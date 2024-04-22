@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full overflow-auto flex-1 ">
+    <div class="lg:overflow-auto lg:flex-1 ">
         <PostItem  :post="post1" />
         <PostItem  :post="post2" />
     </div>
