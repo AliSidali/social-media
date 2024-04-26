@@ -8,6 +8,8 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+
+
 </script>
 
 <template>
@@ -28,9 +30,9 @@ const showingNavigationDropdown = ref(false);
 
                     </div>
 
-                    <div class="hidden sm:flex sm:items-center sm:ms-6">
+                    <div class="hidden sm:flex sm:items-center sm:ms-6" >
                         <!-- Settings Dropdown -->
-                        <div class="ms-3 relative">
+                        <div class="ms-3 relative" v-if="$page.props.auth.user" >
                             <Dropdown align="right" width="48">
                                 <template #trigger>
                                     <span class="inline-flex rounded-md">
@@ -57,12 +59,15 @@ const showingNavigationDropdown = ref(false);
                                 </template>
 
                                 <template #content>
-                                    <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                    <DropdownLink :href="route('profile.index', {username:$page.props.auth.user.username})"> Profile </DropdownLink>
                                     <DropdownLink :href="route('logout')" method="post" as="button">
                                         Log Out
                                     </DropdownLink>
                                 </template>
                             </Dropdown>
+                        </div>
+                        <div v-else>
+                            <Link :href="route('login')">Login</Link>
                         </div>
                     </div>
 
@@ -108,19 +113,28 @@ const showingNavigationDropdown = ref(false);
 
                 <!-- Responsive Settings Options -->
                 <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                    <div class="px-4">
-                        <div class="font-medium text-base text-gray-800 dark:text-gray-200">
-                            {{ $page.props.auth.user.name }}
+                    <template v-if="$page.props.auth.user">
+                        <div class="px-4">
+                            <div class="font-medium text-base text-gray-800 dark:text-gray-200">
+                                {{ $page.props.auth.user.name }}
+                            </div>
+                            <div class="font-medium text-sm text-gray-500">{{ $page.props.auth.user.email }}</div>
                         </div>
-                        <div class="font-medium text-sm text-gray-500">{{ $page.props.auth.user.email }}</div>
-                    </div>
 
-                    <div class="mt-3 space-y-1">
-                        <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                            Log Out
-                        </ResponsiveNavLink>
-                    </div>
+                        <div class="mt-3 space-y-1">
+                            <ResponsiveNavLink :href="route('profile.index', {username : $page.props.auth.user.username})"> Profile </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('logout')" method="post" as="button">
+                                Log Out
+                            </ResponsiveNavLink>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div>
+                            <ResponsiveNavLink :href="route('login')" as="button">
+                                Log In
+                            </ResponsiveNavLink>
+                        </div>
+                    </template>
                 </div>
             </div>
         </nav>
