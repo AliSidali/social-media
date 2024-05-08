@@ -6,28 +6,30 @@ use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class ProfileController extends Controller
 {
-    public function index(User $user)
-    {
-        return Inertia::render(
-            'Profile/Index',
-            [
-                'mustVerifyEmail' => $user instanceof MustVerifyEmail,
-                'status' => session('status'),
-                'user' => $user
-            ]
-        );
-    }
     /**
      * Display the user's profile form.
      */
+    public function index(User $user)
+    {
+        $user = new UserResource($user);
+        return Inertia::render(
+            'Profile/Index',
+            [
+                "user" => $user,
+                'status' => session('status'),
+            ]
+        );
+    }
     public function edit(Request $request): Response
     {
         return Inertia::render('Profile/Edit', [
@@ -49,7 +51,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        return Redirect::route('profile.index');
     }
 
     /**
@@ -71,5 +73,24 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function updateImages(Request $request)
+    {
+        $user = auth()->user();
+        $images = $request->validate([
+            'cover' => ['nullable', 'image'],
+            'avatar' => ['nullable', 'image']
+        ]);
+
+        $cover = $images['cover'] ?? null;
+
+        if ($cover) {
+            $cover_path = $cover->store($user->id . '/covers', 'public');
+            $user->update(['cover_path' => Storage::url($cover_path)]);
+        }
+
+        return back()->with('status', 'cover-image-update');
+
     }
 }
