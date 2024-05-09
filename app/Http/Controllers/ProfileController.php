@@ -84,10 +84,12 @@ class ProfileController extends Controller
         ]);
 
         $cover = $images['cover'] ?? null;
-
         if ($cover) {
-            $cover_path = $cover->store($user->id . '/covers', 'public');
-            $user->update(['cover_path' => Storage::url($cover_path)]);
+            if (Storage::disk('public')->exists(auth()->user()->cover_path)) {
+                Storage::disk('public')->delete(auth()->user()->cover_path);
+            }
+            $cover_path = $cover->store('user-' . $user->id, 'public');
+            $user->update(['cover_path' => $cover_path]);
         }
 
         return back()->with('status', 'cover-image-update');
