@@ -4,7 +4,7 @@
         <!-- POST HEAD -->
         <div class="flex items-center gap-2 mb-3">
             <a href="#" class="border-2 rounded-full hover:border-blue-500  transition-all">
-                <img class="w-[40px] rounded-full" :src="post.user.avatar" alt="">
+                <img class="w-[40px] h-[40px] rounded-full" :src="post.user.avatar_path" alt="">
             </a>
             <div class="ml-3">
                 <h4 class="font-bold">
@@ -21,13 +21,13 @@
         <!-- POST DESCRIPTION -->
         <div class="mb-3">
             <Disclosure v-slot="{open}">
-                <div v-if="!open" v-html="post.body.substring(0, 100)+'...'" />
+                <div v-if="!open" v-html="post.body.substring(0, 200)" />
 
                 <DisclosurePanel>
                     <div v-html="post.body" />
                 </DisclosurePanel>
 
-                <div class="flex justify-end">
+                <div v-if="post.body.length > 200" class="flex justify-end">
                     <DisclosureButton class="text-blue-500 hover:underline">
                         {{  open ? 'Read  Less': 'Read More' }}
                     </DisclosureButton>

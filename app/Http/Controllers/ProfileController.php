@@ -82,7 +82,7 @@ class ProfileController extends Controller
         $user = auth()->user();
         $images = $request->validate([
             'cover' => ['nullable', 'image'],
-            'avatar' => ['nullable', 'image', 'mimes:pdf']
+            'avatar' => ['nullable', 'image']
         ]);
 
         $cover = $images['cover'] ?? null;
@@ -91,10 +91,10 @@ class ProfileController extends Controller
         $success = '';
 
         if ($cover) {
-            if (Storage::disk('public')->exists(auth()->user()->cover_path)) {
+            if (auth()->user()->cover_path) {
                 Storage::disk('public')->delete(auth()->user()->cover_path);
             }
-            $cover_path = $cover->store('user-' . $user->id, 'public');
+            $cover_path = $cover->store('user-' . $user->id, 'public');  //store the image in storage folder
             $user->update(['cover_path' => $cover_path]);
             $success = 'Your cover image has been updated.';
         }

@@ -6,15 +6,24 @@ import PostList from '@/Components/MyComponents/PostList.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
-
+const props = defineProps({
+    success: {
+        type: String
+    },
+    posts: {
+        type: Object
+    }
+})
 
 
 </script>
 
 <template>
+
     <Head title="Social Media Website" />
     <AuthenticatedLayout>
         <!-- "auto-rows-fr" important class for specifying grid child height  -->
+
         <div class="grid  gap-2 px-4 pt-8 lg:grid-cols-12  lg:h-full lg:auto-rows-fr">
             <div class=" lg:col-span-3 lg:order-1 ">
                 <GroupList />
@@ -23,8 +32,9 @@ import { Head, Link } from '@inertiajs/vue3';
                 <FollowingList />
             </div>
             <div class="flex flex-col lg:col-span-6 lg:order-2 ">
-                <CreatePost />
-                <PostList />
+
+                <CreatePost :success="success"/>
+                <PostList :posts="posts.data" />
             </div>
         </div>
     </AuthenticatedLayout>
