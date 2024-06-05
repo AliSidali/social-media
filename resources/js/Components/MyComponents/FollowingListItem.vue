@@ -1,5 +1,5 @@
 <template>
-    <TextInput class="w-full" placeholder="Search for groups..." />
+    <TextInput v-model="forModelError" class="w-full" placeholder="Search for groups..." />
     <div class="px-2  overflow-auto flex-1 mt-4">
         <div v-if="false" class="text-gray-400 text-center">
             Your don't have any friends yet.
@@ -25,5 +25,7 @@
 <script setup>
 import FollowingItem from '@/Components/MyComponents/FollowingItem.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { ref } from 'vue';
+const forModelError = ref('');
 
 </script>

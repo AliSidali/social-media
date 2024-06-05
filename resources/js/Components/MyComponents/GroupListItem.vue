@@ -1,5 +1,5 @@
 <template>
-<TextInput class="w-full" placeholder="Search for groups..." />
+<TextInput v-model="forModelError" class="w-full" placeholder="Search for groups..." />
 <div class="flex-1  px-2  overflow-auto mt-4">
     <div v-if="false" class="text-gray-400 text-center">
         Your are not joined to any group
@@ -23,5 +23,7 @@
 <script setup>
 import TextInput from '@/Components/TextInput.vue';
 import GroupItem from '@/Components/MyComponents/GroupItem.vue';
+import { ref } from 'vue';
+const forModelError = ref('');
 
 </script>

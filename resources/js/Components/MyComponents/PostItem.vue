@@ -1,22 +1,62 @@
 <template>
     <div class="bg-white py-3 px-5 border rounded mb-3">
-
         <!-- POST HEAD -->
-        <div class="flex items-center gap-2 mb-3">
-            <a href="#" class="border-2 rounded-full hover:border-blue-500  transition-all">
-                <img class="w-[40px] h-[40px] rounded-full" :src="post.user.avatar_path" alt="">
-            </a>
-            <div class="ml-3">
-                <h4 class="font-bold">
-                   <a href="#" class="hover:underline transition-all"> {{ post.user.name }}</a>
-                   <template v-if="post.group">
+        <div class="flex justify-between">
+            <PostUserHeader  :post="post"/>
+            <!-- the three dots section -->
+
+            <Menu as="div" class="relative inline-block ">
+                <div>
+                    <MenuButton
+                    class="w-8 h-8 rounded-full  flex justify-center items-center hover:bg-black/5 transition"
+                    >
+                    <EllipsisVerticalIcon class="w-5 h-5" />
+                    </MenuButton>
+                </div>
+
+                <transition
+                    enter-active-class="transition duration-100 ease-out"
+                    enter-from-class="transform scale-95 opacity-0"
+                    enter-to-class="transform scale-100 opacity-100"
+                    leave-active-class="transition duration-75 ease-in"
+                    leave-from-class="transform scale-100 opacity-100"
+                    leave-to-class="transform scale-95 opacity-0"
+                >
+                    <MenuItems
+                    class="absolute right-0 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+                    >
+                    <div class="px-1 py-1 ">
+                        <MenuItem v-slot="{ active }">
+                        <button
+                            :class="[
+                            active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                            'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                            ]"
+                            @click="openEditModal"
                         >
-                       <a  href="#" class="hover:underline transition-all">{{ post.group.name }}</a>
-                   </template>
-                </h4>
-                <small class="text-gray-400">{{ post.created_at }}</small>
-            </div>
+                            <PencilIcon class="w-5 h-5 mr-2" />
+                            Edit
+                        </button>
+                        </MenuItem>
+                        <MenuItem v-slot="{ active }">
+                        <button
+                            :class="[
+                            active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                            'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                            ]"
+
+                            @click="deletePost"
+                        >
+                            <TrashIcon class="w-5 h-5 mr-2" />
+                            Delete
+                        </button>
+                        </MenuItem>
+                    </div>
+                    </MenuItems>
+                </transition>
+            </Menu>
         </div>
+
 
         <!-- POST DESCRIPTION -->
         <div class="mb-3">
@@ -66,17 +106,44 @@
         </div>
 
     </div>
+
 </template>
 <script setup>
-import { Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue'
-import { ArrowDownTrayIcon, HandThumbUpIcon, DocumentIcon, ChatBubbleLeftRightIcon } from '@heroicons/vue/24/solid'
+import { Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue';
+import { ArrowDownTrayIcon, HandThumbUpIcon, DocumentIcon, ChatBubbleLeftRightIcon, EllipsisVerticalIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/solid';
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import PostUserHeader from './PostUserHeader.vue';
 
-defineProps({
-    post: Object
+import { ref } from 'vue';
+import { router } from '@inertiajs/vue3';
+const props = defineProps({
+    post: Object,
 })
+
 
 const isImage = (attachment)=>{
     let mime = attachment.mime.split('/');
     return mime[0].toLowerCase() === 'image';
 }
+
+
+//SHOWING EDIT POST MODAL
+const emit = defineEmits(['editClick']);
+const openEditModal = ()=>{
+    emit('editClick', props.post);
+};
+
+
+//DELETE POST
+
+const deletePost = ()=>{
+    if(window.confirm('Are you sure you want to delete this post?')){
+        router.delete(route('post.destroy', props.post.id), {
+            preserveScroll:true
+        });
+    }
+}
+
+
+
 </script>

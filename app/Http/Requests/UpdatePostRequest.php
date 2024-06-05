@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Http\Requests;
+
+use App\Models\Post;
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdatePostRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        $post = Post::where('id', $this->post->id)->where('user_id', auth()->user()->id)->first();
+        return !!$post;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'user_id' => ['numeric'],
+            'body' => ['required', 'string'],
+        ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'user_id' => auth()->id(),
+        ]);
+    }
+}
