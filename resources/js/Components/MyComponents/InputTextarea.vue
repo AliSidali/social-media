@@ -10,7 +10,6 @@ const props = defineProps({
 
 const model = defineModel({
     type: String,
-    required: true,
 });
 
 const input = ref(null);

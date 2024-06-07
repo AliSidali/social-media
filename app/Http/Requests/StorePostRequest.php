@@ -24,7 +24,7 @@ class StorePostRequest extends FormRequest
     {
         return [
             'user_id' => '',
-            'body' => ['required', 'string'],
+            'body' => ['nullable', 'string'],
         ];
 
     }
@@ -33,6 +33,7 @@ class StorePostRequest extends FormRequest
     {
         $this->merge([
             'user_id' => auth()->id(),
+            'body' => $this->input('body') ?: '',
         ]);
     }
 

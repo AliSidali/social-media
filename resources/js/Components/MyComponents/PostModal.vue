@@ -34,16 +34,18 @@
                   as="h3"
                   class=" font-medium p-3 px-4 bg-gray-200 text-gray-900 flex justify-between items-center"
                 >
-                  Update Post
+                  {{post.id ?' Update Post':'Create Post'}}
                   <button class="w-8 h-8 rounded-full flex justify-center items-center hover:bg-black/10 transition">
                       <XMarkIcon class="w-5 h-5" @click="closeModal" />
                   </button>
                 </DialogTitle>
-                <div class="p-4">
+                <div class="p-4 ">
                     <PostUserHeader :post="post" :showTime="false" class="mb-3"/>
-                    <InputTextarea v-model="updatePostForm.body" autoResize/>
+                    <div class="border-2 border-gray-200">
+                        <ckeditor :editor="editor" v-model="PostForm.body" :config="editorConfig"></ckeditor>
+                    </div>
+                    <!-- <InputTextarea v-model="PostForm.body" autoResize/> -->
                 </div>
-
                 <div class="p-4">
                   <button
                     type="button"
@@ -64,23 +66,18 @@
 
   <script setup>
   import { computed, ref, watch } from 'vue'
-  import {
-    TransitionRoot,
-    TransitionChild,
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-  } from '@headlessui/vue'
+  import {TransitionRoot,TransitionChild,Dialog,DialogPanel, DialogTitle,} from '@headlessui/vue'
   import InputTextarea from './InputTextarea.vue';
   import PostUserHeader from './PostUserHeader.vue';
   import { useForm } from '@inertiajs/vue3';
-import { XMarkIcon } from '@heroicons/vue/24/solid';
+  import { XMarkIcon } from '@heroicons/vue/24/solid';
+  import BalloonEditor  from '@ckeditor/ckeditor5-build-balloon';
 
   const props = defineProps({
     modelValue: Boolean,
     post: {
       type: Object,
-     // required: true
+      required: true
     }
   })
 
@@ -98,23 +95,43 @@ import { XMarkIcon } from '@heroicons/vue/24/solid';
     isOpen.value = false
   }
 
-  //UPDATE POST
+  //UPDATE OR CREATE POST
 
-const updatePostForm = useForm({
-    body: null
+const PostForm = useForm({
+    body: props.post.body
 })
 
 watch(()=>props.post, ()=>{
-    updatePostForm.body = props.post.body
+    PostForm.body = props.post.body
 })
 
 
   const submit = ()=>{
-    updatePostForm.put(route('post.update', props.post.id), {
-        preserveScroll:true,
-        onSuccess: ()=>{
-            isOpen.value = false;
-        }
-    });
+    if(props.post.id){
+            PostForm.put(route('post.update', props.post.id), {
+            preserveScroll:true,
+            onSuccess: ()=>{
+                isOpen.value = false;
+            }
+        });
+    }else{
+        PostForm.post(route('post.store'), {
+
+            preserveScroll:true,
+            onSuccess: ()=>{
+                PostForm.reset();
+                isOpen.value = false;
+            }
+        })
+    }
+
   }
+
+
+  //CKEDITOR CONFIG
+  const editor = BalloonEditor;
+  const editorConfig= {
+    toolbar: [ 'heading','|', 'link','|','bold', 'italic',  '|', 'bulletedList', 'numberedList','|', 'outdent','indent', '|', 'blockquote' ],
+
+};
   </script>

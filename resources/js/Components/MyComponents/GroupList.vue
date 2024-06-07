@@ -19,7 +19,6 @@
             <GroupListItem />
         </div>
 
-
     </div>
 
 </template>
