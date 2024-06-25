@@ -5,7 +5,7 @@ import {TransitionRoot,TransitionChild,Dialog,DialogPanel, DialogTitle,} from '@
 import InputTextarea from './InputTextarea.vue';
 import PostUserHeader from './PostUserHeader.vue';
 import { useForm } from '@inertiajs/vue3';
-import { BookmarkIcon, PaperClipIcon, XMarkIcon } from '@heroicons/vue/24/solid';
+import { BookmarkIcon, PaperClipIcon, XMarkIcon, ArrowUturnLeftIcon } from '@heroicons/vue/24/solid';
 import BalloonEditor  from '@ckeditor/ckeditor5-build-balloon';
 import { isImage } from '@/helpers';
 
@@ -18,12 +18,15 @@ const props = defineProps({
 })
 
 const resetForm = ()=>{
-  PostForm.reset();
+  postForm.reset();
   attachments.value= [];
 }
 
+const attachments = ref([]);
+
+
 //toggle modal
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'hideModal']);
 
 const isOpen = computed({
   get: ()=>props.modelValue,
@@ -34,36 +37,45 @@ const isOpen = computed({
 
 function closeModal() {
   isOpen.value = false;
+  emit('hideModal');
   resetForm();
+  console.log(props.post.attachments.map(attachment=>attachment.deleted=false));
 }
 
 //UPDATE OR CREATE POST
 
-const PostForm = useForm({
-  id: props.post.id,
+const postForm = useForm({
   body: props.post.body,
   attachments: null,
+  deleted_file_ids : [],
+  _method: 'POST'
 })
 
+//1. this watch for update
 watch(()=>props.post, ()=>{
-  PostForm.body = props.post.body
+  console.log('triggered');
+  postForm.body = props.post.body;
 })
 
 
 const submit = ()=>{
   if(props.post.id){
-          PostForm.attachments = attachments.value.map(index=>index.file);
+        postForm.attachments = attachments.value.map(index=>index.file);
+        console.log(
+            postForm.attachments
+        );
+        postForm._method = 'PUT';
 
-          PostForm.put(route('post.update', props.post.id), {
-          preserveScroll:true,
-          onSuccess: ()=>{
-            closeModal();
-          }
-      });
+        postForm.post(route('post.update', props.post.id), {
+        preserveScroll:true,
+        onSuccess: ()=>{
+        closeModal();
+        }
+    });
   }else{
-      PostForm.attachments = attachments.value.map(index=>index.file);
+      postForm.attachments = attachments.value.map(index=>index.file);
 
-      PostForm.post(route('post.store'), {
+      postForm.post(route('post.store'), {
 
           preserveScroll:true,
           onSuccess: ()=>{
@@ -84,7 +96,8 @@ const editorConfig= {
 
 
 //DISPLAY ATTACHMENT ON MODAL
-const attachments = ref([]);
+
+// 1. WHEN YOU CREATE NEW POST
 const onAttachmentChoose = async(evt)=>{
  const files = evt.target.files;
  for(let file of files){
@@ -94,7 +107,9 @@ const onAttachmentChoose = async(evt)=>{
   }
 
   attachments.value.push(attachment);
+
  }
+
 
 
 }
@@ -113,8 +128,25 @@ const readFile = (file)=>{
       })
  }
 
+ //2. WHEN YOU EDIT POST, SO DISPLAYING BOTH BACKEND AND FRONTEND ATTACHMENTS
+const computedAttachments = computed(()=>{
+    return [...(props.post.attachments||[]), ...attachments.value];
+})
+
+
+
+ // REMOVE ATTACHMENT
 const removeAttachment = (attachment)=>{
-  attachments.value = attachments.value.filter(file => file !== attachment);
+    if(attachment.file){
+        attachments.value = attachments.value.filter(file => file !== attachment);
+    }else if(!postForm.deleted_file_ids.includes(attachment.id)){
+        attachment.deleted = true;
+        postForm.deleted_file_ids.push(attachment.id);
+    }
+}
+
+const undoAttachmentRemove = (attachment)=>{
+    attachment.deleted = false
 }
 
 </script>
@@ -166,22 +198,28 @@ const removeAttachment = (attachment)=>{
                 <!-- MODAL BODY -->
                 <div class="p-4 ">
                     <PostUserHeader :post="post" :showTime="false" class="mb-3"/>
+                    {{ postForm.deleted_file_ids }}
                     <div class="border-2 border-gray-200 mb-3">
-                        <ckeditor :editor="editor" v-model="PostForm.body" :config="editorConfig"></ckeditor>
+                        <ckeditor :editor="editor" v-model="postForm.body" :config="editorConfig"></ckeditor>
                     </div>
-                    <div class="grid  gap-2 my-3" :class="attachments.length == 1 ? 'grid-cols-1 ' : 'grid-cols-2 '">
-                        <div  v-for="(attachment, index) in attachments" :key="index"  class="relative group">
-                            <div v-if="isImage(attachment.file)"  class="h-52">
-                                <img :src="attachment.url"   class="h-full w-full" alt="">
+
+                    <div class="grid  gap-2 my-3" :class="computedAttachments.length == 1 ? 'grid-cols-1 ' : 'grid-cols-2 '">
+                            <div  v-for="(attachment, index) in computedAttachments" :key="index"  class="relative group">
+                                <div v-if="isImage(attachment.file||attachment)"  class="h-52 " :class="{'opacity-50': attachment.deleted}">
+                                    <img :src="attachment.url"   class="h-full w-full" alt="">
+                                </div>
+                                <div v-else class="flex flex-col justify-center items-center text-gray-500 h-52 bg-blue-100 " :class="{'opacity-50': attachment.deleted}">
+                                    <PaperClipIcon  class=" w-10 " />
+                                    <small class="font-semibold text-center">{{ (attachment.file||attachment).name }}</small>
+                                </div>
+                                <div class="absolute flex justify-between items-center  bg-black text-white py-2 px-4 font-semibold text-sm w-full bottom-0" v-if="attachment.deleted">
+                                    to be deleted
+                                    <ArrowUturnLeftIcon class="w-4 h-5 cursor-pointer" @click="undoAttachmentRemove(attachment)"/>
+                                </div>
+                                <button @click="removeAttachment(attachment)" class="absolute top-2 right-2 w-8 h-8 text-white rounded-full bg-black/30 hover:bg-black/40 flex justify-center items-center">
+                                    <XMarkIcon class="w-5 h-5" />
+                                </button>
                             </div>
-                            <div v-else  class="flex flex-col justify-center items-center text-gray-500 h-52 bg-blue-100">
-                                <PaperClipIcon  class=" w-10 " />
-                                <small class="font-semibold text-center">{{ attachment.file.name }}</small>
-                            </div>
-                            <button @click="removeAttachment(attachment)" class="absolute top-2 right-2 w-8 h-8 text-white rounded-full bg-black/30 hover:bg-black/40 flex justify-center items-center">
-                                <XMarkIcon class="w-5 h-5" />
-                            </button>
-                          </div>
 
                     </div>
                 </div>

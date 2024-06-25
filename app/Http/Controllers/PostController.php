@@ -14,8 +14,9 @@ class PostController extends Controller
 {
     public function store(StorePostRequest $request)
     {
+        DB::beginTransaction();
+
         try {
-            DB::beginTransaction();
             $user = auth()->user();
             $data = $request->validated();
 
@@ -49,7 +50,42 @@ class PostController extends Controller
 
     public function update(UpdatePostRequest $request, Post $post)
     {
-        $post->update($request->validated());
+        $data = $request->validated();
+        $user = auth()->user();
+
+        DB::beginTransaction();
+
+        try {
+
+            $attachments_path = [];
+            $post->update($data);
+            $deleted_attachment_ids = $data['deleted_file_ids'] ?? [];
+            $deleted_attachments = PostAttachment::query()
+                ->whereIn('id', $deleted_attachment_ids)
+                ->where('post_id', $post->id)
+                ->get();
+            foreach ($deleted_attachments as $attachment) {
+                $attachment->delete();
+
+            }
+            foreach ($data['attachments'] as $attachment) {
+                $attachments_path[] = $path = $attachment->store('attachments/post-' . $post->id, 'public');
+                PostAttachment::create([
+                    'post_id' => $post->id,
+                    'name' => $attachment->getClientOriginalName(),
+                    'path' => $path,
+                    'mime' => $attachment->getMimeType(),
+                    'size' => $attachment->getSize(),
+                    'created_by' => $user->id
+                ]);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            foreach ($attachments_path as $path) {
+                Storage::disk('public')->delete($path);
+            }
+        }
         return back();
     }
 

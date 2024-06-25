@@ -3,36 +3,30 @@
 namespace App\Http\Requests;
 
 use App\Models\Post;
+use Illuminate\Validation\Rules\File;
+use App\Http\Requests\StorePostRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePostRequest extends FormRequest
+class UpdatePostRequest extends StorePostRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        $post = Post::where('id', $this->post->id)->where('user_id', auth()->user()->id)->first();
-        return !!$post;
+        $post = $this->route('post');
+        return $post->user_id === auth()->user()->id;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-        return [
-            'user_id' => ['numeric'],
-            'body' => ['required', 'string'],
+        $rules = parent::rules();
+        $additionnalRules = [
+            'deleted_file_ids' => ['array'],
+            'deleted_file_ids.*' => ['numeric']
         ];
+        return array_merge($rules, $additionnalRules);
     }
 
-    protected function prepareForValidation()
-    {
-        $this->merge([
-            'user_id' => auth()->id(),
-        ]);
-    }
+
 }

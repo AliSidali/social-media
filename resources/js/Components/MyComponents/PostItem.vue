@@ -3,8 +3,8 @@
         <!-- POST HEAD -->
         <div class="flex justify-between">
             <PostUserHeader  :post="post"/>
-            <!-- the three dots section -->
 
+            <!-- the three dots section -->
             <Menu as="div" class="relative inline-block ">
                 <div>
                     <MenuButton
