@@ -230,7 +230,6 @@ const undoAttachmentRemove = (attachment)=>{
                   <button
                     type="button"
                     class="relative flex items-center justify-center w-full rounded-md border border-transparent bg-indigo-700 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                    @click="submit"
                   >
                     <PaperClipIcon class="w-4 h-4 mr-2" />
                     Attach Files

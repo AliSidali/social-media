@@ -19,8 +19,10 @@ Route::middleware('auth')->group(function () {
 
     //Post routes
     Route::post('/post', [PostController::class, 'store'])->name('post.store');
-    Route::put('/post/{post}', [PostController::class, 'update'])->name('post.update');
+    Route::put('/post/{post}', [PostController::class, 'update'])->name('post.update'); //UPDATE POST WITH ADDING OR DELETING ITS ATTACHMENTS
     Route::delete('/post/{post}', [PostController::class, 'destroy'])->name('post.destroy');
+    Route::get('/post/download/{attachment}', [PostController::class, 'downloadAttachment'])->name('attachment.download');
+
 });
 
 require __DIR__ . '/auth.php';
