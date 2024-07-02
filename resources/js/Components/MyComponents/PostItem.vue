@@ -80,20 +80,21 @@
 
         <!-- POST ATTACHEMENTS -->
         <div class="grid  gap-2 mb-3" :class="post.attachments.length ==1?'grid-cols-1 ':'grid-cols-2'">
-            <div v-for="(attachment, index) in post.attachments.slice(0, 4)" :key="index" class="relative group">
-                <div v-if="post.attachments.length > 4 && index == 3"  class="absolute inset-0 bg-black/60 text-white flex justify-center items-center text-2xl">
-                    + {{ post.attachments.length-4 }} more
+            <div v-for="(attachment, index) in post.attachments.slice(0, 4)" :key="index" >
+                <div @click="previewAttachment(post, index)" class="relative group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 cursor-pointer">
+                    <div v-if="post.attachments.length > 4 && index == 3"  class="absolute inset-0 bg-black/60 text-white flex justify-center items-center text-2xl">
+                        + {{ post.attachments.length-4 }} more
+                    </div>
+                    <img v-if="isImage(attachment)"    :src="attachment.url" class="object-contain " alt="">
+                    <div v-else class="flex flex-col justify-center items-center">
+                        <PaperClipIcon class=" w-10 h-10 mb-3" />
+                        <small>{{ attachment.name }}</small>
+                    </div>
+                    <a :href="route('attachment.download', attachment)" class="p-2 text-white bg-gray-800 rounded absolute top-2 right-2 opacity-0  hover:bg-gray-600 group-hover:opacity-100">
+                        <ArrowDownTrayIcon class="w-4"/>
+                    </a>
                 </div>
-                <div v-if="isImage(attachment)" class="  h-52">
-                    <img  :src="attachment.url" class="h-full w-full" alt="">
-                </div>
-                <div v-else class="flex flex-col justify-center items-center text-center text-gray-500 h-52 bg-blue-100">
-                    <DocumentIcon  class=" w-20 " />
-                    <h4 class="text-lg">{{ attachment.name }}</h4>
-                </div>
-                <button class="p-2 text-white bg-gray-800 rounded absolute top-2 right-2 opacity-0  hover:bg-gray-600 group-hover:opacity-100">
-                    <ArrowDownTrayIcon class="w-4"/>
-                </button>
+
             </div>
 
         </div>
@@ -110,15 +111,18 @@
             </button>
         </div>
 
+
+
     </div>
 
 </template>
 <script setup>
 import { Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue';
-import { ArrowDownTrayIcon, HandThumbUpIcon, DocumentIcon, ChatBubbleLeftRightIcon, EllipsisVerticalIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/solid';
+import { ArrowDownTrayIcon, HandThumbUpIcon, ChatBubbleLeftRightIcon, EllipsisVerticalIcon, PencilIcon, TrashIcon, PaperClipIcon } from '@heroicons/vue/24/solid';
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import PostUserHeader from './PostUserHeader.vue';
 import {isImage} from '@/helpers';
+
 
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
@@ -131,7 +135,7 @@ const props = defineProps({
 
 
 //SHOWING EDIT POST MODAL
-const emit = defineEmits(['editClick']);
+const emit = defineEmits(['editClick', 'onAttachmentClick']);
 const openEditModal = ()=>{
     emit('editClick', props.post);
 };
@@ -145,6 +149,15 @@ const deletePost = ()=>{
             preserveScroll:true
         });
     }
+}
+
+
+
+
+//ATTACHMENT MODAL
+
+const previewAttachment = (post, index)=>{
+    emit('onAttachmentClick', post, index);
 }
 
 
