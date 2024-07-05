@@ -90,7 +90,7 @@
                         <PaperClipIcon class=" w-10 h-10 mb-3" />
                         <small>{{ attachment.name }}</small>
                     </div>
-                    <a :href="route('attachment.download', attachment)" class="p-2 text-white bg-gray-800 rounded absolute top-2 right-2 opacity-0  hover:bg-gray-600 group-hover:opacity-100">
+                    <a @click.stop :href="route('attachment.download', attachment)" class="p-2 text-white bg-gray-800 rounded absolute top-2 right-2 opacity-0  hover:bg-gray-600 group-hover:opacity-100">
                         <ArrowDownTrayIcon class="w-4"/>
                     </a>
                 </div>

@@ -4,7 +4,7 @@ import { computed, ref, watch } from 'vue'
 import {TransitionRoot,TransitionChild,Dialog,DialogPanel, DialogTitle,} from '@headlessui/vue'
 import InputTextarea from './InputTextarea.vue';
 import PostUserHeader from './PostUserHeader.vue';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { BookmarkIcon, PaperClipIcon, XMarkIcon, ArrowUturnLeftIcon } from '@heroicons/vue/24/solid';
 import BalloonEditor  from '@ckeditor/ckeditor5-build-balloon';
 import { isImage } from '@/helpers';
@@ -24,6 +24,9 @@ const resetForm = ()=>{
 
 const attachments = ref([]);
 
+const attachmentErrors = ref([]);
+
+const attachmentExtensions = usePage().props.extensions;
 
 //toggle modal
 const emit = defineEmits(['update:modelValue', 'hideModal']);
@@ -39,7 +42,8 @@ function closeModal() {
   isOpen.value = false;
   emit('hideModal');
   resetForm();
-  console.log(props.post.attachments.map(attachment=>attachment.deleted=false));
+  attachmentErrors.value = [];
+  showExtensionMessage.value = false;
 }
 
 //UPDATE OR CREATE POST
@@ -53,7 +57,6 @@ const postForm = useForm({
 
 //1. this watch for update
 watch(()=>props.post, ()=>{
-  console.log('triggered');
   postForm.body = props.post.body;
 })
 
@@ -69,7 +72,10 @@ const submit = ()=>{
         postForm.post(route('post.update', props.post.id), {
         preserveScroll:true,
         onSuccess: ()=>{
-        closeModal();
+            closeModal();
+        },
+        onError: (errors)=>{
+          setAttachmentErrors(errors);
         }
     });
   }else{
@@ -80,10 +86,24 @@ const submit = ()=>{
           preserveScroll:true,
           onSuccess: ()=>{
             closeModal();
-          }
+          },
+          onError: (errors)=>{
+            setAttachmentErrors(errors);
+        }
       })
   }
 
+}
+
+const showExtensionMessage = ref(false);
+
+const setAttachmentErrors = (errors)=>{
+  for(let key in errors){
+      if(key.includes('.')){
+          const [, index] = key.split('.');
+          attachmentErrors.value[index] = errors[key];
+        }
+  }
 }
 
 
@@ -97,16 +117,22 @@ const editorConfig= {
 
 //DISPLAY ATTACHMENT ON MODAL
 
-// 1. WHEN YOU CREATE NEW POST
+// 1. display frontend attachment
 const onAttachmentChoose = async(evt)=>{
  const files = evt.target.files;
  for(let file of files){
-  let attachment = {
-      file,
-      url: await readFile(file)
-  }
+    let attachment = {
+        file,
+        url: await readFile(file)
+    }
 
-  attachments.value.push(attachment);
+    attachments.value.push(attachment);
+
+    //2. show extensions message after choosing none existing file extension
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    if(!attachmentExtensions.includes(fileExtension)){
+        showExtensionMessage.value = true;
+    }
 
  }
 
@@ -128,9 +154,9 @@ const readFile = (file)=>{
       })
  }
 
- //2. WHEN YOU EDIT POST, SO DISPLAYING BOTH BACKEND AND FRONTEND ATTACHMENTS
+ //2.  DISPLAYING BOTH BACKEND AND FRONTEND ATTACHMENTS
 const computedAttachments = computed(()=>{
-    return [...(props.post.attachments||[]), ...attachments.value];
+    return [ ...attachments.value, ...(props.post.attachments||[])];
 })
 
 
@@ -198,27 +224,33 @@ const undoAttachmentRemove = (attachment)=>{
                 <!-- MODAL BODY -->
                 <div class="p-4 ">
                     <PostUserHeader :post="post" :showTime="false" class="mb-3"/>
-                    {{ postForm.deleted_file_ids }}
                     <div class="border-2 border-gray-200 mb-3">
                         <ckeditor :editor="editor" v-model="postForm.body" :config="editorConfig"></ckeditor>
                     </div>
+                    <div v-if="showExtensionMessage" class="bg-sky-200 px-4 py-2 text-gray-700 border-l-4 border-sky-600">
+                      your files must be within the following extensions <br/>
+                      <small>{{ attachmentExtensions.join(', ') }}</small>
+                    </div>
 
                     <div class="grid  gap-2 my-3" :class="computedAttachments.length == 1 ? 'grid-cols-1 ' : 'grid-cols-2 '">
-                            <div  v-for="(attachment, index) in computedAttachments" :key="index"  class="relative group">
-                                <div v-if="isImage(attachment.file||attachment)"  class="h-52 " :class="{'opacity-50': attachment.deleted}">
-                                    <img :src="attachment.url"   class="h-full w-full" alt="">
+                            <div  v-for="(attachment, index) in computedAttachments" :key="index"  >
+                                <div class="relative group border-2" :class="{'border-red-500' : attachmentErrors[index]}">
+                                    <div v-if="isImage(attachment.file||attachment)"  class="h-52 "  :class="{'opacity-50': attachment.deleted}">
+                                        <img :src="attachment.url"   class="h-full w-full" alt="">
+                                    </div>
+                                    <div v-else class="flex flex-col justify-center items-center text-gray-500 h-52 bg-blue-100 " :class="{'opacity-50': attachment.deleted}">
+                                        <PaperClipIcon  class=" w-10 " />
+                                        <small class="font-semibold text-center">{{ (attachment.file||attachment).name }}</small>
+                                    </div>
+                                    <div class="absolute flex justify-between items-center  bg-black text-white py-2 px-4 font-semibold text-sm w-full bottom-0" v-if="attachment.deleted">
+                                        to be deleted
+                                        <ArrowUturnLeftIcon class="w-4 h-5 cursor-pointer" @click="undoAttachmentRemove(attachment)"/>
+                                    </div>
+                                    <button @click="removeAttachment(attachment)" class="absolute top-2 right-2 w-8 h-8 text-white rounded-full bg-black/30 hover:bg-black/40 flex justify-center items-center">
+                                        <XMarkIcon class="w-5 h-5" />
+                                    </button>
                                 </div>
-                                <div v-else class="flex flex-col justify-center items-center text-gray-500 h-52 bg-blue-100 " :class="{'opacity-50': attachment.deleted}">
-                                    <PaperClipIcon  class=" w-10 " />
-                                    <small class="font-semibold text-center">{{ (attachment.file||attachment).name }}</small>
-                                </div>
-                                <div class="absolute flex justify-between items-center  bg-black text-white py-2 px-4 font-semibold text-sm w-full bottom-0" v-if="attachment.deleted">
-                                    to be deleted
-                                    <ArrowUturnLeftIcon class="w-4 h-5 cursor-pointer" @click="undoAttachmentRemove(attachment)"/>
-                                </div>
-                                <button @click="removeAttachment(attachment)" class="absolute top-2 right-2 w-8 h-8 text-white rounded-full bg-black/30 hover:bg-black/40 flex justify-center items-center">
-                                    <XMarkIcon class="w-5 h-5" />
-                                </button>
+                                <small class="text-red-500">{{ attachmentErrors[index] }}</small>
                             </div>
 
                     </div>
