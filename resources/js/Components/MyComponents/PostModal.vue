@@ -7,7 +7,7 @@ import PostUserHeader from './PostUserHeader.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { BookmarkIcon, PaperClipIcon, XMarkIcon, ArrowUturnLeftIcon } from '@heroicons/vue/24/solid';
 import BalloonEditor  from '@ckeditor/ckeditor5-build-balloon';
-import { isImage } from '@/helpers';
+import { helpers } from '@/helpers';
 
 const props = defineProps({
   modelValue: Boolean,
@@ -16,6 +16,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const {isImage} = helpers();
 
 const resetForm = ()=>{
   postForm.reset();
@@ -64,9 +66,6 @@ watch(()=>props.post, ()=>{
 const submit = ()=>{
   if(props.post.id){
         postForm.attachments = attachments.value.map(index=>index.file);
-        console.log(
-            postForm.attachments
-        );
         postForm._method = 'PUT';
 
         postForm.post(route('post.update', props.post.id), {

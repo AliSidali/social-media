@@ -75,9 +75,11 @@
     DialogPanel,
     DialogTitle,
   } from '@headlessui/vue'
-import { isImage } from '@/helpers';
+import { helpers } from '@/helpers';
 import {ChevronLeftIcon, ChevronRightIcon, XMarkIcon, PaperClipIcon } from '@heroicons/vue/24/solid';
 
+
+const {isImage} = helpers();
 
   const props = defineProps({
     modelValue: Boolean,

@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class PostAttachment extends Model
+class Attachment extends Model
 {
     use HasFactory;
 
     const UPDATED_AT = null;
-    protected $fillable = ['post_id', 'name', 'path', 'mime', 'size', 'created_by'];
+    protected $fillable = ['attachable_id', 'attachable_type', 'name', 'path', 'mime', 'size', 'created_by'];
 
     public function post()
     {
@@ -25,5 +25,11 @@ class PostAttachment extends Model
         static::deleted(function (self $attachment) {
             Storage::disk('public')->delete($attachment->path);
         });
+    }
+
+    public function attachable()
+    {
+        return $this->morphTo();
+
     }
 }

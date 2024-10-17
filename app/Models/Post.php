@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\User;
-use App\Models\PostAttachment;
+use App\Models\Attachment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,8 +21,23 @@ class Post extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function post_attachments()
+    public function attachments()
     {
-        return $this->hasMany(PostAttachment::class)->latest();
+        return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    public function reactions()
+    {
+        return $this->morphMany(Reaction::class, 'reactionable');
+    }
+
+    public function post_comments()
+    {
+        return $this->hasMany(PostComment::class)->latest();
+    }
+
+    public function latestLimitedComments()
+    {
+        return $this->hasMany(PostComment::class)->latest()->limit(5);
     }
 }

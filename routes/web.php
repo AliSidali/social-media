@@ -22,7 +22,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/post/{post}', [PostController::class, 'update'])->name('post.update'); //UPDATE POST WITH ADDING OR DELETING ITS ATTACHMENTS
     Route::delete('/post/{post}', [PostController::class, 'destroy'])->name('post.destroy');
     Route::get('/post/download/{attachment}', [PostController::class, 'downloadAttachment'])->name('attachment.download');
-
+    Route::post('/post/{post}/reaction', [PostController::class, 'savePostReaction'])->name('post.reaction');
+    Route::post('/post/{post}/comment', [PostController::class, 'createComment'])->name('post.comment');
+    Route::post('/comment/{comment}', [PostController::class, 'updateComment'])->name('comment.update');
+    Route::delete('/comment/{comment}', [PostController::class, 'destroyComment'])->name('comment.destroy');
+    Route::post('/comment/{comment}/reaction', [PostController::class, 'saveCommentReaction'])->name('comment.reaction');
 });
 
 require __DIR__ . '/auth.php';
