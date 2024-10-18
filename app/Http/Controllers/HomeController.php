@@ -9,14 +9,18 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $posts = Post::query()
             ->latest()
-            ->paginate(20);
+            ->paginate(5);
+        $posts = PostResource::collection($posts);
+        if ($request->wantsJson()) {
+            return $posts;
+        }
         return Inertia::render('Home', [
             'success' => session('success'),
-            'posts' => PostResource::collection($posts)
+            'posts' => $posts
         ]);
     }
 }
