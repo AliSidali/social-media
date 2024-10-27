@@ -20,7 +20,7 @@
     "dependencies": {
         "@ckeditor/ckeditor5-build-balloon": "^41.4.2",
         "@ckeditor/ckeditor5-vue": "^5.1.0",
-        "@headlessui/vue": "^1.7.19",
+        "@headlessui/vue": "^1.7.23",
         "@heroicons/vue": "^2.1.3"
     }
 }

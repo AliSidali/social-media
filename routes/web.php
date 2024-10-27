@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
@@ -27,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/comment/{comment}', [PostController::class, 'updateComment'])->name('comment.update');
     Route::delete('/comment/{comment}', [PostController::class, 'destroyComment'])->name('comment.destroy');
     Route::post('/comment/{comment}/reaction', [PostController::class, 'saveCommentReaction'])->name('comment.reaction');
+    Route::post('/group', [GroupController::class, 'store'])->name('group.store');
 });
 
 require __DIR__ . '/auth.php';

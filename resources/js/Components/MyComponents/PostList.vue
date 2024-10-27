@@ -84,7 +84,7 @@ observer.observe(loadMoreIntersect.value);
 </script>
 
 <template>
-    <div class="lg:overflow-auto lg:flex-1 ">
+    <div class="scrollbar lg:overflow-auto lg:flex-1 ">
         <PostItem  @onShowComments="showComments" @onAttachmentClick="previewAttachmentModal" @editClick="openEditModal" v-for="(post, index) in allPosts.data" :key="index" :post="post" />
         <div ref="loadMoreIntersect" v-if="allPosts.next">load more...</div>
         <div v-else>no more posts</div>

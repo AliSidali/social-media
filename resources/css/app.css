@@ -99,3 +99,21 @@
   }
 
 
+  .scrollbar {
+    scrollbar-width: thin; /* for Firefox */
+    scrollbar-color: #1d4ed8 #d1d5db; /* for Firefox */
+  }
+
+  .scrollbar::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    background: #d1d5db; /* Track color */
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background-color: #1d4ed8; /* Thumb (scrolling handle) color */
+    border-radius: 80px; /* Rounded corners */
+    border: 8px solid #d1d5db; /* Optional: space around the thumb */
+  }
