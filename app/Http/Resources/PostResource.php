@@ -29,8 +29,8 @@ class PostResource extends JsonResource
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'user' => new UserResource($this->user),
-            'attachments' => AttachmentResource::collection($this->attachments()->where("attachable_id", $this->id)->get()),
-            'reactions' => $this->reactions()->where("reactionable_id", $this->id)->get(),
+            'attachments' => AttachmentResource::collection($this->attachments),
+            'reactions' => $this->whenLoaded('reactions'),
             'has_current_user_reaction' => $this->reactions()->where('user_id', $user->id)->count() > 0,
             'post_comments_num' => $this->post_comments()->count(),
             'commentsss' => self::convertIntoCommentTree($comments)[0]

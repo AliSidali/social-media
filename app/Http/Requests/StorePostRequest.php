@@ -48,7 +48,7 @@ class StorePostRequest extends FormRequest
                 'file',
                 File::types(
                     self::$extensions
-                )->max(500 * 1024 * 1024)
+                )->max(500 * 1024 * 1024 * 1024)
             ],
             'body' => ['string'],
         ];

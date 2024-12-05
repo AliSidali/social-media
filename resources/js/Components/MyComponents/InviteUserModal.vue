@@ -1,7 +1,5 @@
 <template>
-{{ isOpen }}
     <TransitionRoot appear :show="isOpen" as="template">
-
       <Dialog as="div" @close="closeModal" class="relative z-10">
         <TransitionChild
           as="template"
@@ -35,19 +33,13 @@
                   as="h3"
                   class="text-lg font-medium leading-6 text-gray-900"
                 >
-                  Create a new group
+                  Invite User
+
                 </DialogTitle>
                 <div class="mt-2">
-                    <label for="" class="font-semibold">Group Name</label>
-                    <TextInput v-model="form.name" class="w-full"/>
-                </div>
-                <div class="mt-2">
-                    <Checkbox v-model:checked="form.auto_approval" class="mr-2"/>
-                    <label for="auto_aproval">Enable auto approval</label>
-                </div>
-                <div class="mt-2">
-                    <label class="font-semibold">Text</label>
-                    <InputTextarea v-model="form.about" />
+                    <label for="" class="font-semibold">email or username</label>
+                    <TextInput v-model="form.email" class="w-full mt-2" :class="page.props.errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''" />
+                    <span class="text-red-600">{{ page.props.errors.email }}</span>
                 </div>
 
                 <div class="mt-4 flex justify-between">
@@ -61,9 +53,9 @@
                   <button
                     type="button"
                     class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                    @click="createGroup"
+                    @click="sendInvitation"
                   >
-                    Send
+                    Submit
                   </button>
                 </div>
               </DialogPanel>
@@ -75,7 +67,7 @@
   </template>
 
   <script setup>
-  import { computed, ref, watch } from 'vue'
+  import {  ref, watch } from 'vue'
   import {
     TransitionRoot,
     TransitionChild,
@@ -83,22 +75,19 @@
     DialogPanel,
     DialogTitle,
   } from '@headlessui/vue'
-import { useForm } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import TextInput from '../TextInput.vue';
-import InputTextarea from './InputTextarea.vue';
-import Checkbox from '../Checkbox.vue';
-import axiosClient from '@/axiosClient';
 
 
   const props = defineProps({
-    modelValue: Boolean
+    modelValue: Boolean,
+    group : Object,
   })
-  const emit = defineEmits(['closeGroupModal', 'addGroup'])
+  const emit = defineEmits(['closeModal'])
   const isOpen = ref(props.modelValue);
+  const page = usePage();
   const form = useForm({
-    name: "",
-    about: "",
-    auto_approval: true
+    email: ''
   })
 
   watch(()=>props.modelValue, ()=>{
@@ -108,17 +97,17 @@ import axiosClient from '@/axiosClient';
   function closeModal() {
     form.reset();
     isOpen.value = false
-    emit('closeGroupModal', isOpen.value)
+    emit('closeModal', isOpen.value)
   }
 
 
-  const createGroup = ()=>{
+  const sendInvitation = ()=>{
+    form.post(route('group.inviteUser', props.group.slug), {
+        onSuccess:(res)=>{
+            closeModal();
 
-    axiosClient.post(route('group.store'),form)
-            .then(({data})=>{
-                closeModal();
-                emit('addGroup', data.group);
-            })
+        }
+    })
   }
 
   </script>

@@ -14,8 +14,8 @@
             <!-- Select cover image -->
             <div class="relative  group">
                 <img class="w-full h-[200px] object-cover " :src=" coverImageSrc || user.cover_path || '/imgs/default_cover.jpg' " alt="">
-                <div class="opacity-0 absolute right-3 top-3  group-hover:opacity-100">
-                    <button v-if="!coverImageSrc" class="flex space-x-2  w-48 justify-center text-sm py-1 bg-gray-50 text-gray-800 hover:bg-gray-100">
+                <div class=" absolute right-3 top-3  ">
+                    <button v-if="!coverImageSrc" class="opacity-0 group-hover:opacity-100 flex space-x-2  w-48 justify-center text-sm py-1 bg-gray-50 text-gray-800 hover:bg-gray-100">
                         <CameraIcon class="w-5" />
                         <span>Update cover image</span>
                         <input type="file" class="opacity-0 absolute inset-y-0 top-0 right-0.5 w-48  py-1" @change="onCoverChange">

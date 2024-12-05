@@ -10,7 +10,7 @@ use App\Http\Controllers\ProfileController;
 
 Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
 Route::get('/u/{user:username}', [ProfileController::class, 'index'])->name('profile.index');
-
+Route::get('/g/{group:slug}', [GroupController::class, 'profile'])->name('group.profile');
 
 Route::middleware('auth')->group(function () {
     Route::post('/profile/update-images', [ProfileController::class, 'updateImages'])->name('profile.updateImages');
@@ -29,6 +29,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/comment/{comment}', [PostController::class, 'destroyComment'])->name('comment.destroy');
     Route::post('/comment/{comment}/reaction', [PostController::class, 'saveCommentReaction'])->name('comment.reaction');
     Route::post('/group', [GroupController::class, 'store'])->name('group.store');
+
+    //Group Routes
+    Route::post('/group/{group:slug}/update-images', [GroupController::class, 'updateImage'])->name('group.updateImages');
+    Route::post('/group/{group:slug}/invite-user', [GroupController::class, 'inviteUser'])->name('group.inviteUser');
+    Route::get('/group/{group:slug}/approve-invitation/{token}', [GroupController::class, 'approveInvitation'])->name('group.approveInvitation');
 });
 
 require __DIR__ . '/auth.php';

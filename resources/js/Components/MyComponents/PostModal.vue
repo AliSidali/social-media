@@ -74,6 +74,7 @@ const submit = ()=>{
             closeModal();
         },
         onError: (errors)=>{
+
           setAttachmentErrors(errors);
         }
     });
@@ -97,6 +98,8 @@ const submit = ()=>{
 const showExtensionMessage = ref(false);
 
 const setAttachmentErrors = (errors)=>{
+    console.log(errors);
+
   for(let key in errors){
       if(key.includes('.')){
           const [, index] = key.split('.');
