@@ -58,6 +58,8 @@
 
 
                 <div class="p-3 flex justify-between items-center flex-1">
+
+
                     <h2 class="font-bold text-lg ">{{ user.name }}</h2>
                     <PrimaryButton v-if="isUserProfile">
                         <PencilIcon class="w-5 mr-2" />
@@ -90,6 +92,7 @@
 
 
 
+
                 </TabList>
 
                     <TabPanels class="mt-2">
@@ -111,6 +114,7 @@
                         <Edit :mustVerifyEmail="mustVerifyEmail" :status="status" />
                     </TabPanel>
                 </TabGroup>
+
         </div>
     </div>
 </AuthenticatedLayout>
@@ -131,6 +135,7 @@ const authUser  = usePage().props.auth.user;
 
 const props = defineProps({
     errors: Object,
+
     mustVerifyEmail: {
         type: Boolean,
     },
@@ -218,6 +223,7 @@ const validationErrorsExist = computed(()=>{
     console.log(props.errors);
     return showNotification.value &&  (props.errors.cover || props.errors.avatar);
 })
+
 
 
 </script>

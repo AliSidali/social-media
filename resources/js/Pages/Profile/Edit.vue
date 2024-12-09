@@ -16,6 +16,7 @@ defineProps({
 
 <template>
     <div class="mx-auto space-y-6">
+
         <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
             <UpdateProfileInformationForm
                 :must-verify-email="mustVerifyEmail"

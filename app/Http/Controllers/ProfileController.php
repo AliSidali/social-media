@@ -10,27 +10,39 @@ use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
     public function index(User $user)
     {
-        $user = new UserResource($user);
         return Inertia::render(
             'Profile/Index',
             [
-                "user" => $user,
+                'mustVerifyEmail' => $user instanceof MustVerifyEmail,
                 'status' => session('status'),
-                'success' => session('success'),
+                'user' => $user
             ]
         );
     }
+    /**
+     * Display the user's profile form.
+     */
+    // public function index(User $user)
+    // {
+    //     $user = new UserResource($user);
+    //     return Inertia::render(
+    //         'Profile/Index',
+    //         [
+    //             "user" => $user,
+    //             'status' => session('status'),
+    //             'success' => session('success'),
+    //         ]
+    //     );
+    // }
     // public function edit(Request $request): Response
     // {
     //     return Inertia::render('Profile/Edit', [
