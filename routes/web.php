@@ -13,6 +13,7 @@ Route::get('/u/{user:username}', [ProfileController::class, 'index'])->name('pro
 Route::get('/g/{group:slug}', [GroupController::class, 'profile'])->name('group.profile');
 
 
+
 Route::middleware('auth')->group(function () {
     Route::post('/profile/update-images', [ProfileController::class, 'updateImages'])->name('profile.updateImages');
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -35,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/group/{group:slug}/update-images', [GroupController::class, 'updateImage'])->name('group.updateImages');
     Route::post('/group/{group:slug}/invite-user', [GroupController::class, 'inviteUser'])->name('group.inviteUser');
     Route::get('/group/{group:slug}/approve-invitation/{token}', [GroupController::class, 'approveInvitation'])->name('group.approveInvitation');
+
 });
 
 require __DIR__ . '/auth.php';

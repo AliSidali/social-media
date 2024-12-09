@@ -23,12 +23,14 @@
 
                     <div v-else class="flex space-x-3">
                         <button @click="cancelCoverImage"  class="flex space-x-2   justify-center bg-gray-50 text-gray-800 text-sm px-2 py-1 hover:bg-gray-100">
+
                             <XMarkIcon class="w-5" />
                             <span>Cancel</span>
                         </button>
 
                         <button @click="submitSelectedImage('avatar')('cover')"  class="flex space-x-2   justify-center bg-gray-800 text-gray-100 text-sm px-2 py-1 hover:bg-gray-900">
                             <CheckCircleIcon class="w-5" />
+
                             <span>Submit</span>
                         </button>
                     </div>
@@ -58,6 +60,7 @@
 
 
                 <div class="p-3 flex justify-between items-center flex-1">
+
 
 
                     <h2 class="font-bold text-lg ">{{ user.name }}</h2>
@@ -131,11 +134,11 @@ import TabItem  from "./Partials/TabItem.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { CameraIcon, CheckCircleIcon, PencilIcon, PhotoIcon, XMarkIcon } from "@heroicons/vue/24/solid";
 
+
 const authUser  = usePage().props.auth.user;
 
 const props = defineProps({
     errors: Object,
-
     mustVerifyEmail: {
         type: Boolean,
     },
@@ -158,6 +161,7 @@ const isUserProfile = computed(()=>{
 // updating cover photo
 const coverImageSrc = ref('');
 const avatarImageSrc = ref('');
+
 const showNotification = ref(true);
 
 
@@ -169,6 +173,7 @@ const imagesForm = useForm({
 
 //Show selected cover image only in frontend
 const onCoverChange = (evt)=>{
+
     imagesForm.cover  = evt.target.files[0];
     if (imagesForm.cover) {
         const reader = new FileReader()
@@ -210,6 +215,7 @@ const submitSelectedImage = (image)=>{
             }else{
                 cancelAvatarImage();
             }
+
             setTimeout(()=>{
                 showNotification.value=false;
             }, 3000)
@@ -223,6 +229,7 @@ const validationErrorsExist = computed(()=>{
     console.log(props.errors);
     return showNotification.value &&  (props.errors.cover || props.errors.avatar);
 })
+
 
 
 

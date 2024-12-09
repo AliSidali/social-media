@@ -18,7 +18,6 @@ const user = usePage().props.auth.user;
 
 const form = useForm({
     name: user.name,
-    username: user.username,
     email: user.email,
 });
 </script>
@@ -50,6 +49,7 @@ const form = useForm({
             </div>
 
             <div>
+<<<<<<< HEAD
                 <InputLabel for="username" value="Username" />
 
                 <TextInput
@@ -65,6 +65,8 @@ const form = useForm({
             </div>
 
             <div>
+=======
+>>>>>>> 55f2973 (implement updating and uploading cover image on user)
                 <InputLabel for="email" value="Email" />
 
                 <TextInput

@@ -10,46 +10,35 @@ use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class ProfileController extends Controller
 {
-    public function index(User $user)
-    {
-        return Inertia::render(
-            'Profile/Index',
-            [
-                'mustVerifyEmail' => $user instanceof MustVerifyEmail,
-                'status' => session('status'),
-                'user' => $user
-            ]
-        );
-    }
     /**
      * Display the user's profile form.
      */
-    // public function index(User $user)
-    // {
-    //     $user = new UserResource($user);
-    //     return Inertia::render(
-    //         'Profile/Index',
-    //         [
-    //             "user" => $user,
-    //             'status' => session('status'),
-    //             'success' => session('success'),
-    //         ]
-    //     );
-    // }
-    // public function edit(Request $request): Response
-    // {
-    //     return Inertia::render('Profile/Edit', [
-    //         'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-    //         'status' => session('status'),
-    //     ]);
-    // }
+    public function index(User $user)
+    {
+        $user = new UserResource($user);
+        return Inertia::render(
+            'Profile/Index',
+            [
+                "user" => $user,
+                'status' => session('status'),
+                'success' => session('success'),
+            ]
+        );
+    }
+    public function edit(Request $request): Response
+    {
+        return Inertia::render('Profile/Edit', [
+            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'status' => session('status'),
+        ]);
+    }
+
 
     /**
      * Update the user's profile information.
@@ -65,6 +54,7 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.index', $request->user())->with('success', 'Your profile details were updated.');
+
     }
 
     /**
@@ -122,6 +112,7 @@ class ProfileController extends Controller
         return back()->with('success', $success);
 
     }
+
 
 
 }
