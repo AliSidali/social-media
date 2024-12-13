@@ -81,9 +81,9 @@ class GroupController extends Controller
     public function inviteUser(InviteUsersRequest $request, Group $group)
     {
         $data = $request->validated();
-        $invitedUser = $request->groupUser;
+        $invitedUser = $request->user;
 
-        if ($invitedUser->pivot->token_expire_date < Carbon::now()) {
+        if ($invitedUser->pivot?->token_expire_date < Carbon::now()) {
             $group->users()->detach($invitedUser->id);
         }
         $token = Str::random(256);
@@ -91,7 +91,7 @@ class GroupController extends Controller
             'status' => StatusEnum::PENDING->value,
             'role' => RoleEnum::USER->value,
             'token' => $token,
-            'token_expire_date' => Carbon::now()->addMinute(),
+            'token_expire_date' => Carbon::now()->addHours(24),
             'created_by' => Auth::id()
         ]);
 
