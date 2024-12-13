@@ -10,10 +10,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 const showingNavigationDropdown = ref(false);
 
 const authUser = usePage().props.auth.user;
-<<<<<<< HEAD
 
-=======
->>>>>>> 55f2973 (implement updating and uploading cover image on user)
 </script>
 
 <template>
@@ -43,17 +40,11 @@ const authUser = usePage().props.auth.user;
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-<<<<<<< HEAD
                                                 class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                                                 {{ authUser.name }}
 
 
-=======
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
-                                            >
-                                                {{ authUser.name }}
 
->>>>>>> 55f2973 (implement updating and uploading cover image on user)
                                                 <svg
                                                     class="ms-2 -me-0.5 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -150,14 +141,11 @@ const authUser = usePage().props.auth.user;
                 </div>
             </nav>
 
-            <!-- Page Heading -->
+            <!-- Page ing -->
             <header class="bg-white dark:bg-gray-800 shadow" v-if="$slots.header">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <slot name="header" />
-<<<<<<< HEAD
 
-=======
->>>>>>> 55f2973 (implement updating and uploading cover image on user)
                 </div>
             </header>
 
