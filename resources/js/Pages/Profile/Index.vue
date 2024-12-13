@@ -16,6 +16,7 @@
                 <img class="w-full h-[200px] object-cover " :src=" coverImageSrc || user.cover_path || '/imgs/default_cover.jpg' " alt="">
                 <div class=" absolute right-3 top-3  ">
                     <button v-if="!coverImageSrc" class="opacity-0 group-hover:opacity-100 flex space-x-2  w-48 justify-center text-sm py-1 bg-gray-50 text-gray-800 hover:bg-gray-100">
+
                         <CameraIcon class="w-5" />
                         <span>Update cover image</span>
                         <input type="file" class="opacity-0 absolute inset-y-0 top-0 right-0.5 w-48  py-1" @change="onCoverChange">
@@ -30,7 +31,6 @@
 
                         <button @click="submitSelectedImage('avatar')('cover')"  class="flex space-x-2   justify-center bg-gray-800 text-gray-100 text-sm px-2 py-1 hover:bg-gray-900">
                             <CheckCircleIcon class="w-5" />
-
                             <span>Submit</span>
                         </button>
                     </div>
@@ -60,9 +60,6 @@
 
 
                 <div class="p-3 flex justify-between items-center flex-1">
-
-
-
                     <h2 class="font-bold text-lg ">{{ user.name }}</h2>
                     <PrimaryButton v-if="isUserProfile">
                         <PencilIcon class="w-5 mr-2" />
@@ -92,10 +89,6 @@
                     <Tab v-if="isUserProfile"   v-slot="{ selected }" as="template">
                         <TabItem text="My Profile"  :selected="selected"/>
                     </Tab>
-
-
-
-
                 </TabList>
 
                     <TabPanels class="mt-2">
@@ -117,7 +110,6 @@
                         <Edit :mustVerifyEmail="mustVerifyEmail" :status="status" />
                     </TabPanel>
                 </TabGroup>
-
         </div>
     </div>
 </AuthenticatedLayout>
@@ -161,7 +153,6 @@ const isUserProfile = computed(()=>{
 // updating cover photo
 const coverImageSrc = ref('');
 const avatarImageSrc = ref('');
-
 const showNotification = ref(true);
 
 
@@ -173,7 +164,6 @@ const imagesForm = useForm({
 
 //Show selected cover image only in frontend
 const onCoverChange = (evt)=>{
-
     imagesForm.cover  = evt.target.files[0];
     if (imagesForm.cover) {
         const reader = new FileReader()

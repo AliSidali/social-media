@@ -31,13 +31,13 @@ class ProfileController extends Controller
             ]
         );
     }
-    public function edit(Request $request): Response
-    {
-        return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => session('status'),
-        ]);
-    }
+    // public function edit(Request $request): Response
+    // {
+    //     return Inertia::render('Profile/Edit', [
+    //         'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+    //         'status' => session('status'),
+    //     ]);
+    // }
 
 
     /**
@@ -84,7 +84,7 @@ class ProfileController extends Controller
         $user = auth()->user();
         $images = $request->validate([
             'cover' => ['nullable', 'image'],
-            'avatar' => ['nullable', 'image']
+            'avatar' => ['nullable', 'image', 'mimes:pdf']
         ]);
 
         $cover = $images['cover'] ?? null;
@@ -107,7 +107,6 @@ class ProfileController extends Controller
             $avatar_path = $avatar->store('user-' . $user->id, 'public');
             $user->update(['avatar_path' => $avatar_path]);
             $success = 'Your avatar image has been updated.';
-
         }
 
         return back()->with('success', $success);
