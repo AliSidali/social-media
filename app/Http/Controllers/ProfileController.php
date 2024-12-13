@@ -107,6 +107,7 @@ class ProfileController extends Controller
             $avatar_path = $avatar->store('user-' . $user->id, 'public');
             $user->update(['avatar_path' => $avatar_path]);
             $success = 'Your avatar image has been updated.';
+
         }
 
         return back()->with('success', $success);
