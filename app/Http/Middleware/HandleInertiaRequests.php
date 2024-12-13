@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Requests\StorePostRequest;
+
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -36,6 +37,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $user,
+
             ],
             'extensions' => StorePostRequest::$extensions
         ];
