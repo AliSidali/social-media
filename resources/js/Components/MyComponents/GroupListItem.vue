@@ -2,6 +2,7 @@
     <div class="flex gap-2">
         <TextInput v-model="forModelError" class="w-full" placeholder="Search for groups..." />
         <button @click="showGroupModal = true" class=" bg-indigo-500 text-white text-sm py-1 px-2 rounded w-40 hover:bg-indigo-600">New Group</button>
+
     </div>
 
     <div class="flex-1  px-2  overflow-auto mt-4">

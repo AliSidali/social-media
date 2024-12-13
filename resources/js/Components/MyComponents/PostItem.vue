@@ -1,52 +1,16 @@
 <template>
     <div class="bg-white py-3 px-5 border rounded mb-3">
         <!-- POST HEAD -->
-<<<<<<< HEAD
         <div class="flex justify-between">
             <PostUserHeader  :post="post"/>
             <!-- the three dots section -->
             <EditDeleteDropdown @edit="openEditModal" />
-
-=======
-        <div class="flex items-center gap-2 mb-3">
-            <a href="#" class="border-2 rounded-full hover:border-blue-500  transition-all">
-                <img class="w-[40px] h-[40px] rounded-full" :src="post.user.avatar_path" alt="">
-            </a>
-            <div class="ml-3">
-                <h4 class="font-bold">
-                   <a href="#" class="hover:underline transition-all"> {{ post.user.name }}</a>
-                   <template v-if="post.group">
-                        >
-                       <a  href="#" class="hover:underline transition-all">{{ post.group.name }}</a>
-                   </template>
-                </h4>
-                <small class="text-gray-400">{{ post.created_at }}</small>
-            </div>
->>>>>>> 39623f4 (implement post creation)
         </div>
 
 
         <!-- POST DESCRIPTION -->
         <div class="mb-3">
-<<<<<<< HEAD
             <ReadMoreLess :content="post.body" />
-            {{ post.id }}
-=======
-            <Disclosure v-slot="{open}">
-                <div v-if="!open" v-html="post.body.substring(0, 200)" />
-
-                <DisclosurePanel>
-                    <div v-html="post.body" />
-                </DisclosurePanel>
-
-                <div v-if="post.body.length > 200" class="flex justify-end">
-                    <DisclosureButton class="text-blue-500 hover:underline">
-                        {{  open ? 'Read  Less': 'Read More' }}
-                    </DisclosureButton>
-                </div>
-
-            </Disclosure>
->>>>>>> 39623f4 (implement post creation)
         </div>
         <!-- POST ATTACHEMENTS -->
         <div class="grid  gap-2 mb-3" :class="post.attachments.length ==1?'grid-cols-1 ':'grid-cols-2'">
@@ -222,8 +186,6 @@ const showReactionIcons = ()=>{
 const showComments = ()=>{
     emit('onShowComments', props.post)
 }
-
-
 
 
 

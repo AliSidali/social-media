@@ -5,10 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
-<<<<<<< HEAD
 use App\Http\Controllers\GroupController;
-=======
->>>>>>> 39623f4 (implement post creation)
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
@@ -25,7 +22,6 @@ Route::middleware('auth')->group(function () {
 
     //Post routes
     Route::post('/post', [PostController::class, 'store'])->name('post.store');
-<<<<<<< HEAD
     Route::put('/post/{post}', [PostController::class, 'update'])->name('post.update'); //UPDATE POST WITH ADDING OR DELETING ITS ATTACHMENTS
     Route::delete('/post/{post}', [PostController::class, 'destroy'])->name('post.destroy');
     Route::get('/post/download/{attachment}', [PostController::class, 'downloadAttachment'])->name('attachment.download');
@@ -41,8 +37,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/group/{group:slug}/invite-user', [GroupController::class, 'inviteUser'])->name('group.inviteUser');
     Route::get('/group/{group:slug}/approve-invitation/{token}', [GroupController::class, 'approveInvitation'])->name('group.approveInvitation');
 
-=======
->>>>>>> 39623f4 (implement post creation)
 });
 
 require __DIR__ . '/auth.php';

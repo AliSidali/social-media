@@ -1,15 +1,7 @@
-<<<<<<< HEAD
-=======
-<template>
-    <div class="lg:overflow-auto lg:flex-1 ">
-        <PostItem v-for="(post, index) in posts" :key="index" :post="post" />
-    </div>
-</template>
->>>>>>> 39623f4 (implement post creation)
+
 <script setup>
 import { onMounted, ref } from 'vue';
 import PostItem from './PostItem.vue'
-<<<<<<< HEAD
 import PostModal from './PostModal.vue';
 import { usePage } from '@inertiajs/vue3';
 import PreviewAttachmentModal from './PreviewAttachmentModal.vue';
@@ -91,11 +83,9 @@ observer.observe(loadMoreIntersect.value);
 
 
 
-=======
-defineProps({
-    posts: Array
-})
->>>>>>> 39623f4 (implement post creation)
+
+
+
 </script>
 
 <template>

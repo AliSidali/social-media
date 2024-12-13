@@ -29,4 +29,5 @@ class UpdatePostRequest extends StorePostRequest
     }
 
 
+
 }

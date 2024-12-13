@@ -212,7 +212,6 @@ const undoAttachmentRemove = (attachment)=>{
               <DialogPanel
                 class="w-full max-w-md transform overflow-hidden rounded bg-white text-left align-middle shadow-xl transition-all"
               >
-                <!-- MODAL HEADER -->
                 <DialogTitle
                   as="h3"
                   class=" font-medium p-3 px-4 bg-gray-200 text-gray-900 flex justify-between items-center"
@@ -287,3 +286,4 @@ const undoAttachmentRemove = (attachment)=>{
     </TransitionRoot>
   </teleport>
 </template>
+
