@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Rules\TotalFilesSize;
 use Illuminate\Validation\Validator;
 use Illuminate\Validation\Rules\File;
+
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePostRequest extends FormRequest
@@ -51,6 +52,7 @@ class StorePostRequest extends FormRequest
                 )->max(500 * 1024 * 1024 * 1024)
             ],
             'body' => ['string'],
+
         ];
 
     }
@@ -69,5 +71,6 @@ class StorePostRequest extends FormRequest
             'attachments.*.mimes' => 'invalid file'
         ];
     }
+
 
 }

@@ -313,5 +313,6 @@ class PostController extends Controller
         foreach ($comment->replies as $reply) {
             $this->deleteAttachment($reply);
         }
+
     }
 }

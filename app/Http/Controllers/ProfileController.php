@@ -84,7 +84,7 @@ class ProfileController extends Controller
         $user = auth()->user();
         $images = $request->validate([
             'cover' => ['nullable', 'image'],
-            'avatar' => ['nullable', 'image', 'mimes:pdf']
+            'avatar' => ['nullable', 'image']
         ]);
 
         $cover = $images['cover'] ?? null;
