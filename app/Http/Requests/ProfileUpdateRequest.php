@@ -29,7 +29,6 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             "regex" => "Username can only contain  alphanumeric characters, dots(.) and dashes(-)."
-
         ];
     }
 
