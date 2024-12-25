@@ -4,7 +4,7 @@
         <div class="flex justify-between">
             <PostUserHeader  :post="post"/>
             <!-- the three dots section -->
-            <EditDeleteDropdown @edit="openEditModal" />
+            <EditDeleteDropdown @edit="openEditModal" @delete="deletePost"/>
         </div>
 
 
