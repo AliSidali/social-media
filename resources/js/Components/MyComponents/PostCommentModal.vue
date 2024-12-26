@@ -67,10 +67,8 @@
                     <!-- diplaying post comments and update input -->
                     <div class="py-3 px-6">
 
-                        <div v-for="(comment, index) in post.commentsss" :key="index"  class="mb-4 group">
-
+                        <div v-for="(comment, index) in post.comments" :key="index"  class="mb-4 group">
                             <comment  :comment="comment"  :post="post" @onCreateComment="createComment" @onPreviewAttachment="previewAttachment"/>
-
                         </div>
 
 
@@ -214,19 +212,20 @@ import {ChatBubbleLeftEllipsisIcon, PencilIcon, TrashIcon,CameraIcon } from '@he
 
         ).then(({data})=>{
 
-        if(!data.comment.parent_id){
-            props.post.comments.unshift(data.comment);
-        }else{
-            props.post.comments.forEach(c=>{
-                if(c.id == data.comment.parent_id && !c.parent_id){
-                    c.sub_comments.unshift(data.comment);
-                }else{
-                    console.log(data.comment);
+        // if(!data.comment.parent_id){
+        //     props.post.comments.unshift(data.comment);
+        // }else{
+        //     props.post.comments.forEach(c=>{
+        //         if(c.id == data.comment.parent_id && !c.parent_id){
+        //             c.sub_comments.unshift(data.comment);
+        //         }else{
+        //             console.log(data.comment);
 
-                    addSubcomment(c.sub_comments, data.comment);
-                }
-            })
-        }
+        //             addSubcomment(c.sub_comments, data.comment);
+        //         }
+        //     })
+        // }
+        props.post.comments.unshift(data.comment);
         props.post.post_comments_num = data.post_comments_num;
         commentText.value = '';
         cancelAttachment();
