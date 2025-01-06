@@ -22,9 +22,8 @@ class StoreGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => ['string', 'required', 'max:255'],
-            "about" => ['string'],
-            "auto_approval" => ['required', 'boolean']
+            "name" => ['required', 'string', 'max:255'],
+            "auto_approval" => ['boolean']
         ];
     }
 }

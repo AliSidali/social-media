@@ -1,6 +1,6 @@
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import PostItem from './PostItem.vue'
 import PostModal from './PostModal.vue';
 import { usePage } from '@inertiajs/vue3';
@@ -12,10 +12,11 @@ import axiosClient from '@/axiosClient'
 const props = defineProps({
     posts: Array,
 })
-const page = usePage();
-const user = page.props.auth.user;
+const  page = usePage().props;
+const user = page.auth.user;
+const translations = page.translations;
 
-//previewing post create and edit modal
+//previewing  create and edit post modal
 const showEditModal = ref(false);
 const editPost = ref({});
 const openEditModal= (newpost)=>{
@@ -24,10 +25,7 @@ const openEditModal= (newpost)=>{
 }
 
 const onModalHide = ()=>{
-    editPost.value = {
-        body: '',
-        user: user
-    }
+    showEditModal.value = false;
 }
 
 //FOR PREVIEW ATTACHMENT MODAL
@@ -56,8 +54,8 @@ const showComments = (post)=>{
 // FOR LOADING MORE POSTS
 const loadMoreIntersect = ref(null);
 const allPosts = ref({
-    data:page.props.posts.data,
-    next:page.props.posts.links.next
+    data:props.posts,
+    next:page.posts.links.next
 })
 const loadMore = ()=>{
     axiosClient.get(allPosts.value.next).then(({data})=>{
@@ -70,6 +68,7 @@ const loadMore = ()=>{
 onMounted(()=>{
     const observer = new IntersectionObserver(
     (entities)=>entities.forEach((entity)=>{
+
         if(entity.isIntersecting && allPosts.value.next){
 
             loadMore();
@@ -77,7 +76,14 @@ onMounted(()=>{
 
     })
 )
+
 observer.observe(loadMoreIntersect.value);
+})
+
+//reflect posts props changes to allPosts after adding new post to show it instantly in page
+
+watch(()=>props.posts, (newPosts)=>{
+    allPosts.value.data = newPosts;
 })
 
 
@@ -91,8 +97,9 @@ observer.observe(loadMoreIntersect.value);
 <template>
     <div class="scrollbar lg:overflow-auto lg:flex-1 ">
         <PostItem  @onShowComments="showComments" @onAttachmentClick="previewAttachmentModal" @editClick="openEditModal" v-for="(post, index) in allPosts.data" :key="index" :post="post" />
-        <div ref="loadMoreIntersect" v-if="allPosts.next">load more...</div>
-        <div v-else>no more posts</div>
+        <div ref="loadMoreIntersect" ></div>
+        <div v-if="allPosts.next">{{ translations.load_post }}</div>
+        <div v-else>{{ translations.no_post }}</div>
         <PostModal v-model="showEditModal" :post="editPost" @hideModal="onModalHide"/>
         <PreviewAttachmentModal :attachments="previewAttachmentsPost.attachments" :index="previewAttachmentsPost.index" v-model="isOpenAttachment" />
         <PostCommentModal :post="commentPost" v-model="isCommentModalOpen" @onAttachmentClick="previewAttachmentModal"/>

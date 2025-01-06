@@ -49,7 +49,8 @@ class HomeController extends Controller
         return Inertia::render('Home', [
             'success' => session('success'),
             'posts' => $posts,
-            'groups' => GroupResource::collection($groups)
+            'groups' => GroupResource::collection($groups),
+            'language' => __('messages.language')
         ]);
     }
 

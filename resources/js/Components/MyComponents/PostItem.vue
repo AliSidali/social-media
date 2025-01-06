@@ -42,8 +42,9 @@
                 <HeartIcon v-if="hasLoveReaction" class="w-6 text-white rounded-full bg-red-600 p-1"/>
                 <span class="ml-2">{{ post.reactions.length }}</span>
             </div>
-            <div>
-                <span>{{ post.post_comments_num }} comments</span>
+            <div class="flex gap-1">
+                <span>{{ post.post_comments_num }}</span>
+                <ChatBubbleOvalLeftIcon class="w-5" />
             </div>
 
         </div>
@@ -61,13 +62,13 @@
                     :class="post.has_current_user_reaction ? 'bg-sky-100 hover:bg-sky-200' : 'bg-gray-100 hover:bg-gray-200'"
                 >
                     <HandThumbUpIcon class="w-6"/>
-                    <span>Like</span>
+                    <span>{{ translations.like_button }}</span>
                 </button>
             </div>
 
             <button @click="showComments" class="flex flex-1 items-center justify-center gap-2 bg-gray-100 py-2  rounded-lg hover:bg-gray-200">
                 <ChatBubbleLeftRightIcon class="w-6" />
-                <span>Comment</span>
+                <span>{{ translations.comment_button }}</span>
             </button>
         </div>
 
@@ -77,7 +78,7 @@
 </template>
 <script setup>
 import { Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue';
-import { ArrowDownTrayIcon, HandThumbUpIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon, PaperClipIcon, HeartIcon, FaceSmileIcon, FaceFrownIcon } from '@heroicons/vue/24/solid';
+import { ArrowDownTrayIcon, HandThumbUpIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon, PaperClipIcon, HeartIcon, FaceSmileIcon, FaceFrownIcon, ChatBubbleOvalLeftIcon } from '@heroicons/vue/24/outline';
 import { MenuItem } from '@headlessui/vue'
 import PostUserHeader from './PostUserHeader.vue';
 import ReadMoreLess from './ReadMoreLess.vue';
@@ -87,7 +88,7 @@ import axiosClient from '@/axiosClient';
 
 
 import { onMounted, ref, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 
 
 const {isImage} = helpers();
@@ -96,7 +97,8 @@ const props = defineProps({
     post: Object,
 })
 
-
+const page = usePage().props;
+const translations = page.translations;
 
 
 
@@ -111,7 +113,7 @@ const openEditModal = ()=>{
 //DELETE POST
 
 const deletePost = ()=>{
-    if(window.confirm('Are you sure you want to delete this post?')){
+    if(window.confirm(translations.delete_post_alert)){
         router.delete(route('post.destroy', props.post.id), {
             preserveScroll:true
         });

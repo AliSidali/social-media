@@ -2,7 +2,7 @@
     <div class="p-3 bg-white rounded-t border mb-3">
 
         <div  @click="showModal=true"  class="w-full mb-3  border-2 border-gray-200 py-2 px-3 rounded-md text-gray-500">
-            click here to add new post
+            {{ translations.add_post_placeholder }}
 
         </div>
 
@@ -19,14 +19,15 @@ const props = defineProps({
         type: String
     }
 })
-const page = usePage();
+const  page = usePage().props;
+const translations = page.translations;
 
 //SHOW MODAL FOR CREATING POST
 
 const showModal = ref(false);
 const newPost = ref({
     body:'',
-    user:page.props.auth.user
+    user:page.auth.user
 })
 
 

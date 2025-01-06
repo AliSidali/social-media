@@ -14,7 +14,9 @@ defineProps({
     },
 });
 
-const user = usePage().props.auth.user;
+const page = usePage();
+const user = page.props.auth.user;
+const translations = page.props.translations;
 
 const form = useForm({
     name: user.name,
@@ -26,16 +28,16 @@ const form = useForm({
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Profile Information</h2>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ translations.profile_information }}</h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Update your account's profile information and email address.
+               {{ translations.information_update_message }}
             </p>
         </header>
 
         <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel class="capitalize" for="name" :value="translations.name_label" />
 
                 <TextInput
                     id="name"
@@ -51,7 +53,7 @@ const form = useForm({
 
             <div>
 
-                <InputLabel for="username" value="Username" />
+                <InputLabel class="capitalize" for="username" :value="translations.username_label" />
 
                 <TextInput
                     id="username"
@@ -66,7 +68,7 @@ const form = useForm({
             </div>
 
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel class="capitalize" for="email" :value="translations.email_label" />
 
                 <TextInput
                     id="email"
@@ -102,7 +104,7 @@ const form = useForm({
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <PrimaryButton :disabled="form.processing">{{ translations.save_button }}</PrimaryButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -110,7 +112,7 @@ const form = useForm({
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
+                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">{{ translations.saved_note }}.</p>
                 </Transition>
             </div>
         </form>

@@ -14,9 +14,9 @@
                     <div v-if="!isCoverChanged" class="absolute opacity-0 top-2 right-4 group-hover/cover:opacity-100 ">
                         <div class="relative px-2 py-1 bg-indigo-600 text-white rounded  hover:bg-indigo-800">
 
-                            <span class="flex gap-2 text-sm">
-                            <CameraIcon class="w-5" />
-                            update group cover
+                            <span class="flex gap-2 text-sm capitalize">
+                            <CameraIcon class="w-5 " />
+                                {{ translations.update_cover }}
                             </span>
                             <input @change="updateCover" type="file" class="absolute inset-0 opacity-0 cursor-pointer">
                         </div>
@@ -24,12 +24,12 @@
                     <div v-else class="absolute flex gap-4 top-2 right-2 ">
                         <button @click="cancelChangingImages" class="flex gap-1 bg-gray-700 text-white px-1 py-0.5 text-sm hover:bg-gray-900">
                             <XMarkIcon class="w-5" />
-                            <span>Cancel</span>
+                            <span class="capitalize">{{ translations.cancel_button }}</span>
                         </button>
 
-                        <button @click="sendGroupImages" class="flex bg-gray-200 px-1 py-0.5 text-sm hover:bg-gray-300">
+                        <button @click="sendGroupImages" class="flex bg-gray-200 px-1 py-0.5 text-sm gap-1 hover:bg-gray-300">
                             <CheckCircleIcon class="w-5" />
-                            Submit
+                            <span class="capitalize">{{ translations.send_button }}</span>
                         </button>
                     </div>
                 </div>
@@ -58,10 +58,10 @@
                 <div class="flex   justify-between w-full">
                     <h3 class="font-black">{{ group.name }}</h3>
                     <button @click="isOpenModal = true" v-if="isCurrentUserAdmin" class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
-                        <span>Invite Users</span>
+                        <span>{{ translations.invitation }}</span>
                     </button>
                     <button v-else-if="!group.role && group.autoApproval" class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
-                        <span>Join To Group</span>
+                        <span>{{ translations.group_join }}</span>
                     </button>
                     <button v-else-if="!group.role && !group.autoApproval" class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
                         <span>Request to Join</span>
@@ -168,7 +168,7 @@
 </template>
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { PencilIcon, CameraIcon, XMarkIcon, CheckIcon, CheckCircleIcon } from '@heroicons/vue/24/solid';
 
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
@@ -181,7 +181,8 @@ const props = defineProps({
     message: Object
 })
 
-
+const page = usePage();
+const translations = page.props.translations;
 const newCoverImage = ref(null);
 const newThumbnailImage = ref(null);
 const isCoverChanged = ref(false);

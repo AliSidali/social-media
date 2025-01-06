@@ -1,9 +1,9 @@
 <template>
 <div>
-    <div class=" flex w-full mb-4 relative">
+    <div class=" flex w-full mb-4 relative gap-3">
 
 
-        <img :src="comment.user.avatar_path" alt="" class=" z-10 w-8 h-8 rounded-full mr-3">
+        <img :src="comment.user.avatar_path" alt="" class=" z-10 w-8 h-8 rounded-full">
         <div v-if=" editedComment.id !== comment.id"  class="flex justify-between w-full ">
             <div>
                 <div class="bg-gray-100 px-4 py-2 rounded-xl">
@@ -24,15 +24,15 @@
                     <button @click="sendReaction" :class="{'bg-indigo-100':comment.user_has_comment_reaction}" class="flex text-xs gap-1  px-1 rounded text-indigo-600 hover:bg-indigo-50" >
                         <HandThumbUpIcon  class="w-3"/>
                         <span class="mr-1">{{ comment.comment_reaction_num }}</span>
-                        like
+                        {{ translations.like_button }}
                     </button>
                     <button @click="showReplyBox" class="flex text-xs gap-1  px-1 rounded text-indigo-600 hover:bg-indigo-50">
                         <ChatBubbleLeftEllipsisIcon  class="w-3"/>
-                        reply
+                        {{ translations.reply_button }}
                     </button>
                 </div>
                 <button v-if="comment.sub_comments.length>0 && !showSubcomments"  @click="showSubcomments=true" class="my-2">
-                    View  {{ comment.subcomment_num }} replies
+                    {{ translations.subcomment_num_text }}  {{ comment.subcomment_num }}
                 </button>
 
 
@@ -44,8 +44,8 @@
         <!-- update comment input -->
         <div v-else class="w-full">
 
-            <div class="w-[60%] border border-gray-300 rounded-xl bg-gray-100">
-                <ckeditor :editor="editor" v-model="editedComment.text" :config="editorConfig" ></ckeditor>
+            <div class="w-[60%] border border-gray-300 rounded-xl bg-gray-100 ">
+                <ckeditor :editor="editor" v-model="editedComment.text" :config="editorConfig" class=" text-end px-4 py-2"></ckeditor>
                 <div class="flex justify-between px-5">
                     <div class=" text-white bg-black/50 left-1/3 top-1/4 rounded-full hover:bg-black/80">
                         <div v-if="!deletedAttachmentId" class=" relative p-1">
@@ -54,7 +54,7 @@
                         </div>
                     </div>
                     <button  type="button" @click="updateComment" >
-                        <PaperAirplaneIcon class="w-5"/>
+                        <PaperAirplaneIcon class="w-5" :class="page.props.lang==='ar' ? 'rotate-180' : ''" />
                     </button>
 
                 </div>
@@ -69,7 +69,7 @@
 
             <div class="flex justify-end">
                 <button type="button" @click="cancelUpdate" class="text-blue-800 hover:text-white  hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                    cancel
+                    {{ translations.cancel_button }}
                 </button>
             </div>
         </div>
@@ -128,7 +128,9 @@ import {helpers} from '@/helpers';
 
 
 const {readFile} = helpers();
-const user = usePage().props.auth.user;
+const page = usePage();
+const user = page.props.auth.user;
+const translations = page.props.translations;
 const props = defineProps({
     comment: Object,
     post: Object
@@ -225,7 +227,7 @@ const sendReaction = ()=>{
 
 // delete comment
 const deleteComment = ()=>{
-  if (!window.confirm('are you sure, you want to delete this comment?')) {
+  if (!window.confirm(translations.delete_comment_confirmation)) {
     return false;
   }
     axiosClient.delete(route('comment.destroy', props.comment.id))

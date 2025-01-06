@@ -1,10 +1,9 @@
 <template>
     <div class=" p-3  bg-white rounded border h-full">
-
         <div class="block  lg:hidden">
             <Disclosure v-slot="{open}" >
                 <DisclosureButton class="w-full flex justify-between items-center">
-                    <h3 class=" text-xl font-bold" > My Groups </h3>
+                    <h3 class=" text-xl font-bold" > {{ translations.group_title }}</h3>
                     <ChevronDownIcon   class="w-6 transition-all" :class="open ? 'rotate-180 transform' : ''" />
                 </DisclosureButton>
                 <DisclosurePanel class="mt-3 h-[300px] flex flex-col">
@@ -15,7 +14,7 @@
 
 
         <div class="hidden lg:flex lg:flex-col lg:h-full ">
-            <h3 class=" text-xl font-bold mb-3"> My Groups </h3>
+            <h3 class=" text-xl font-bold mb-3">{{ translations.group_title }} </h3>
             <GroupListItem :groups="groups"/>
         </div>
 
@@ -26,10 +25,12 @@
 import GroupListItem from '@/Components/MyComponents/GroupListItem.vue';
 import { Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue';
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/solid'
+import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
-    groups: {
-        type:Array
-    }
+    groups: Array
 })
+
+const page = usePage();
+const translations = page.props.translations;
 </script>

@@ -23,12 +23,13 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
 
+
         DB::beginTransaction();
 
         try {
             $user = auth()->user();
             $data = $request->validated();
-
+            dd($data);
             $post = Post::create($data);
 
             $attachments = $data['attachments'] ?? [];
@@ -52,7 +53,7 @@ class PostController extends Controller
         }
 
 
-        return back();
+        return redirect()->route('home');
 
 
 

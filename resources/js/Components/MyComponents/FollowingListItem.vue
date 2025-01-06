@@ -1,5 +1,5 @@
 <template>
-    <TextInput v-model="forModelError" class="w-full" placeholder="Search for groups..." />
+    <TextInput v-model="forModelError" class="w-full" placeholder="Search for friends..." />
     <div class="px-2  overflow-auto flex-1 mt-4">
         <div v-if="false" class="text-gray-400 text-center">
             Your don't have any friends yet.

@@ -51,7 +51,7 @@ class StorePostRequest extends FormRequest
                     self::$extensions
                 )->max(500 * 1024 * 1024 * 1024)
             ],
-            'body' => ['string'],
+            'body' => ['required', 'string'],
 
         ];
 
@@ -65,12 +65,7 @@ class StorePostRequest extends FormRequest
         ]);
     }
 
-    public function messages()
-    {
-        return [
-            'attachments.*.mimes' => 'invalid file'
-        ];
-    }
+
 
 
 }

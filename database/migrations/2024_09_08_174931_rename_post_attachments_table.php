@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
     /**
@@ -11,8 +12,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::rename('post_attachments', 'attachments');
-        DB::statement('ALTER TABLE attachments MODIFY attachable_id bigint(255) null AFTER id');
-        DB::statement('ALTER TABLE attachments MODIFY attachable_type varchar(255) null AFTER attachable_id');
+        DB::statement('ALTER TABLE attachments ADD attachable_id bigint(255) null AFTER id');
+        DB::statement('ALTER TABLE attachments ADD attachable_type varchar(255) null AFTER attachable_id');
     }
 
     /**

@@ -6,15 +6,17 @@ use Illuminate\Foundation\Application;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\GroupController;
+use App\Http\Middleware\LocaleMiddleware;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LanguageController;
 
-Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
-Route::get('/u/{user:username}', [ProfileController::class, 'index'])->name('profile.index');
-Route::get('/g/{group:slug}', [GroupController::class, 'profile'])->name('group.profile');
+Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified', LocaleMiddleware::class])->name('home');
+Route::get('/u/{user:username}', [ProfileController::class, 'index'])->middleware(LocaleMiddleware::class)->name('profile.index');
+Route::get('/g/{group:slug}', [GroupController::class, 'profile'])->middleware(LocaleMiddleware::class)->name('group.profile');
+Route::post('/lang/{lang}', [LanguageController::class, 'index'])->name('language.index');
 
 
-
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', LocaleMiddleware::class])->group(function () {
     Route::post('/profile/update-images', [ProfileController::class, 'updateImages'])->name('profile.updateImages');
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -36,12 +36,12 @@ class InviteUsersRequest extends FormRequest
                     $this->user = User::query()->where($attribute, $value)
                         ->orWhere('username', $value)->first();
                     if (!$this->user) {
-                        $fail("User does not exist!");
+                        $fail(__('messages.user_existence'));
                         return;
                     }
                     $this->groupUser = $this->group->users()->wherePivot('user_id', $this->user->id)->first();
                     if ($this->groupUser && $this->groupUser->pivot->token_expire_date > Carbon::now()) {
-                        $fail("User has already been invited to the group");
+                        $fail(__('messages.already_invited'));
                     }
                 }
             ]

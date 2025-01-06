@@ -14,10 +14,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class PostResource extends JsonResource
 {    /**
 
-    * Transform the resource into an array.
-    *
-    * @return array<string, mixed>
-    */
+   * Transform the resource into an array.
+   *
+   * @return array<string, mixed>
+   */
     public function toArray(Request $request): array
     {
 
@@ -34,7 +34,7 @@ class PostResource extends JsonResource
             'reactions' => $this->whenLoaded('reactions'),
             'has_current_user_reaction' => $this->reactions()->where('user_id', $user->id)->count() > 0,
             'post_comments_num' => $this->post_comments()->count(),
-            'commentsss' => self::convertIntoCommentTree($comments)[0]
+            'comments' => self::convertIntoCommentTree($comments)[0]
         ];
     }
 

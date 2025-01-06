@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="utf-8">
@@ -19,7 +19,9 @@
 </head>
 
 <body class="font-sans antialiased">
-    @inertia
+    <div class="text-start">
+        @inertia
+    </div>
 </body>
 
 <!-- Scripts -->

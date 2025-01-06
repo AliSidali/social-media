@@ -17,7 +17,7 @@
                     leave-to-class="transform scale-95 opacity-0"
                 >
                     <MenuItems
-                    class="absolute z-10 right-0 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+                    class="absolute z-10 end-0 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
                     >
                     <div class="px-1 py-1 ">
                         <MenuItem v-slot="{ active }">
@@ -29,7 +29,7 @@
                                         @click="$emit('edit')"
                                     >
                                         <PencilIcon class="w-5 h-5 mr-2" />
-                                        Edit
+                                        {{ translations.edit_button }}
                                     </button>
                                 </MenuItem>
                                 <MenuItem v-slot="{ active }">
@@ -42,7 +42,7 @@
                                         @click="$emit('delete')"
                                     >
                                         <TrashIcon class="w-5 h-5 mr-2" />
-                                        Delete
+                                        {{ translations.delete_button }}
                                     </button>
                                 </MenuItem>
 
@@ -54,7 +54,10 @@
 <script setup>
 import {EllipsisVerticalIcon, TrashIcon, PencilIcon} from '@heroicons/vue/24/solid'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import { usePage } from '@inertiajs/vue3';
 
 defineEmits(['edit', 'delete']);
+const page = usePage().props;
+const translations = page.translations;
 
 </script>

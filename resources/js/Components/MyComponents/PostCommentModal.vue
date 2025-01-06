@@ -1,5 +1,4 @@
 <template>
-
     <TransitionRoot appear :show="isCommentModalOpen" as="template">
       <Dialog as="div" @close="closeModal" class="relative z-10 ">
         <TransitionChild
@@ -32,15 +31,16 @@
               >
                 <DialogTitle
                   as="h3"
-                  class="text-lg font-medium leading-6 text-gray-900 flex justify-between items-center  shadow-xl px-6"
+                  class="text-lg font-medium leading-6 text-gray-900 flex justify-between items-center  shadow-xl px-6 text-start"
                 >
                   <PostUserHeader :post="post"/>
                   <div class="p-2  cursor-pointer rounded-full hover:bg-gray-100" @click="closeModal">
                       <XMarkIcon class="w-5" />
                   </div>
+
                 </DialogTitle>
 
-                <div class="my-2 h-full overflow-auto">
+                <div class="my-2 h-full overflow-auto text-start">
 
                     <p  v-html="post.body "  class="p-6"/>
                     <div class="grid  gap-1 bg-gray-900 " :class="post.attachments.length>1 ? 'grid-cols-2 ' : 'grid-cols-1' ">
@@ -59,8 +59,9 @@
                             <HeartIcon v-if="hasLoveReaction" class="w-6 text-white rounded-full bg-red-600 p-1"/>
                             <span class="ml-2">{{ post.reactions.length }}</span>
                         </div>
-                        <div>
-                            <span>{{ post.post_comments_num }} comments</span>
+                        <div class="flex gap-1">
+                            <span>{{ post.post_comments_num }}</span>
+                            <ChatBubbleOvalLeftIcon class="w-5" />
                         </div>
                     </div>
 
@@ -69,6 +70,7 @@
 
                         <div v-for="(comment, index) in post.comments" :key="index"  class="mb-4 group">
                             <comment  :comment="comment"  :post="post" @onCreateComment="createComment" @onPreviewAttachment="previewAttachment"/>
+
                         </div>
 
 
@@ -77,10 +79,10 @@
                 <!-- creating comment input field -->
 
 
-                <div  class="flex px-6 mb-3 w-full">
+                <div  class="flex px-6 gap-3 mb-3 w-full">
                     <img :src="user.avatar_path" alt="" class="w-10 h-10 rounded-full">
 
-                    <div class="w-full ml-3">
+                    <div class="w-full ">
                         <div class="border border-gray-300 rounded-xl bg-gray-100">
                             <ckeditor :editor="editor" v-model="commentText" :config="editorConfig" ></ckeditor>
                             <div class="flex justify-between px-5">
@@ -88,8 +90,9 @@
                                     <input type="file" @change="displayAttachment" accept="image/*" class="absolute opacity-0 cursor-pointer w-5">
                                     <CameraIcon class="w-4" />
                                 </div>
+
                                 <button type="button" @click="createComment" >
-                                    <PaperAirplaneIcon class="w-5"/>
+                                    <PaperAirplaneIcon class="w-5 "  :class="page.props.lang==='ar'?'rotate-180' : ''" />
                                 </button>
                             </div>
                         </div>
@@ -118,9 +121,7 @@
   <script setup>
   import { computed, onMounted, ref, watch } from 'vue';
   import { MenuItem } from '@headlessui/vue'
-import {ChatBubbleLeftEllipsisIcon, PencilIcon, TrashIcon,CameraIcon } from '@heroicons/vue/24/solid';
-
-
+  import {ChatBubbleOvalLeftIcon,ChatBubbleLeftRightIcon} from '@heroicons/vue/24/outline';
   import {
     TransitionRoot,
     TransitionChild,
@@ -128,7 +129,7 @@ import {ChatBubbleLeftEllipsisIcon, PencilIcon, TrashIcon,CameraIcon } from '@he
     DialogPanel,
     DialogTitle,
   } from '@headlessui/vue'
-    import { XMarkIcon, HandThumbUpIcon, HeartIcon, ChatBubbleLeftRightIcon, PaperAirplaneIcon } from '@heroicons/vue/24/solid';
+    import { XMarkIcon, HandThumbUpIcon, HeartIcon, PaperAirplaneIcon,CameraIcon  } from '@heroicons/vue/24/solid';
     import PostUserHeader from './PostUserHeader.vue';
     import Comment from './Comment.vue';
     import { router, useForm, usePage } from '@inertiajs/vue3';
@@ -145,6 +146,9 @@ import {ChatBubbleLeftEllipsisIcon, PencilIcon, TrashIcon,CameraIcon } from '@he
 
     const page = usePage();
     const user = page.props.auth.user;
+    const translations = page.props.translations;
+
+
     const emit = defineEmits(['update:modelValue', 'onAttachmentClick']);
 
     //toggle comment table
@@ -195,7 +199,7 @@ import {ChatBubbleLeftEllipsisIcon, PencilIcon, TrashIcon,CameraIcon } from '@he
     const commentText = ref('');
     const editorConfig = {
         toolbar: [ 'heading','|', 'link','|','bold', 'italic',  '|', 'bulletedList', 'numberedList','|', 'outdent','indent', '|', 'blockquote' ],
-        placeholder: 'Type your comment here'
+        placeholder: translations.comment_input_placeholder
     }
 
     //2.create new comment
@@ -211,6 +215,7 @@ import {ChatBubbleLeftEllipsisIcon, PencilIcon, TrashIcon,CameraIcon } from '@he
         }
 
         ).then(({data})=>{
+            console.log(data);
 
         // if(!data.comment.parent_id){
         //     props.post.comments.unshift(data.comment);

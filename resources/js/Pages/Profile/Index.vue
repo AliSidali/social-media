@@ -18,7 +18,7 @@
                     <button v-if="!coverImageSrc" class="opacity-0 group-hover:opacity-100 flex space-x-2  w-48 justify-center text-sm py-1 bg-gray-50 text-gray-800 hover:bg-gray-100">
 
                         <CameraIcon class="w-5" />
-                        <span>Update cover image</span>
+                        <span>{{ translations.update_cover }}</span>
                         <input type="file" class="opacity-0 absolute inset-y-0 top-0 right-0.5 w-48  py-1" @change="onCoverChange">
                     </button>
 
@@ -26,12 +26,12 @@
                         <button @click="cancelCoverImage"  class="flex space-x-2   justify-center bg-gray-50 text-gray-800 text-sm px-2 py-1 hover:bg-gray-100">
 
                             <XMarkIcon class="w-5" />
-                            <span>Cancel</span>
+                            <span class="capitalize">{{ translations.cancel_button }}</span>
                         </button>
 
                         <button @click="submitSelectedImage('avatar')('cover')"  class="flex space-x-2   justify-center bg-gray-800 text-gray-100 text-sm px-2 py-1 hover:bg-gray-900">
                             <CheckCircleIcon class="w-5" />
-                            <span>Submit</span>
+                            <span class="capitalize">{{ translations.send_button }}</span>
                         </button>
                     </div>
                 </div>
@@ -62,8 +62,8 @@
                 <div class="p-3 flex justify-between items-center flex-1">
                     <h2 class="font-bold text-lg ">{{ user.name }}</h2>
                     <PrimaryButton v-if="isUserProfile">
-                        <PencilIcon class="w-5 mr-2" />
-                        <span>Edit Profile</span>
+                        <PencilIcon class="w-4 mr-2" />
+                        <span class="capitalize">{{ translations.edit_profile }}</span>
                     </PrimaryButton>
                 </div>
             </div>
@@ -75,19 +75,19 @@
                 <TabList class="flex py-1  bg-white ">
 
                     <Tab v-slot="{ selected }" as="template">
-                        <TabItem text="Posts"  :selected="selected"/>
+                        <TabItem class="capitalize" :text="translations.posts"  :selected="selected"/>
                     </Tab>
                     <Tab v-slot="{ selected }" as="template">
-                        <TabItem text="Followers"  :selected="selected"/>
+                        <TabItem class="capitalize" :text="translations.followers"  :selected="selected"/>
                     </Tab>
                     <Tab v-slot="{ selected }" as="template">
-                        <TabItem text="Followings"  :selected="selected"/>
+                        <TabItem class="capitalize" :text="translations.followings"  :selected="selected"/>
                     </Tab>
                     <Tab v-slot="{ selected }" as="template">
-                        <TabItem text="Photos"  :selected="selected"/>
+                        <TabItem class="capitalize" :text="translations.photos"  :selected="selected"/>
                     </Tab>
                     <Tab v-if="isUserProfile"   v-slot="{ selected }" as="template">
-                        <TabItem text="My Profile"  :selected="selected"/>
+                        <TabItem class="capitalize" :text="translations.my_profile"  :selected="selected"/>
                     </Tab>
                 </TabList>
 
@@ -126,8 +126,9 @@ import TabItem  from "./Partials/TabItem.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { CameraIcon, CheckCircleIcon, PencilIcon, PhotoIcon, XMarkIcon } from "@heroicons/vue/24/solid";
 
-
-const authUser  = usePage().props.auth.user;
+const page = usePage();
+const authUser  = page.props.auth.user;
+const translations = page.props.translations;
 
 const props = defineProps({
     errors: Object,
