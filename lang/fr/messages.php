@@ -60,9 +60,9 @@ return [
     //8.LOGIN PAGE
     'remember_me' => 'souviens moi',
     'forget_password' => 'Mot de passe oublié ?',
-    'delete_account' => 'delete account',
-    'delete_message' => 'Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.',
-
+    //9.REGISTER PAGE
+    'registered' => 'déjà inscrit?',
+    'register' => 's\'inscrire',
     //4.POST LIST
     'no_post' => 'Pas de post',
     'load_post' => 'Charger plus',

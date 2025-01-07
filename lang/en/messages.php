@@ -57,6 +57,9 @@ return [
     //8.LOGIN PAGE
     'remember_me' => 'remember me',
     'forget_password' => 'forget your password?',
+    //9.REGISTER PAGE
+    'registred' => 'already registered?',
+    'register' => 'register',
 
 
     //4.POST LIST PAGE
