@@ -12,7 +12,6 @@ use App\Http\Controllers\LanguageController;
 
 Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified', LocaleMiddleware::class])->name('home');
 Route::get('/u/{user:username}', [ProfileController::class, 'index'])->middleware(LocaleMiddleware::class)->name('profile.index');
-Route::get('/g/{group:slug}', [GroupController::class, 'profile'])->middleware(LocaleMiddleware::class)->name('group.profile');
 Route::post('/lang/{lang}', [LanguageController::class, 'index'])->name('language.index');
 
 
@@ -35,10 +34,15 @@ Route::middleware(['auth', LocaleMiddleware::class])->group(function () {
     Route::post('/group', [GroupController::class, 'store'])->name('group.store');
 
     //Group Routes
+    Route::get('/g/{group:slug}', [GroupController::class, 'profile'])->middleware(LocaleMiddleware::class)->name('group.profile');
     Route::post('/group/{group:slug}/update-images', [GroupController::class, 'updateImage'])->name('group.updateImages');
     Route::post('/group/{group:slug}/invite-user', [GroupController::class, 'inviteUser'])->name('group.inviteUser');
     Route::get('/group/{group:slug}/approve-invitation/{token}', [GroupController::class, 'approveInvitation'])->name('group.approveInvitation');
+    Route::post('/group/{group}/join', [GroupController::class, 'join'])->name('group.join');
+    Route::post('/group/{group}/approval', [GroupController::class, 'groupApproval'])->name('group.approval');
 
+    //notification route
+    Route::get('/notification/read', [GroupController::class, 'readNotifications'])->name('notification.read');
 });
 
 require __DIR__ . '/auth.php';

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Enums\StatusEnum;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Illuminate\Database\Eloquent\Model;
@@ -32,5 +33,20 @@ class Group extends Model
     {
         return $this->users()->where(['user_id' => auth()->user()->id, 'role' => 'admin'])->exists();
 
+    }
+
+    public function getPendingUsers()
+    {
+        return $this->belongsToMany(User::class, 'group_user')->wherePivot('status', StatusEnum::PENDING->value)->get();
+    }
+
+    public function getApprovedUsers()
+    {
+        return $this->belongsToMany(User::class, 'group_user')->wherePivot('status', StatusEnum::APPROVED->value)->get();
+    }
+
+    public function createdNotifications()
+    {
+        return $this->morphMany(Notification::class, 'notificable');
     }
 }

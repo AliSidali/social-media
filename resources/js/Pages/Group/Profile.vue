@@ -57,62 +57,51 @@
 
                 <div class="flex   justify-between w-full">
                     <h3 class="font-black">{{ group.name }}</h3>
-                    <button @click="isOpenModal = true" v-if="isCurrentUserAdmin" class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
+                    <button v-if="isCurrentUserAdmin" @click="isOpenModal = true"  class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
                         <span>{{ translations.invitation }}</span>
                     </button>
-                    <button v-else-if="!group.role && group.autoApproval" class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
+                    <button v-else-if="!group.role && group.autoApproval" @click="joinToGroup"  class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
                         <span>{{ translations.group_join }}</span>
                     </button>
-                    <button v-else-if="!group.role && !group.autoApproval" class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
+                    <button v-else-if="!group.role && !group.autoApproval" @click="joinToGroup"  class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
                         <span>Request to Join</span>
                     </button>
+                    <div v-else-if="group.status === 'pending'" class="bg-gray-100 flex items-center h-10 px-4 rounded-md text-gray-500">
+                        <span class="capitalize">request sent</span>
+                    </div>
                 </div>
             </div>
 
 
             <div class="px-2 py-2">
                 <TabGroup>
-                    <TabList class="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
+                    <TabList class="flex ">
                       <Tab
                         as="template"
+                        v-slot="{ selected }"
                       >
-                        <button
-                          :class="[
-                            'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-                            'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-
-                          ]"
-                        >
-                        category
-                        </button>
+                        <TabItem text="posts" :selected="selected" />
                       </Tab>
 
                       <Tab
                         as="template"
+                        v-slot="{ selected }"
+                        v-if="group.status === 'approved'"
                       >
-                        <button
-                          :class="[
-                            'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-                            'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-
-                          ]"
-                        >
-                        category
-                        </button>
+                        <TabItem text="followers" :selected="selected" />
                       </Tab>
-
+                      <Tab
+                      as="template"
+                      v-slot="{ selected }"
+                      v-if="isCurrentUserAdmin"
+                      >
+                        <TabItem text="pending users" :selected="selected" :alert="pendingUsers.length"/>
+                      </Tab>
                       <Tab
                         as="template"
+                        v-slot="{ selected }"
                       >
-                        <button
-                          :class="[
-                            'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-                            'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-
-                          ]"
-                        >
-                        category
-                        </button>
+                        <TabItem text="photos" :selected="selected" />
                       </Tab>
                     </TabList>
 
@@ -125,7 +114,7 @@
                       >
 
                             <h3 class="text-sm font-medium leading-5">
-                              title
+                              posts
                             </h3>
 
 
@@ -136,15 +125,35 @@
                           'rounded-xl bg-white p-3',
                           'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                         ]"
+                        v-if="group.status === 'approved'"
                       >
 
-                            <h3 class="text-sm font-medium leading-5">
-                              title2
+                            <h3 class="text-sm font-medium grid grid-cols-2 gap-2">
+                                <div v-for="(user, index) in approvedUsers" :key="index" class="flex justify-between items-center px-4 border-2 border-transparent shadow   hover:border-indigo-300" >
+                                    <UserListItem :image="user.avatar_path" :name="user.username" class="hover:bg-white"/>
+                                    <button v-if="isCurrentUserAdmin" @click="joinActions(user.id)" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 capitalize">disapprove</button>
+                                </div>
                             </h3>
 
 
                       </TabPanel>
 
+                      <TabPanel
+                         v-if="isCurrentUserAdmin"
+                        :class="[
+                          'rounded-xl bg-white p-3',
+                          'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                        ]"
+                      >
+                            <div class="grid grid-cols-2 text-sm font-medium gap-2">
+                                <div v-for="(user, index) in pendingUsers" :key="index" class="flex justify-between items-center px-4 border-2 border-transparent shadow   hover:border-indigo-300" >
+                                    <UserListItem :image="user.avatar_path" :name="user.username" class="hover:bg-white"/>
+                                    <button @click="joinActions(user.id)" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 capitalize">approve</button>
+                                </div>
+                            </div>
+
+
+                      </TabPanel>
                       <TabPanel
                         :class="[
                           'rounded-xl bg-white p-3',
@@ -153,7 +162,7 @@
                       >
 
                             <h3 class="text-sm font-medium leading-5">
-                              title3
+                              photos
 
                             </h3>
 
@@ -168,17 +177,21 @@
 </template>
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { PencilIcon, CameraIcon, XMarkIcon, CheckIcon, CheckCircleIcon } from '@heroicons/vue/24/solid';
 
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import { TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
 import { computed, ref, watch } from 'vue';
 import axiosClient from '@/axiosClient';
 import InviteUserModal from '@/Components/MyComponents/InviteUserModal.vue';
+import TabItem from '@/Components/MyComponents/TabItem.vue';
+import UserListItem from '@/Components/MyComponents/UserListItem.vue';
 
 const props = defineProps({
     group: Object,
-    message: Object
+    message: Object,
+    pendingUsers: Object,
+    approvedUsers: Object
 })
 
 const page = usePage();
@@ -260,5 +273,21 @@ watch(()=>props.message.success, ()=>{
     setTimeout(()=>{
         props.message.success = null;
     }, 3000)
-})
+});
+
+
+//request to join to group
+const joinToGroup = ()=>{
+    const form = useForm({});
+
+    form.post(route('group.join', props.group.id));
+}
+
+//approve and disapprove a request
+const joinActions = (userId)=>{
+    const form = useForm({
+        userId : userId,
+    });
+    form.post(route('group.approval', props.group.id));
+}
 </script>

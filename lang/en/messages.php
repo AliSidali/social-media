@@ -58,7 +58,7 @@ return [
     'remember_me' => 'remember me',
     'forget_password' => 'forget your password?',
     //9.REGISTER PAGE
-    'registred' => 'already registered?',
+    'registered' => 'already registered?',
     'register' => 'register',
 
 

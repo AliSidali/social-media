@@ -6,7 +6,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/24/solid';
+import { ArrowLeftStartOnRectangleIcon, BellAlertIcon } from '@heroicons/vue/24/outline';
 import axiosClient from '@/axiosClient';
 
 const showingNavigationDropdown = ref(false);
@@ -14,12 +14,19 @@ const showingNavigationDropdown = ref(false);
 const  page = usePage().props;
 const authUser = page.auth.user;
 const translations = page.translations;
+const notificationsNum = ref(authUser.notReadNotificationNum);
 
 const changeLanguage = (lang)=>{
 
     axiosClient.post(route('language.index', lang)).then(()=>{
         window.location.reload();
     })
+}
+
+const readNotifications = ()=>{
+    axiosClient.get(route('notification.read')).then(()=>{
+        notificationsNum.value = 0;
+    });
 }
 
 </script>
@@ -45,7 +52,42 @@ const changeLanguage = (lang)=>{
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
                             <!-- Settings Dropdown -->
-                            <div class="ms-3 relative flex" v-if="authUser">
+                            <div class="ms-3 relative flex gap-1" v-if="authUser">
+                                <Dropdown align="right" width="48">
+                                    <template #trigger>
+                                        <span class="inline-flex rounded-md">
+                                            <button
+                                                @click="readNotifications"
+                                                type="button"
+                                                class="relative inline-flex items-center bg-gray-100 p-2 border border-transparent text-sm leading-4 font-medium rounded-full text-gray-500 dark:text-gray-400  dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                                <BellAlertIcon class="w-5" />
+                                                <span v-if="notificationsNum >0" class="absolute -end-1 -top-2 bg-red-600 px-2 py-0.5 text-white text-xs rounded-full">
+                                                    {{ notificationsNum < 10 ? notificationsNum : "+"+10 }}
+                                                </span>
+                                            </button>
+                                        </span>
+                                    </template>
+
+                                    <template #content>
+                                        <div class=" p-4 text-lg font-semibold bg-gray-100">
+                                            <h3>Notifications</h3>
+                                        </div>
+                                        <div class="max-h-[75vh] overflow-auto">
+                                        <DropdownLink v-for="(notification, index) in authUser.notifications" :key="index"  :href="notification.created_by.is_user ?  route('profile.index', notification.created_by.parameter) : route('group.profile', notification.created_by.parameter)" class="flex  gap-4  items-center ">
+                                            <img :src="notification.created_by.thumbnail_path ?? '/storage/defaults/avatar.png'" class="border w-10 h-10 rounded-full" alt="">
+                                            <div>
+                                                <div class=" gap-2">
+                                                    <span class="font-semibold">{{ notification.title }}: </span>
+                                                    <span> {{ notification.message }} </span>
+                                                </div>
+                                                <div class="text-xs text-gray-500">
+                                                    {{ notification.created_at }}
+                                                </div>
+                                            </div>
+                                        </DropdownLink>
+                                    </div>
+                                    </template>
+                                </Dropdown>
                                 <Dropdown align="right" width="">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
@@ -116,6 +158,8 @@ const changeLanguage = (lang)=>{
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
+
+
                             </div>
                             <div v-else>
                                 <Link :href="route('login')">

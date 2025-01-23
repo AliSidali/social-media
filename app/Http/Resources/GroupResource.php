@@ -17,8 +17,9 @@ class GroupResource extends JsonResource
     public function toArray(Request $request): array
     {
         $user_id = auth()->user()?->id;
-        $pivotData = $this->users()->where('user_id', $user_id)->first()?->pivot;
+        $pivotData = $this->users()->wherePivot('user_id', $user_id)->first()?->pivot;
         return [
+            "id" => $this->id,
             "name" => $this->name,
             "slug" => $this->slug,
             "autoApproval" => $this->auto_approval,
@@ -27,7 +28,7 @@ class GroupResource extends JsonResource
             "status" => $pivotData?->status,
             "role" => $pivotData?->role,
             "about" => $this->about,
-            "description" => Str::words($this->about, 7, ' ')
+            "description" => Str::words($this->about, 7, ' '),
         ];
     }
 }

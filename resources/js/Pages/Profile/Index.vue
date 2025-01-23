@@ -122,7 +122,7 @@ import Edit from "./Edit.vue";
 import { usePage, Head, useForm } from "@inertiajs/vue3";
 import { computed, ref, watch } from 'vue'
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import TabItem  from "./Partials/TabItem.vue";
+import TabItem  from "@/Components/MyComponents/TabItem.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { CameraIcon, CheckCircleIcon, PencilIcon, PhotoIcon, XMarkIcon } from "@heroicons/vue/24/solid";
 

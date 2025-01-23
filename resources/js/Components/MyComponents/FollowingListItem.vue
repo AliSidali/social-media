@@ -5,25 +5,13 @@
             Your don't have any friends yet.
         </div>
         <div v-else>
-            <FollowingItem image="https://picsum.photos/200" title="Abd elrezak" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
-            <FollowingItem image="https://picsum.photos/200" title="Hadjer sidali" />
+            <UserListItem image="https://picsum.photos/200" name="Abd elrezak" />
+            <UserListItem image="https://picsum.photos/200" name="Hadjer sidali" />
         </div>
     </div>
 </template>
 <script setup>
-import FollowingItem from '@/Components/MyComponents/FollowingItem.vue';
+import UserListItem from '@/Components/MyComponents/UserListItem.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { ref } from 'vue';
 const forModelError = ref('');

@@ -20,6 +20,7 @@ const props = defineProps({
 <template>
 
     <Head title="Social Media Website" />
+
     <AuthenticatedLayout>
         <!-- "auto-rows-fr" important class for specifying grid child height  -->
         <div class="grid  gap-2 px-4 pt-8 lg:grid-cols-12  lg:h-full lg:auto-rows-fr">

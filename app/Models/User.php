@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Post;
+use Illuminate\Support\Facades\Session;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Illuminate\Notifications\Notifiable;
@@ -20,6 +21,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
+
     protected $fillable = [
         'name',
         'username',
@@ -38,6 +40,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'remember_token',
     ];
+
+
 
     /**
      * Get the attributes that should be cast.
@@ -76,9 +80,19 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(PostComment::class);
     }
 
-    public function Groups()
+    public function groups()
     {
         return $this->belongsToMany(Group::class);
 
+    }
+
+    public function receivedNotifications()//THE USER WHO OWN THE NOTIFICATIONS, BELONG TO HIM
+    {
+        return $this->hasMany(Notification::class)->limit(20)->latest();
+    }
+
+    public function createdNotifications()//THE USER WHO CREATES THE NOTIFICATION AND SAVE IT FOR RECEIVER
+    {
+        return $this->morphMany(Notification::class, 'notificable');
     }
 }

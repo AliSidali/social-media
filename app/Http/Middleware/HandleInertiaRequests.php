@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\NotificationResource;
 use Inertia\Middleware;
 
 use Illuminate\Http\Request;
@@ -33,14 +34,16 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $user = auth()->user() ? new UserResource(auth()->user()) : null;
+        $user = auth()->user();
+        $userResource = $user ? new UserResource(auth()->user()) : null;
 
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $user,
+                'user' => $userResource,
             ],
             'extensions' => StorePostRequest::$extensions,
+
 
 
         ];
