@@ -48,7 +48,6 @@
             </div>
 
         </div>
-
         <!-- like and comment buttons -->
         <div class=" flex mb-3 gap-2">
             <div class="flex-1 relative"  @mouseover="showReaction"  @mouseleave="hideReaction" @click="hideReaction">

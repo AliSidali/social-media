@@ -15,7 +15,7 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $notifications = $this->receivedNotifications()->with('notificable')->get();
+        $notifications = $this->receivedNotifications;
         $notReadNotifications = $this->getNotReadNotifications($notifications);
         return [
             "id" => $this->id,
@@ -28,7 +28,8 @@ class UserResource extends JsonResource
             "cover_path" => $this->cover_path ? Storage::url($this->cover_path) : null,
             "avatar_path" => $this->avatar_path ? Storage::url($this->avatar_path) : null,
             "notifications" => NotificationResource::collection($notifications),
-            "notReadNotificationNum" => count($notReadNotifications)
+            "notReadNotificationNum" => count($notReadNotifications),
+            "role" => $this->pivot?->role,
         ];
     }
 

@@ -131,11 +131,19 @@ const props = defineProps({
   modelValue: Boolean,
   post: {
     type: Object,
-    required: true
+    default:()=>({
+        body:'',
+        user:usePage().props.auth.user
+    })
+  },
+  group_id:{
+    type:Number,
+    default:null
   }
 })
 const postForm = useForm({
   body: props.post.body,
+  group_id:null,
   attachments: null,
   deleted_file_ids : [],
   _method: 'POST'
@@ -195,8 +203,10 @@ watch(()=>props.post, ()=>{
 
 const submit = ()=>{
 
+    postForm.attachments = attachments.value.map(index=>index.file);
+
+
   if(props.post.id){
-        postForm.attachments = attachments.value.map(index=>index.file);
         postForm._method = 'PUT';
 
         postForm.post(route('post.update', props.post.id), {
@@ -211,7 +221,7 @@ const submit = ()=>{
     });
   }else{
 
-      postForm.attachments = attachments.value.map(index=>index.file);
+      postForm.group_id = props.group_id;
 
       postForm.post(route('post.store'), {
 

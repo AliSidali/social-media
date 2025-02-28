@@ -33,7 +33,7 @@ const props = defineProps({
             <div class="flex flex-col lg:col-span-6 lg:order-2 ">
 
                 <CreatePost :success="success"/>
-                <PostList :posts="posts.data" />
+                <PostList :posts="posts" />
             </div>
         </div>
     </AuthenticatedLayout>

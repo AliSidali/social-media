@@ -1,7 +1,7 @@
 <template>
     <Head :title="group.slug" />
     <AuthenticatedLayout>
-        <div class="w-full bg-white mx-auto h-full overflow-auto lg:w-[60%]">
+        <div class="w-full bg-white mx-auto h-full overflow-auto lg:w-[60%] pb-10">
             <div v-if="message.success"  class="bg-green-900 text-white py-1 px-2  text-center font-semibold">
                    {{message.success}}
             </div>
@@ -57,13 +57,13 @@
 
                 <div class="flex   justify-between w-full">
                     <h3 class="font-black">{{ group.name }}</h3>
-                    <button v-if="isCurrentUserAdmin" @click="isOpenModal = true"  class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
+                    <button v-if="isCurrentUserAdmin" @click="isOpenModal = true"  class="flex text-sm items-center gap-2 px-2 py-1 bg-cyan-700 text-white rounded">
                         <span>{{ translations.invitation }}</span>
                     </button>
-                    <button v-else-if="!group.role && group.autoApproval" @click="joinToGroup"  class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
+                    <button v-else-if="!group.role && group.autoApproval" @click="joinToGroup"  class="flex text-sm items-center gap-2 px-2 py-1 bg-cyan-700 text-white rounded">
                         <span>{{ translations.group_join }}</span>
                     </button>
-                    <button v-else-if="!group.role && !group.autoApproval" @click="joinToGroup"  class="flex text-sm items-center gap-2 px-2 py-1 bg-indigo-500 text-white rounded">
+                    <button v-else-if="!group.role && !group.autoApproval" @click="joinToGroup"  class="flex text-sm items-center gap-2 px-2 py-1 bg-cyan-700 text-white rounded">
                         <span>Request to Join</span>
                     </button>
                     <div v-else-if="group.status === 'pending'" class="bg-gray-100 flex items-center h-10 px-4 rounded-md text-gray-500">
@@ -103,6 +103,13 @@
                       >
                         <TabItem text="photos" :selected="selected" />
                       </Tab>
+
+                      <Tab
+                        as="template"
+                        v-slot="{ selected }"
+                      >
+                        <TabItem text="about" :selected="selected" />
+                      </Tab>
                     </TabList>
 
                     <TabPanels class="mt-2">
@@ -112,26 +119,47 @@
                           'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                         ]"
                       >
-
-                            <h3 class="text-sm font-medium leading-5">
-                              posts
-                            </h3>
-
+                        <template v-if="groupPosts">
+                          <CreatePost :group_id="group.id"/>
+                          <PostList :posts="groupPosts" />
+                        </template>
+                        <div v-else>
+                            you don't have permission to see this group posts.
+                        </div>
 
                       </TabPanel>
 
                       <TabPanel
                         :class="[
-                          'rounded-xl bg-white p-3',
-                          'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                          ' bg-white px-3 py-6'
                         ]"
                         v-if="group.status === 'approved'"
                       >
 
                             <h3 class="text-sm font-medium grid grid-cols-2 gap-2">
-                                <div v-for="(user, index) in approvedUsers" :key="index" class="flex justify-between items-center px-4 border-2 border-transparent shadow   hover:border-indigo-300" >
-                                    <UserListItem :image="user.avatar_path" :name="user.username" class="hover:bg-white"/>
-                                    <button v-if="isCurrentUserAdmin" @click="joinActions(user.id)" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 capitalize">disapprove</button>
+                                <div v-for="(user, index) in approvedUsers" :key="index" class="flex justify-between items-center px-1 border-2 border-transparent shadow   hover:border-indigo-300" >
+                                    <UserListItem :href="route('profile.index', user.username)" :image="user.avatar_path" :name="user.username" class="hover:bg-white"/>
+                                    <div class="flex gap-2 items-center">
+                                      <button v-if="isCurrentUserAdmin && user.id !== currentUser.id && user.id !== group.user_id" @click="approveUser(user.id, 'rejected')" class="bg-red-800 text-xs text-white px-4 py-2 rounded hover:bg-red-900 capitalize">reject</button>
+                                      <Dropdown :isDisabled=" user.id == currentUser.id" width="48">
+                                        <template #trigger>
+                                            <button  class="flex items-center gap-1  cursor-pointer border border-gray-400 text-xs py-2 px-3 rounded-lg hover:bg-gray-100 " :class="{'text-gray-400 cursor-auto hover:bg-white' : user.id == currentUser.id || user.id == group.user_id}">
+                                                {{user.role}}
+                                                <ChevronDownIcon class="w-4" />
+                                            </button>
+                                        </template>
+                                        <template #content>
+                                            <div class="flex flex-col text-center w-28">
+                                                <div @click="changeRole(user.id, 'admin')" class="w-full text-center py-2  cursor-pointer hover:bg-gray-100">
+                                                    Admin
+                                                </div>
+                                                <div @click="changeRole(user.id, 'user')" class="w-full text-center py-2 cursor-pointer hover:bg-gray-100">
+                                                    User
+                                                </div>
+                                            </div>
+                                        </template>
+                                      </Dropdown>
+                                    </div>
                                 </div>
                             </h3>
 
@@ -147,8 +175,11 @@
                       >
                             <div class="grid grid-cols-2 text-sm font-medium gap-2">
                                 <div v-for="(user, index) in pendingUsers" :key="index" class="flex justify-between items-center px-4 border-2 border-transparent shadow   hover:border-indigo-300" >
-                                    <UserListItem :image="user.avatar_path" :name="user.username" class="hover:bg-white"/>
-                                    <button @click="joinActions(user.id)" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 capitalize">approve</button>
+                                    <UserListItem :href="route('profile.index', user.username)" :image="user.avatar_path" :name="user.username" class="hover:bg-white"/>
+                                    <div class="flex gap-2">
+                                        <button @click="approveUser(user.id, 'approved')" class="bg-gray-800 text-xs text-white px-4 py-2 rounded hover:bg-gray-900 capitalize">approve</button>
+                                        <button @click="approveUser(user.id, 'rejected')" class="bg-red-800 text-xs text-white px-4 py-2 rounded hover:bg-red-900 capitalize">reject</button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -168,34 +199,57 @@
 
 
                       </TabPanel>
+
+                      <TabPanel
+                        :class="[
+                          'rounded-xl bg-white p-3',
+                          'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                        ]"
+                      >
+
+                        <GroupForm :form="groupForm" :translations="translations" :validationErrors="validationErrors" />
+                        <div class="text-end">
+                            <button @click="updateGroup" class=" bg-cyan-700 py-2 px-4 rounded text-white">
+                                Edit
+                            </button>
+                        </div>
+
+
+                      </TabPanel>
                     </TabPanels>
                 </TabGroup>
             </div>
-            <InviteUserModal v-model="isOpenModal" @closeModal="closeModal" :group="group"/>
         </div>
     </AuthenticatedLayout>
 </template>
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { PencilIcon, CameraIcon, XMarkIcon, CheckIcon, CheckCircleIcon } from '@heroicons/vue/24/solid';
+import { Head, useForm, usePage, Link } from '@inertiajs/vue3';
+import { PencilIcon, CameraIcon, XMarkIcon, CheckIcon, CheckCircleIcon, ChevronDownIcon } from '@heroicons/vue/24/solid';
 
 import { TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import axiosClient from '@/axiosClient';
-import InviteUserModal from '@/Components/MyComponents/InviteUserModal.vue';
+import PostList from '@/Components/MyComponents/PostList.vue';
 import TabItem from '@/Components/MyComponents/TabItem.vue';
 import UserListItem from '@/Components/MyComponents/UserListItem.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import GroupForm from '@/Components/MyComponents/GroupForm.vue';
+import CreatePost from '@/Components/MyComponents/CreatePost.vue';
 
 const props = defineProps({
     group: Object,
     message: Object,
     pendingUsers: Object,
-    approvedUsers: Object
+    approvedUsers: Object,
+    groupPosts:Object
 })
+
+
 
 const page = usePage();
 const translations = page.props.translations;
+const currentUser = page.props.auth.user;
 const newCoverImage = ref(null);
 const newThumbnailImage = ref(null);
 const isCoverChanged = ref(false);
@@ -209,6 +263,15 @@ const isOpenModal=ref(false);
 const isCurrentUserAdmin  = computed(()=>{
     return props.group.role == 'admin';
 })
+
+
+//update group section
+const validationErrors = ref({});
+const groupForm = useForm({
+    name: props.group.name,
+    auto_approval:props.group.autoApproval? true: false,
+    about:props.group.about,
+});
 
 
 
@@ -284,10 +347,35 @@ const joinToGroup = ()=>{
 }
 
 //approve and disapprove a request
-const joinActions = (userId)=>{
+const approveUser = (userId, action)=>{
     const form = useForm({
         userId : userId,
+        action : action
     });
-    form.post(route('group.approval', props.group.id));
+    form.post(route('group.approveRequest', props.group.id));
 }
+
+//CHANGE ROLE FROM USER TO ADMIN OR VICE VERSA
+const changeRole = (userId, role)=>{
+
+    const form = useForm({
+        user_id: userId,
+        role:role
+    });
+    form.patch(route('group.updateRole', props.group.id))
+}
+
+
+//UPDATE GROUP IN ABOUT SECTION
+const updateGroup = ()=>{
+    groupForm.put(route('group.update', props.group.slug))
+}
+
+
+
+
+
+
+
+
 </script>

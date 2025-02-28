@@ -19,13 +19,14 @@ class HomeController extends Controller
         $posts = Post::query()
             ->with('attachments')
             ->with('reactions')
+            ->with('post_comments')
+            ->with('group')
             ->latest()
             ->paginate(5);
         $posts = PostResource::collection($posts);
         if ($request->wantsJson()) {
             return $posts;
         }
-
         // $groups = Group::query()
         //     //->select(['groups.*', 'gu.role', 'gu.status'])
         //     ->with('groupUser')
@@ -34,8 +35,6 @@ class HomeController extends Controller
         //     ->orderBy("gu.role")
         //     ->orderBy("name")
         //     ->get();
-
-
 
         $groups = Group::with([
             'users'

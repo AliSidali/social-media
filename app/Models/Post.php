@@ -14,11 +14,16 @@ class Post extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['id', 'user_id', 'body'];
+    protected $fillable = ['id', 'user_id', 'body', 'group_id'];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class)->select('id', 'name', 'slug');
     }
 
     public function attachments()

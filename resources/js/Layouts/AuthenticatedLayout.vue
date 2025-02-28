@@ -53,9 +53,9 @@ const readNotifications = ()=>{
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
                             <!-- Settings Dropdown -->
                             <div class="ms-3 relative flex gap-1" v-if="authUser">
-                                <Dropdown align="right" width="48">
+                                <Dropdown align="right" >
                                     <template #trigger>
-                                        <span class="inline-flex rounded-md">
+                                        <span class="inline-flex  rounded-md">
                                             <button
                                                 @click="readNotifications"
                                                 type="button"
@@ -69,23 +69,25 @@ const readNotifications = ()=>{
                                     </template>
 
                                     <template #content>
-                                        <div class=" p-4 text-lg font-semibold bg-gray-100">
-                                            <h3>Notifications</h3>
-                                        </div>
-                                        <div class="max-h-[75vh] overflow-auto">
-                                        <DropdownLink v-for="(notification, index) in authUser.notifications" :key="index"  :href="notification.created_by.is_user ?  route('profile.index', notification.created_by.parameter) : route('group.profile', notification.created_by.parameter)" class="flex  gap-4  items-center ">
-                                            <img :src="notification.created_by.thumbnail_path ?? '/storage/defaults/avatar.png'" class="border w-10 h-10 rounded-full" alt="">
-                                            <div>
-                                                <div class=" gap-2">
-                                                    <span class="font-semibold">{{ notification.title }}: </span>
-                                                    <span> {{ notification.message }} </span>
-                                                </div>
-                                                <div class="text-xs text-gray-500">
-                                                    {{ notification.created_at }}
-                                                </div>
+                                        <div class=" w-[600px]">
+                                            <div class=" p-4 text-lg font-semibold bg-gray-100">
+                                                <h3>Notifications</h3>
                                             </div>
-                                        </DropdownLink>
-                                    </div>
+                                            <div class="max-h-[75vh] overflow-auto">
+                                                <DropdownLink v-for="(notification, index) in authUser.notifications" :key="index"  :href="notification.created_by.is_user ?  route('profile.index', notification.created_by.parameter) : route('group.profile', notification.created_by.parameter)" class="flex  gap-4  items-center ">
+                                                    <img :src="notification.created_by.thumbnail_path ?? '/storage/defaults/avatar.png'" class="border w-10 h-10 rounded-full" alt="">
+                                                    <div>
+                                                        <div class=" gap-2">
+                                                            <span class="font-semibold">{{ notification.title }}: </span>
+                                                            <span> {{ notification.message }} </span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500">
+                                                            {{ notification.created_at }}
+                                                        </div>
+                                                    </div>
+                                                </DropdownLink>
+                                        </div>
+                                        </div>
                                     </template>
                                 </Dropdown>
                                 <Dropdown align="right" width="">

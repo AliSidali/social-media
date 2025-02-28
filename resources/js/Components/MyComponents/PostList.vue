@@ -1,6 +1,6 @@
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import PostItem from './PostItem.vue'
 import PostModal from './PostModal.vue';
 import { usePage } from '@inertiajs/vue3';
@@ -10,7 +10,7 @@ import axiosClient from '@/axiosClient'
 
 
 const props = defineProps({
-    posts: Array,
+    posts: Object,
 })
 const  page = usePage().props;
 const user = page.auth.user;
@@ -54,8 +54,8 @@ const showComments = (post)=>{
 // FOR LOADING MORE POSTS
 const loadMoreIntersect = ref(null);
 const allPosts = ref({
-    data:props.posts,
-    next:page.posts.links.next
+    data:props.posts.data,
+    next:props.posts.links.next
 })
 const loadMore = ()=>{
     axiosClient.get(allPosts.value.next).then(({data})=>{
@@ -81,9 +81,17 @@ observer.observe(loadMoreIntersect.value);
 })
 
 //reflect posts props changes to allPosts after adding new post to show it instantly in page
+const newPosts = computed(()=>{
+    return props.posts;
+})
 
-watch(()=>props.posts, (newPosts)=>{
-    allPosts.value.data = newPosts;
+watch(()=>props.posts, ()=>{
+    // allPosts.value.data = newPosts.data;
+
+    //second solution
+
+    allPosts.value.data =newPosts.value.data;
+
 })
 
 
@@ -95,7 +103,9 @@ watch(()=>props.posts, (newPosts)=>{
 </script>
 
 <template>
+
     <div class="scrollbar lg:overflow-auto lg:flex-1 ">
+
         <PostItem  @onShowComments="showComments" @onAttachmentClick="previewAttachmentModal" @editClick="openEditModal" v-for="(post, index) in allPosts.data" :key="index" :post="post" />
         <div ref="loadMoreIntersect" ></div>
         <div v-if="allPosts.next">{{ translations.load_post }}</div>

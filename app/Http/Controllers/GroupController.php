@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateGroupRequest;
+use App\Http\Resources\PostResource;
+use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Group;
-use App\Models\GroupUser;
 use Illuminate\Support\Str;
 use App\Http\Enums\RoleEnum;
 use App\Models\Notification;
@@ -21,16 +23,40 @@ use App\Notifications\InvitationToGroup;
 use App\Http\Requests\InviteUsersRequest;
 use App\Notifications\InvitationApproved;
 
+
 class GroupController extends Controller
 {
 
-    public function profile(Group $group)
+    public function profile(Request $request, Group $group)
     {
+        //another way to get approved and pending users with its pivot (group_user) table and selecting specific columns
+        // $users = User::query()
+        //     ->join('group_user as gu', 'gu.user_id', 'users.id')
+        //     ->select('users.name', 'gu.role')
+        //     ->where(['gu.group_id' => $group->id, 'gu.status' => 'approved'])
+        //     ->get();
+        $groupPosts = $group->posts()
+            ->with('user')
+            ->with('attachments')
+            ->with('reactions')
+            ->with('post_comments')
+            ->latest()->paginate(3);
+
+        if (!$group->isCurrentUserApproved()) {
+            $groupPosts = null;
+        }
+
+
+        if ($request->wantsJson()) {
+            return PostResource::collection($groupPosts);
+        }
+
         return Inertia::render('Group/Profile', [
             'group' => new GroupResource($group),
             'message' => ['success' => session('success')],
-            'pendingUsers' => UserResource::collection($group->getPendingUsers()),
-            'approvedUsers' => UserResource::collection($group->getApprovedUsers())
+            'pendingUsers' => UserResource::collection($group->getPendingUsers),
+            'approvedUsers' => UserResource::collection($group->getApprovedUsers),
+            'groupPosts' => $groupPosts ? PostResource::collection($groupPosts) : null
         ]);
     }
     public function store(StoreGroupRequest $request)
@@ -142,7 +168,7 @@ class GroupController extends Controller
             $user = auth()->user();
             $groupUserExists = $group->users()->wherePivot('user_id', $user->id)->exists();
             if ($groupUserExists) {
-                dd('yella');
+                return back();
             }
 
 
@@ -189,34 +215,31 @@ class GroupController extends Controller
         return back()->with('success', $message);
     }
 
-    public function groupApproval(Request $request, Group $group)
+    public function approveRequest(Request $request, Group $group)
     {
         DB::beginTransaction();
         try {
             $currentUser = auth()->user();
             $groupCurrentUser = $group->users()->wherePivot('user_id', $currentUser->id)->first();
             if ($groupCurrentUser->pivot->role !== RoleEnum::ADMIN->value) {
-                return back();
+                return response('you don\'t have permission to do this action', 403);
             }
 
-            $groupUser = $group->users()->wherePivot('user_id', $request->userId)->first();
-            $userRole = $groupUser->pivot->role;
-            $userStatus = $groupUser->pivot->status;
-
             $status = StatusEnum::APPROVED->value;
-            $message = 'your request is approved';
-            if ($userRole == RoleEnum::ADMIN->value) {
-                return back();
-            } elseif ($userStatus == StatusEnum::APPROVED->value) {
-                $status = StatusEnum::PENDING->value;
-                $message = 'your request is disapproved';
+            $notificationMessage = 'your request is approved';
+            $successMessage = 'User request is approved';
+
+            if ($request->action == StatusEnum::REJECTED->value) {
+                $status = StatusEnum::REJECTED->value;
+                $notificationMessage = 'your request is rejected';
+                $successMessage = 'User request is rejected';
             }
 
             //send approved and disapproved notifications
             Notification::create([
                 'user_id' => $request->userId,
                 'title' => 'response of the request',
-                'message' => $message,
+                'message' => $notificationMessage,
                 'is_read' => false,
                 'notificable_id' => $group->id,
                 'notificable_type' => Group::class
@@ -225,14 +248,16 @@ class GroupController extends Controller
 
             $group->users()->updateExistingPivot($request->userId, ['status' => $status]);
             DB::commit();
+            return back()->with('success', $successMessage);
+
         } catch (\Exception $e) {
             DB::rollBack();
+            return back();
         }
-        return back();
     }
 
 
-    //for notifications
+    //make notifications read
     public function readNotifications()
     {
         $user = auth()->user();
@@ -243,5 +268,58 @@ class GroupController extends Controller
         $notReadNotifications = $user->receivedNotifications()->where('is_read', false)->update(['is_read' => true]);
 
         return response(null, 201);
+    }
+
+    //update role
+    public function updateRole(Request $request, Group $group)
+    {
+        $currentUser = auth()->user();
+
+        $groupUser = $group->users()->wherePivot('user_id', $currentUser->id)->first();
+        if ($groupUser->pivot->role !== 'admin') {
+            return response('You don\'t have permission to do this action', 403);
+        } elseif ($group->user_id === $request->user_id) {
+            return response('you don\'t have permission to change the role of the group owner!');
+        }
+
+
+        $data = $request->validate([
+            'user_id' => ['required'],
+            'role' => ['required']
+        ]);
+
+        $groupUserExists = $group->users()
+            ->wherePivot('user_id', $data['user_id'])
+            ->exists();
+
+        if ($groupUserExists) {
+            $group->users()->updateExistingPivot(
+                $data['user_id'],
+                ['role' => $data['role']]
+            );
+
+            Notification::create([
+                'user_id' => $data['user_id'],
+                'title' => 'change the role: ',
+                'message' => 'the group admin changes your role to ' . $data['role'],
+                'notificable_id' => $group->id,
+                'notificable_type' => Group::class
+            ]);
+
+        }
+
+
+        return back();
+
+
+
+    }
+
+
+    public function update(UpdateGroupRequest $request, Group $group)
+    {
+        $data = $request->validated();
+        $group->update($data);
+        return redirect()->route('group.profile', $group->slug)->with('success', 'your group is updated');
     }
 }

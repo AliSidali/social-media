@@ -4,14 +4,15 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreGroupRequest extends FormRequest
+class UpdateGroupRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        $group = $this->route('group');
+        return $group->isCurrentUserAdmin();
     }
 
     /**
@@ -22,9 +23,9 @@ class StoreGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => ['required', 'string', 'max:255'],
-            "auto_approval" => ['boolean'],
-            'about' => ['string']
+            'name' => ['required', 'string', 'max:255'],
+            'auto_approval' => ['boolean', 'required'],
+            'about' => ['nullable']
         ];
     }
 }

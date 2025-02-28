@@ -111,6 +111,8 @@ const {isImage} = helpers();
         currentIndex.value = props.index
     })
     const currentAttachment = computed(()=>{
+        console.log(props.attachments);
+
         return props.attachments[currentIndex.value]
     });
 

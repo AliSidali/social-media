@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use App\Models\Post;
 use App\Models\Reaction;
 use App\Models\Attachment;
@@ -20,16 +21,16 @@ use App\Http\Resources\PostCommentResource;
 
 class PostController extends Controller
 {
+
+
     public function store(StorePostRequest $request)
     {
-
 
         DB::beginTransaction();
 
         try {
             $user = auth()->user();
             $data = $request->validated();
-            dd($data);
             $post = Post::create($data);
 
             $attachments = $data['attachments'] ?? [];
@@ -53,7 +54,7 @@ class PostController extends Controller
         }
 
 
-        return redirect()->route('home');
+        return back();
 
 
 

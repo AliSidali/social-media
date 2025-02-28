@@ -38,37 +38,23 @@
                   <XMarkIcon @click="closeModal" class="w-8 rounded-full cursor-pointer p-1 hover:bg-gray-200"/>
                 </DialogTitle>
                 <div class="p-6">
-                    <div class="mt-4">
-                        <label for="" class="font-semibold">{{ translations.group_name_field }}</label>
-                        <TextInput v-model="form.name" class="w-full mt-1" :class="validationErrors.name ?'border-red-500' : ''"/>
-                        <span v-if="validationErrors.name" class="text-red-600">{{ validationErrors.name[0]}}</span>
-                    </div>
-                    <div class="flex items-center mt-4 gap-2">
-                        <Checkbox v-model:checked="form.auto_approval" />
-                        <label for="auto_aproval">{{ translations.auto_approval }}</label>
-                    </div>
-                    <div class="mt-4">
-                        <label class="font-semibold">{{ translations.group_text }}</label>
-                        <InputTextarea v-model="form.about" class="mt-1"/>
-                        <span v-if="validationErrors.about" class="text-red-600  ">{{ validationErrors.about[0]}}</span>
 
-                    </div>
-
+                    <GroupForm :form="form" :translations="translations" :validationErrors="validationErrors" />
                     <div class="mt-4 flex justify-between">
-                    <button
-                        type="button"
-                        class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        @click="closeModal"
-                    >
-                        {{ translations.cancel_button }}
-                    </button>
-                    <button
-                        type="button"
-                        class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        @click="createGroup"
-                    >
-                        {{ translations.send_button }}
-                    </button>
+                        <button
+                            type="button"
+                            class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            @click="closeModal"
+                        >
+                            {{ translations.cancel_button }}
+                        </button>
+                        <button
+                            type="button"
+                            class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            @click="createGroup"
+                        >
+                            {{ translations.send_button }}
+                        </button>
                     </div>
                 </div>
               </DialogPanel>
@@ -89,11 +75,10 @@
     DialogTitle,
   } from '@headlessui/vue'
 import { useForm, usePage } from '@inertiajs/vue3';
-import TextInput from '../TextInput.vue';
-import InputTextarea from './InputTextarea.vue';
-import Checkbox from '../Checkbox.vue';
+
 import axiosClient from '@/axiosClient';
 import { XMarkIcon } from '@heroicons/vue/24/solid';
+import GroupForm from './GroupForm.vue';
 
 
   const props = defineProps({
@@ -138,11 +123,6 @@ import { XMarkIcon } from '@heroicons/vue/24/solid';
                 emit('addGroup', data.group);
             }).catch(({response})=>{
                 validationErrors.value = response.data.errors;
-                console.log(validationErrors.value);
-
-                console.log(response);
-
-
             })
   }
 

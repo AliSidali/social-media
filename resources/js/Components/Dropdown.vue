@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps({
     align: {
@@ -14,6 +14,7 @@ const props = defineProps({
         type: String,
         default: 'pb-1 bg-white dark:bg-gray-700',
     },
+    isDisabled : false
 });
 
 const closeOnEscape = (e) => {
@@ -42,11 +43,18 @@ const alignmentClasses = computed(() => {
 });
 
 const open = ref(false);
+
+const openDropdown = ()=>{
+    if(!props.isDisabled){
+        open.value = !open.value;
+    }
+}
+
 </script>
 
 <template>
     <div class="relative">
-        <div @click="open = !open">
+        <div @click="openDropdown">
             <slot name="trigger" />
         </div>
 
@@ -63,8 +71,8 @@ const open = ref(false);
         >
             <div
                 v-show="open"
-                class="absolute z-50 mt-2 rounded-md shadow-lg w-[500px]"
-                :class="[widthClass, alignmentClasses]"
+                class="absolute z-50 mt-2 rounded-md shadow-lg "
+                :class="[alignmentClasses]"
                 style="display: none"
                 @click="open = false"
             >

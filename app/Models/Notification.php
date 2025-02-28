@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Traits\ModelsMethods;
 use Illuminate\Database\Eloquent\Model;
-
 class Notification extends Model
 {
     use ModelsMethods;
@@ -15,6 +14,8 @@ class Notification extends Model
     {
         return $this->morphTo();
     }
+
+
 
 
 

@@ -35,18 +35,32 @@ class Group extends Model
 
     }
 
+    public function isCurrentUserApproved()
+    {
+        return $this->users()->where(['user_id' => auth()->user()->id, 'status' => StatusEnum::APPROVED->value])->exists();
+    }
+
     public function getPendingUsers()
     {
-        return $this->belongsToMany(User::class, 'group_user')->wherePivot('status', StatusEnum::PENDING->value)->get();
+        return $this->belongsToMany(User::class, 'group_user')
+            ->withPivot('status', 'role')
+            ->wherePivot('status', StatusEnum::PENDING->value);
     }
 
     public function getApprovedUsers()
     {
-        return $this->belongsToMany(User::class, 'group_user')->wherePivot('status', StatusEnum::APPROVED->value)->get();
+        return $this->belongsToMany(User::class, 'group_user')
+            ->withPivot('status', 'role')
+            ->wherePivot('status', StatusEnum::APPROVED->value);
     }
 
     public function createdNotifications()
     {
         return $this->morphMany(Notification::class, 'notificable');
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
     }
 }

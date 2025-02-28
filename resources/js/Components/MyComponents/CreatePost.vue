@@ -6,7 +6,7 @@
 
         </div>
 
-        <PostModal v-model="showModal" :post="newPost" />
+        <PostModal v-model="showModal" :group_id="group_id" />
     </div>
 </template>
 <script setup>
@@ -17,6 +17,10 @@ import { useForm, usePage } from '@inertiajs/vue3';
 const props = defineProps({
     success: {
         type: String
+    },
+    group_id:{
+        type:Number,
+        default:null
     }
 })
 const  page = usePage().props;
@@ -25,35 +29,10 @@ const translations = page.translations;
 //SHOW MODAL FOR CREATING POST
 
 const showModal = ref(false);
-const newPost = ref({
-    body:'',
-    user:page.auth.user
-})
-
-
-//const showNotifcation = ref(true);
 
 
 
-const newPostForm = useForm({
-    body: ''
-});
-const showNotifcation = ref(true);
 
-
-const submit = ()=>{
-    newPostForm.post(route('post.store'), {
-        onSuccess: ()=>{
-            newPostForm.reset();
-            setTimeout(()=>{
-                showNotifcation.value=false;
-            }, 3000);
-            showNotifcation.value=true;
-
-        }
-
-    });
-}
 
 
 

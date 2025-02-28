@@ -20,6 +20,7 @@ class GroupResource extends JsonResource
         $pivotData = $this->users()->wherePivot('user_id', $user_id)->first()?->pivot;
         return [
             "id" => $this->id,
+            "user_id" => $this->user_id,
             "name" => $this->name,
             "slug" => $this->slug,
             "autoApproval" => $this->auto_approval,

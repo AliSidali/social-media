@@ -32,14 +32,15 @@ Route::middleware(['auth', LocaleMiddleware::class])->group(function () {
     Route::delete('/comment/{comment}', [PostController::class, 'destroyComment'])->name('comment.destroy');
     Route::post('/comment/{comment}/reaction', [PostController::class, 'saveCommentReaction'])->name('comment.reaction');
     Route::post('/group', [GroupController::class, 'store'])->name('group.store');
-
     //Group Routes
     Route::get('/g/{group:slug}', [GroupController::class, 'profile'])->middleware(LocaleMiddleware::class)->name('group.profile');
     Route::post('/group/{group:slug}/update-images', [GroupController::class, 'updateImage'])->name('group.updateImages');
     Route::post('/group/{group:slug}/invite-user', [GroupController::class, 'inviteUser'])->name('group.inviteUser');
     Route::get('/group/{group:slug}/approve-invitation/{token}', [GroupController::class, 'approveInvitation'])->name('group.approveInvitation');
     Route::post('/group/{group}/join', [GroupController::class, 'join'])->name('group.join');
-    Route::post('/group/{group}/approval', [GroupController::class, 'groupApproval'])->name('group.approval');
+    Route::post('/group/{group}/approve-request', [GroupController::class, 'approveRequest'])->name('group.approveRequest');
+    Route::patch('/group/{group}/update-role', [GroupController::class, 'updateRole'])->name('group.updateRole');
+    Route::put('/group/{group:slug}/update', [GroupController::class, 'update'])->name('group.update');
 
     //notification route
     Route::get('/notification/read', [GroupController::class, 'readNotifications'])->name('notification.read');
