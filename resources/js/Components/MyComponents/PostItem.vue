@@ -4,7 +4,7 @@
         <div class="flex justify-between">
             <PostUserHeader  :post="post"/>
             <!-- the three dots section -->
-            <EditDeleteDropdown @edit="openEditModal" @delete="deletePost"/>
+            <EditDeleteDropdown :post="post" @edit="openEditModal" @delete="deletePost"/>
         </div>
 
 
@@ -97,6 +97,7 @@ const props = defineProps({
 })
 
 const page = usePage().props;
+const user = page.auth.user;
 const translations = page.translations;
 
 

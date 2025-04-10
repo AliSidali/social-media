@@ -45,4 +45,10 @@ class Post extends Model
     {
         return $this->hasMany(PostComment::class)->latest()->limit(5);
     }
+
+    public function isOwner($userId)
+    {
+        return $this->user_id === $userId;
+    }
+
 }

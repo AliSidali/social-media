@@ -37,7 +37,7 @@
 
 
             </div>
-            <EditDeleteDropdown   v-if="comment.user.id === user.id" @edit="editComment" @delete="deleteComment" class="opacity-0 group-hover:opacity-100" />
+            <EditDeleteDropdown  :comment="comment"  :post="post"     @edit="editComment" @delete="deleteComment" class="opacity-0 group-hover:opacity-100" />
 
         </div>
 
@@ -230,12 +230,14 @@ const deleteComment = ()=>{
   if (!window.confirm(translations.delete_comment_confirmation)) {
     return false;
   }
+
     axiosClient.delete(route('comment.destroy', props.comment.id))
     .then(({data})=>{
-        //props.post.comments = data.post.comments;
-        removeElement(props.post.comments);
+        props.post.comments = data.post.comments;
+       removeElement(props.post.comments);
 
         props.post.post_comments_num = data.post.post_comments_num;
+
 
     });
 }

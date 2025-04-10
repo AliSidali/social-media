@@ -63,4 +63,9 @@ class Group extends Model
     {
         return $this->hasMany(Post::class);
     }
+
+    public function isAdmin($user_id)
+    {
+        return $this->users()->wherePivot('role', 'admin')->wherePivot('user_id', $user_id)->exists();
+    }
 }

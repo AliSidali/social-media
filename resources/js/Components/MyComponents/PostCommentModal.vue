@@ -67,7 +67,6 @@
 
                     <!-- diplaying post comments and update input -->
                     <div class="py-3 px-6">
-
                         <div v-for="(comment, index) in post.comments" :key="index"  class="mb-4 group">
                             <comment  :comment="comment"  :post="post" @onCreateComment="createComment" @onPreviewAttachment="previewAttachment"/>
 

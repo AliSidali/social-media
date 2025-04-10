@@ -26,6 +26,7 @@ class PostResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'user_id' => $this->user_id,
             'body' => $this->body,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
@@ -35,7 +36,7 @@ class PostResource extends JsonResource
             'has_current_user_reaction' => $this->reactions()->where('user_id', $user->id)->count() > 0,
             'post_comments_num' => $comments->count(),
             'comments' => self::convertIntoCommentTree($comments)[0],
-            'group' => $this->group
+            'group' => new GroupResource($this->group)
         ];
     }
 

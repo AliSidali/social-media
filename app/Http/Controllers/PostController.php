@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Group;
+use App\Models\Notification;
 use App\Models\Post;
 use App\Models\Reaction;
 use App\Models\Attachment;
@@ -104,13 +105,24 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
 
-        $post = $post->where('user_id', auth()->user()->id)->first();
-        if (!$post) {
-            return response("You don't have a permission to delete this post", 403);
+        $user = auth()->user();
+
+        if ($post->isOwner($user->id) || $post->group?->isAdmin($user->id)) {
+            if (!$post->isOwner($user->id)) {
+                Notification::create([
+                    'user_id' => $post->user_id,
+                    'title' => 'Deleting post: ',
+                    'message' => 'group\'s admin has deleted your post.',
+                    'notificable_id' => $post->group->id,
+                    'notificable_type' => Group::class,
+
+                ]);
+                $post->delete();
+            }
+            return back();
         }
 
-        $post->delete();
-        return back();
+        return response("You don't have a permission to delete this post", 403);
     }
 
     public function downloadAttachment(Attachment $attachment)
@@ -215,22 +227,30 @@ class PostController extends Controller
     public function destroyComment(Request $request, PostComment $comment)
     {
         $user = auth()->user();
-        $post_id = $comment->post_id;
+        $post = $comment->post;
 
-        if ($user->id !== $comment->user_id) {
-            return response("You don't have a permission to delete this comment", 403);
+        if ($user->id === $comment->user_id || $post->group->isAdmin($user->id)) {
+            $this->deleteAttachment($comment);
+
+            $comment->delete();
+            if ($user->id !== $comment->user_id) {
+                Notification::create([
+                    'user_id' => $comment->user_id,
+                    'title' => 'Deleting Comment',
+                    'message' => 'the group\'s admin has deleted your comment',
+                    'notificable_id' => $comment->post->group->id,
+                    'notificable_type' => Group::class
+                ]);
+            }
+
+            return response([
+                'post' => new PostResource($post)
+            ], 201);
         }
+        return response("You don't have a permission to delete this comment", 403);
 
 
-        $this->deleteAttachment($comment);
 
-        $comment->delete();
-
-        $post = Post::find($post_id);
-
-        return response([
-            'post' => new PostResource($post)
-        ], 201);
     }
 
 
