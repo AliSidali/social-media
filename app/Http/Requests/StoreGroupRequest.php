@@ -27,4 +27,11 @@ class StoreGroupRequest extends FormRequest
             'about' => ['string']
         ];
     }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'about' => nl2br($this->about)
+        ]);
+    }
 }

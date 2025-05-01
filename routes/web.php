@@ -22,6 +22,7 @@ Route::middleware(['auth', LocaleMiddleware::class])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //Post routes
+    Route::get('/post/{post}', [PostController::class, 'view'])->name('post.view');
     Route::post('/post', [PostController::class, 'store'])->name('post.store');
     Route::put('/post/{post}', [PostController::class, 'update'])->name('post.update'); //UPDATE POST WITH ADDING OR DELETING ITS ATTACHMENTS
     Route::delete('/post/{post}', [PostController::class, 'destroy'])->name('post.destroy');
@@ -41,7 +42,8 @@ Route::middleware(['auth', LocaleMiddleware::class])->group(function () {
     Route::post('/group/{group}/approve-request', [GroupController::class, 'approveRequest'])->name('group.approveRequest');
     Route::patch('/group/{group}/update-role', [GroupController::class, 'updateRole'])->name('group.updateRole');
     Route::put('/group/{group:slug}/update', [GroupController::class, 'update'])->name('group.update');
-
+    //delete group's user
+    Route::delete('/group-user/{group:slug}', [GroupController::class, 'destroyUserGroup'])->name('groupUser.destroy');
     //notification route
     Route::get('/notification/read', [GroupController::class, 'readNotifications'])->name('notification.read');
 });

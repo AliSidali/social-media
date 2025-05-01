@@ -56,6 +56,7 @@ class GroupController extends Controller
             'message' => ['success' => session('success')],
             'pendingUsers' => UserResource::collection($group->getPendingUsers),
             'approvedUsers' => UserResource::collection($group->getApprovedUsers),
+            'groupUsers' => UserResource::collection($group->users),
             'groupPosts' => $groupPosts ? PostResource::collection($groupPosts) : null
         ]);
     }
@@ -105,6 +106,11 @@ class GroupController extends Controller
 
         $group = $group->update($paths);
         return response(['success' => $success]);
+
+    }
+
+    public function destroyUser()
+    {
 
     }
 
@@ -279,7 +285,7 @@ class GroupController extends Controller
         if ($groupUser->pivot->role !== 'admin') {
             return response('You don\'t have permission to do this action', 403);
         } elseif ($group->user_id === $request->user_id) {
-            return response('you don\'t have permission to change the role of the group owner!');
+            return response('you don\'t have permission to change the role of the group owner!', 403);
         }
 
 
@@ -321,5 +327,31 @@ class GroupController extends Controller
         $data = $request->validated();
         $group->update($data);
         return redirect()->route('group.profile', $group->slug)->with('success', 'your group is updated');
+    }
+
+    public function destroyUserGroup(Request $request, Group $group)
+    {
+        $user = auth()->user();
+
+        if (!$group->isAdmin($user->id)) {
+            return response()->json('you don\'t have permission to delete the user from the group', 403);
+        }
+        $data = $request->validate([
+            'userId' => ['required']
+        ]);
+        $isGroupUserExists = $group->users()->wherePivot('user_id', $data['userId'])->exists();
+        if (!$isGroupUserExists) {
+            return response('this record does not exist', 404);
+        }
+        $group->users()->detach($data['userId']);
+
+        Notification::create([
+            'user_id' => $data['userId'],
+            'title' => 'removing user from group: ',
+            'message' => 'you have been removed from the group ' . $group->name,
+            'notificable_id' => $group->id,
+            'notificable_type' => Group::class
+        ]);
+        return back()->with('success', 'the user has been deleted from the group.');
     }
 }

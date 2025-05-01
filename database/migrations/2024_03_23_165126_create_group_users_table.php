@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('group_users', function (Blueprint $table) {
             $table->id();
-            $table->string('status', 255); //approved, pending
+            $table->string('status', 255); //approved, pending, rejected
             $table->string('role', 255); //admin user
             $table->string('token', 1024)->nullable();
             $table->timestamp('token_expire_date')->nullable();

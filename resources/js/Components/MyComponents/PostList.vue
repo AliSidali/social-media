@@ -105,7 +105,6 @@ watch(()=>props.posts, ()=>{
 <template>
 
     <div class="scrollbar lg:overflow-auto lg:flex-1 ">
-
         <PostItem  @onShowComments="showComments" @onAttachmentClick="previewAttachmentModal" @editClick="openEditModal" v-for="(post, index) in allPosts.data" :key="index" :post="post" />
         <div ref="loadMoreIntersect" ></div>
         <div v-if="allPosts.next">{{ translations.load_post }}</div>

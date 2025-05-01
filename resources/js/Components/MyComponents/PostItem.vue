@@ -37,10 +37,22 @@
         <!-- LIKE AND COMMENT -->
         <!-- info about comments and reactions -->
         <div class="flex items-center justify-between border-b mb-2 px-4 py-2 ">
-            <div class="flex gap-1">
-                <HandThumbUpIcon v-if="hasLikeReaction" class="w-6 text-white rounded-full bg-blue-600 p-1"/>
-                <HeartIcon v-if="hasLoveReaction" class="w-6 text-white rounded-full bg-red-600 p-1"/>
-                <span class="ml-2">{{ post.reactions.length }}</span>
+            <div class="relative flex items-center group">
+                <div class="" v-for="(type, index) in existingReactionTypes" :key="index">
+                    <img  :src="`/storage/emojis/${type}.png`"  class="w-5 object-contain" />
+                </div>
+                <div v-if="post.reactions.length > 0">
+                    <span class="ml-2">{{ post.reactions[0].username }} and</span>
+                    <span class="ml-2">{{ post.reactions.length-1 }} others</span>
+                </div>
+                <!-- display list of users that have reaction -->
+                <div class="absolute pointer-events-none top-6 -left-3 z-10 text-sm bg-black/70 p-2 w-40 rounded-lg text-white opacity-0 group-hover:pointer-events-auto group-hover:opacity-100">
+                    <a :href="route('profile.index', reaction.username)" v-for="(reaction,index) in post.reactions" :key="index" class="flex gap-4 mb-2 z-30 hover:underline">
+                        <span><img :src="reaction.image" class="w-5 object-contain bg-white rounded-full" alt=""> </span>
+                        <span>{{ reaction.username }}</span>
+                    </a>
+                </div>
+
             </div>
             <div class="flex gap-1">
                 <span>{{ post.post_comments_num }}</span>
@@ -48,19 +60,21 @@
             </div>
 
         </div>
-        <!-- like and comment buttons -->
+        <!-- reactions and comment buttons -->
         <div class=" flex mb-3 gap-2">
-            <div class="flex-1 relative"  @mouseover="showReaction"  @mouseleave="hideReaction" @click="hideReaction">
-                <div  v-if="isShowReaction" class="absolute flex -top-14 gap-1 border rounded shadow-sm bg-white w-full py-3 justify-center">
-                    <button  @click="sendPostReaction('like')"> <HandThumbUpIcon class="w-9 text-white rounded-full bg-blue-600 p-2"/></button>
-                    <button  @click="sendPostReaction('love')"><HeartIcon  class="w-9 text-white rounded-full bg-red-600 p-2"/> </button>
+            <div class="flex-1 relative group" >
+                <div   class="absolute transform top-0 scale-0 left-1/2 -translate-x-1/2 px-2 bg-gray-100 flex  gap-4 border rounded shadow-sm  py-1 justify-center group-hover:-top-14 group-hover:scale-100 transition-all duration-500 ease-out">
+                    <span  @click="sendPostReaction('like')" class=" w-14 h-14 text-white animate-bounce rounded-full bg-blue-600 p-2 cursor-pointer hover:scale-125 transition-all duration-500"> <HandThumbUpIcon class=" w-10 "/></span>
+                    <span  @click="sendPostReaction('love')" class=" w-14 h-14 text-white  animate-bounce rounded-full bg-red-600 p-2 cursor-pointer hover:scale-125 transition-all duration-500"><HeartIcon  class="w-10"/> </span>
+                    <span  @click="sendPostReaction('lamour')" class=" w-14 h-14 rounded-full animate-bounce cursor-pointer"><img src="/storage/emojis/lamour.png"  class=" object-contain" /></span>
+
                 </div>
                 <button
                     @click="sendPostReaction('like')"
-                    class="flex w-full items-center justify-center gap-2 text-gray-800  py-2 rounded-lg "
+                    class="flex z-10 w-full items-center justify-center gap-2 text-gray-800  py-2 rounded-lg "
                     :class="post.has_current_user_reaction ? 'bg-sky-100 hover:bg-sky-200' : 'bg-gray-100 hover:bg-gray-200'"
                 >
-                    <HandThumbUpIcon class="w-6"/>
+                    <HandThumbUpIcon class="w-6 text-blue-700"/>
                     <span>{{ translations.like_button }}</span>
                 </button>
             </div>
@@ -77,16 +91,15 @@
 </template>
 <script setup>
 import { Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue';
-import { ArrowDownTrayIcon, HandThumbUpIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon, PaperClipIcon, HeartIcon, FaceSmileIcon, FaceFrownIcon, ChatBubbleOvalLeftIcon } from '@heroicons/vue/24/outline';
+import { ArrowDownTrayIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon, PaperClipIcon,  FaceFrownIcon, ChatBubbleOvalLeftIcon } from '@heroicons/vue/24/outline';
+import {FaceSmileIcon, HandThumbUpIcon, HeartIcon} from '@heroicons/vue/24/solid'
 import { MenuItem } from '@headlessui/vue'
 import PostUserHeader from './PostUserHeader.vue';
 import ReadMoreLess from './ReadMoreLess.vue';
 import EditDeleteDropdown from './EditDeleteDropdown.vue';
 import {helpers} from '@/helpers';
 import axiosClient from '@/axiosClient';
-
-
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 
 
@@ -139,56 +152,25 @@ const sendPostReaction = (reaction)=>{
         props.post.reactions = data.reactions;
         props.post.has_current_user_reaction = data.has_reaction
 
-        // show   reactions type of the current post without refresh
-        showReactionIcons();
 
     });
 }
-
-//SHOW AND HIDE REACTION BUTTONS
-const isShowReaction = ref(false);
-
-const showReaction = ()=>{
-    setTimeout(()=>{
-        isShowReaction.value= true
-    }, 300)
-}
-
-const hideReaction = ()=>{
-    setTimeout(()=>{
-        isShowReaction.value= false
-    }, 300)
-}
-
-// show all reactions type  of the current post in the first laod
-const hasLikeReaction = ref(false);
-const hasLoveReaction = ref(false);
-onMounted(()=>{
-    showReactionIcons();
-})
-
-
-const showReactionIcons = ()=>{
-    hasLikeReaction.value =   false ;
-    hasLoveReaction.value =  false ;
-
+const existingReactionTypes = computed(()=>{
+    let reactionTypes = [];
     for(let reaction of props.post.reactions){
-        if(reaction.type === 'like'){
-            hasLikeReaction.value =   true ;
-        }
-        if (reaction.type == 'love') {
-            hasLoveReaction.value =  true ;
-        }
 
+        if(!reactionTypes.includes(reaction.type)){
+            reactionTypes = [...reactionTypes, reaction.type]
+        }
     }
-}
+    return reactionTypes;
+})
 
 
 //show comments
 const showComments = ()=>{
     emit('onShowComments', props.post)
 }
-
 
 
 </script>

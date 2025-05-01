@@ -23,7 +23,6 @@ class PostResource extends JsonResource
 
         $user = auth()->user();
         $comments = $this->post_comments;
-
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -32,8 +31,8 @@ class PostResource extends JsonResource
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'user' => new UserResource($this->user),
             'attachments' => AttachmentResource::collection($this->attachments),
-            'reactions' => $this->reactions,
-            'has_current_user_reaction' => $this->reactions()->where('user_id', $user->id)->count() > 0,
+            'reactions' => ReactionResource::collection($this->reactions),
+            'has_current_user_reaction' => $this->reactions->where('user_id', $user->id)->count() > 0,
             'post_comments_num' => $comments->count(),
             'comments' => self::convertIntoCommentTree($comments)[0],
             'group' => new GroupResource($this->group)

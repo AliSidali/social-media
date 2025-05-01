@@ -184,7 +184,7 @@ const updateComment= ()=>{
   axiosClient.post(route('comment.update', editedComment.value.id), {
    text: editedComment.value.text,
    deletedAttachmentId:deletedAttachmentId.value,
-   attachment: !editedComment.value.attachment.id ?editedComment.value.attachment.file : null
+   attachment: editedComment.value.attachment ? editedComment.value.attachment.file : null
   }
   ,{
         headers: {

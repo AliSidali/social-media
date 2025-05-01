@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Enums\StatusEnum;
+use App\Http\Resources\ReactionResource;
 use App\Models\Group;
 use App\Models\Notification;
 use App\Models\Post;
@@ -19,9 +21,29 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Resources\PostCommentResource;
+use Inertia\Inertia;
 
 class PostController extends Controller
 {
+
+    public function view(Request $request, Post $post)
+    {
+        $post->load('attachments');
+        $post->load('user');
+        $post->load([
+            'post_comments' => function ($query) {
+                $query->with('reactions');
+            }
+        ]);
+        $post = $post->load('group');
+        dd($post);
+        return Inertia::render(
+            'Post/View',
+            [
+                'post' => new PostResource($post)
+            ]
+        );
+    }
 
 
     public function store(StorePostRequest $request)
@@ -33,7 +55,6 @@ class PostController extends Controller
             $user = auth()->user();
             $data = $request->validated();
             $post = Post::create($data);
-
             $attachments = $data['attachments'] ?? [];
             foreach ($attachments as $attachment) {
                 $path = $attachment->store('attachments/post-' . $post->id, 'public');
@@ -47,6 +68,23 @@ class PostController extends Controller
                     'created_by' => $user->id
                 ]);
             }
+
+            $group = $post->group;
+            if ($group) {
+                $approvedUsers = $group->users()->wherePivot('status', StatusEnum::APPROVED->value)->get();
+                foreach ($approvedUsers as $groupUser) {
+                    if ($groupUser->id !== $user->id) {
+                        $notification = Notification::create([
+                            'user_id' => $groupUser->id,
+                            'title' => 'New post added to group ' . $group->name,
+                            'message' => substr($post->body, 3, 40) . '...',
+                            'notificable_id' => $group->id,
+                            'notificable_type' => Group::class
+                        ]);
+                    }
+                }
+            }
+
             DB::commit();
         } catch (\Exception $e) {
 
@@ -64,7 +102,6 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post)
     {
         $user = auth()->user();
-
         DB::beginTransaction();
 
         try {
@@ -138,7 +175,6 @@ class PostController extends Controller
             'reaction' => ['string', Rule::enum(ReactionEnum::class)]
         ]);
 
-
         $reaction = $post->reactions()->where('user_id', $user->id)->first();
         if ($reaction) {
             if ($reaction->type == $data['reaction']) {
@@ -146,7 +182,10 @@ class PostController extends Controller
                 $has_reaction = false;
 
             } else {
-                $reaction->update(['type' => $data['reaction']]);
+                $reaction->update([
+                    'type' => $data['reaction'],
+                    'image' => 'emojis/' . $data['reaction'] . '.png'
+                ]);
                 $has_reaction = true;
             }
         } else {
@@ -154,15 +193,27 @@ class PostController extends Controller
                 'user_id' => $user->id,
                 'reactionable_id' => $post->id,
                 'reactionable_type' => Post::class,
-                'type' => $data['reaction']
+                'type' => $data['reaction'],
+                'image' => 'emojis/' . $data['reaction'] . '.png'
             ]);
             $has_reaction = true;
 
         }
 
+        if ($has_reaction) {
+            Notification::create([
+                'user_id' => $post->user->id,
+                'title' => 'post\'s reaction: ',
+                'message' => $user->username . ' has reacted to your post.',
+                'notificable_id' => $post->id,
+                'notificable_type' => Post::class
+
+            ]);
+        }
+
 
         return response([
-            'reactions' => $post->reactions,
+            'reactions' => ReactionResource::collection($post->reactions),
             'has_reaction' => $has_reaction
         ]);
     }
@@ -170,6 +221,7 @@ class PostController extends Controller
     //comment methods
     public function createComment(Request $request, Post $post)
     {
+
         DB::beginTransaction();
         $user = auth()->user();
 
@@ -187,7 +239,6 @@ class PostController extends Controller
                 ]
             ]);
 
-
             $comment = PostComment::create([
                 'user_id' => $user->id,
                 'post_id' => $post->id,
@@ -197,6 +248,7 @@ class PostController extends Controller
 
 
             $attachment = $request->attachment;
+            $path = null;
             if ($attachment) {
                 $path = $attachment->store('attachments/comment-' . $comment->id, 'public');
                 Attachment::create([
@@ -209,6 +261,27 @@ class PostController extends Controller
                     'created_by' => $user->id
                 ]);
             }
+
+            if ($request->parent_id) {
+                $user_id = PostComment::find($request->parent_id)->user_id;
+                Notification::create([
+                    'user_id' => $user_id,
+                    'title' => 'New Comment: ',
+                    'message' => $user->username . ' has replied to your comment',
+                    'notificable_id' => $post->id,
+                    'notificable_type' => Post::class
+                ]);
+            }
+
+            Notification::create([
+                'user_id' => $post->user_id,
+                'title' => 'New Comment: ',
+                'message' => $user->username . ' has commented in your post.',
+                'notificable_id' => $post->id,
+                'notificable_type' => Post::class
+            ]);
+
+
 
             DB::commit();
             return response([

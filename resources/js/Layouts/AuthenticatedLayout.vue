@@ -74,7 +74,8 @@ const readNotifications = ()=>{
                                                 <h3>Notifications</h3>
                                             </div>
                                             <div class="max-h-[75vh] overflow-auto">
-                                                <DropdownLink v-for="(notification, index) in authUser.notifications" :key="index"  :href="notification.created_by.is_user ?  route('profile.index', notification.created_by.parameter) : route('group.profile', notification.created_by.parameter)" class="flex  gap-4  items-center ">
+                                                <!-- notification.created_by.is_user ?  route('profile.index', notification.created_by.parameter) : route('group.profile', notification.created_by.parameter) -->
+                                                <DropdownLink v-for="(notification, index) in authUser.notifications" :key="index"  :href="notification.created_by.path" class="flex  gap-4  items-center ">
                                                     <img :src="notification.created_by.thumbnail_path ?? '/storage/defaults/avatar.png'" class="border w-10 h-10 rounded-full" alt="">
                                                     <div>
                                                         <div class=" gap-2">

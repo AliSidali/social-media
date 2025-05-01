@@ -3,10 +3,10 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
-class AttachmentResource extends JsonResource
+class ReactionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,14 +15,11 @@ class AttachmentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        //return parent::toArray($request);
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'url' => Storage::url($this->path),
-            'mime' => $this->mime,
-            'size' => $this->size
-
+            'username' => $this->user->username,
+            'type' => $this->type,
+            'image' => Storage::url($this->image),
         ];
     }
-
 }

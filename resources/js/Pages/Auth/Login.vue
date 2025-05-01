@@ -6,6 +6,8 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import {EyeSlashIcon, EyeIcon, EnvelopeIcon} from '@heroicons/vue/24/outline';
+import {ref} from 'vue'
 
 defineProps({
     canResetPassword: {
@@ -16,6 +18,7 @@ defineProps({
     },
 });
 
+const passwordType = ref('password');
 const page = usePage();
 const translations = page.props.translations;
 const form = useForm({
@@ -29,6 +32,10 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
+
+const changePasswordType = ()=>{
+    passwordType.value = passwordType.value == 'password' ? 'text' : 'password';
+}
 </script>
 
 <template>
@@ -41,32 +48,39 @@ const submit = () => {
         <form @submit.prevent="submit">
             <div>
                 <InputLabel class="capitalize" for="email" :value="translations.email_label" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+                <div class="flex items-center">
+                    <TextInput
+                        id="email"
+                        type="email"
+                        class="mt-1 block w-full rounded-r-none"
+                        v-model="form.email"
+                        required
+                        autofocus
+                        autocomplete="username"
+                    />
+                        <div @click="changePasswordType" class="bg-gray-200 p-3 rounded-r-md mt-1 hover:cursor-pointer">
+                            <EnvelopeIcon class="w-4"/>
+                        </div>
+                    </div>
+                    <InputError class="mt-2" :message="form.errors.email" />
+                </div>
 
             <div class="mt-4">
                 <InputLabel class="capitalize" for="password" :value="translations.password_label" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
+                <div class="flex items-center">
+                    <TextInput
+                        id="password"
+                        :type="passwordType"
+                        class="mt-1 block w-full rounded-r-none"
+                        v-model="form.password"
+                        required
+                        autocomplete="current-password"
+                    />
+                    <div @click="changePasswordType" class="bg-gray-200 p-3 rounded-r-md mt-1 hover:cursor-pointer">
+                        <EyeIcon class="w-4" v-if="passwordType == 'password'" />
+                        <EyeSlashIcon class="w-4"  v-else/>
+                    </div>
+                </div>
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 

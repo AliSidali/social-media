@@ -51,4 +51,9 @@ class Post extends Model
         return $this->user_id === $userId;
     }
 
+    public function createdNotifications()
+    {
+        return $this->morphMany(Notification::class, 'notificable');
+    }
+
 }

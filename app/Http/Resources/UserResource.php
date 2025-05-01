@@ -29,6 +29,7 @@ class UserResource extends JsonResource
             "avatar_path" => $this->avatar_path ? Storage::url($this->avatar_path) : null,
             "notifications" => NotificationResource::collection($notifications),
             "notReadNotificationNum" => count($notReadNotifications),
+            "status" => $this->pivot?->status,
             "role" => $this->pivot?->role,
         ];
     }
