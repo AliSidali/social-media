@@ -20,7 +20,6 @@ class PostResource extends JsonResource
 */
     public function toArray(Request $request): array
     {
-
         $user = auth()->user();
         $comments = $this->post_comments;
         return [

@@ -268,10 +268,9 @@ class GroupController extends Controller
     {
         $user = auth()->user();
         $notReadNotificationsExists = $user->receivedNotifications()->where('is_read', false)->exists();
-        if (!$notReadNotificationsExists) {
-            return response(null, 404);
+        if ($notReadNotificationsExists) {
+            $notReadNotifications = $user->receivedNotifications()->where('is_read', false)->update(['is_read' => true]);
         }
-        $notReadNotifications = $user->receivedNotifications()->where('is_read', false)->update(['is_read' => true]);
 
         return response(null, 201);
     }

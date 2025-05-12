@@ -23,8 +23,8 @@ class PostCommentResource extends JsonResource
             'parent_id' => $this->parent_id,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
-            'user_has_comment_reaction' => $this->reactions()->where('user_id', $user->id)->count(),
-            'comment_reaction_num' => $this->reactions()->count(),
+            'user_has_comment_reaction' => $this->reactions->where('user_id', $user->id)->count(),
+            'comment_reaction_num' => $this->reactions->count(),
             'user' => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,

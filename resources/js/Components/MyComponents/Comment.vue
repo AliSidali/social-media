@@ -119,7 +119,7 @@
 import ReadMoreLess from './ReadMoreLess.vue';
 import Comment from './Comment.vue';
 import { usePage } from '@inertiajs/vue3';
-import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import {CameraIcon, ChatBubbleLeftEllipsisIcon,  HandThumbUpIcon, PaperAirplaneIcon, XMarkIcon} from '@heroicons/vue/24/solid';
 import EditDeleteDropdown from './EditDeleteDropdown.vue';
 import { ref, watch } from 'vue';
@@ -156,7 +156,7 @@ const replyComment = ref('');
 const attachment = ref(null);
 
 //ckeditor
-const editor = BalloonEditor;
+const editor = ClassicEditor;
 const editorConfig = {
     toolbar: [ 'heading','|', 'link','|','bold', 'italic',  '|', 'bulletedList', 'numberedList','|', 'outdent','indent', '|', 'blockquote' ],
     placeholder: 'Type your comment here'

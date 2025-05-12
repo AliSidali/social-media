@@ -24,3 +24,7 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+
+// "@ckeditor/ckeditor5-build-balloon": "^41.4.2",
+// "@ckeditor/ckeditor5-vue": "^5.1.0",
+//"ckeditor5": "^45.0.0"

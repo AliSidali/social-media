@@ -121,7 +121,7 @@ import InputTextarea from './InputTextarea.vue';
 import PostUserHeader from './PostUserHeader.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { BookmarkIcon, PaperClipIcon, XMarkIcon, ArrowUturnLeftIcon } from '@heroicons/vue/24/solid';
-import BalloonEditor  from '@ckeditor/ckeditor5-build-balloon';
+import ClassicEditor  from '@ckeditor/ckeditor5-build-classic';
 import { helpers } from '@/helpers';
 
 
@@ -251,7 +251,7 @@ const setAttachmentErrors = (errs)=>{
 
 
 //CKEDITOR CONFIG
-const editor = BalloonEditor;
+const editor = ClassicEditor;
 const editorConfig= {
   toolbar: [ 'heading','|', 'link','|','bold', 'italic',  '|', 'bulletedList', 'numberedList','|', 'outdent','indent', '|', 'blockquote' ],
 

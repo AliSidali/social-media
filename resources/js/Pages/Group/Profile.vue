@@ -145,7 +145,7 @@
 
                             <h3 class="text-sm font-medium grid grid-cols-2 gap-2">
                                 <div v-for="(user, index) in approvedUsers" :key="index" class="flex justify-between items-center px-1 border-2 border-transparent shadow   hover:border-indigo-300" >
-                                    <UserListItem :href="route('profile.index', user.username)" :image="user.avatar_path" :name="user.username" class="hover:bg-white"/>
+                                    <UserListItem :href="route('profile.index', user.username)" :user="user" class="hover:bg-white"/>
                                     <div class="flex gap-2 items-center">
                                       <button v-if="isCurrentUserAdmin && user.id !== currentUser.id && user.id !== group.user_id" @click="approveUser(user.id, 'rejected')" class="bg-orange-500 text-xs text-white px-4 py-2 rounded hover:bg-orange-700 capitalize">reject</button>
                                       <Dropdown :isDisabled=" user.id == currentUser.id || user.id == group.user_id" width="48">
@@ -182,7 +182,7 @@
                       >
                             <div class="grid grid-cols-2 text-sm font-medium gap-2">
                                 <div v-for="(user, index) in pendingUsers" :key="index" class="flex justify-between items-center px-4 border-2 border-transparent shadow  " >
-                                    <UserListItem :href="route('profile.index', user.username)" :image="user.avatar_path" :name="user.username" class="hover:bg-white"/>
+                                    <UserListItem :href="route('profile.index', user.username)" :user="user" class="hover:bg-white"/>
                                     <div class="flex gap-2">
                                         <button @click="approveUser(user.id, 'approved')" class="bg-gray-800 text-xs text-white px-4 py-2 rounded hover:bg-gray-900 capitalize">approve</button>
                                         <button @click="approveUser(user.id, 'rejected')" class="bg-orange-500 text-xs text-white px-4 py-2 rounded hover:bg-orange-900 capitalize">reject</button>
@@ -201,7 +201,7 @@
                       >
                             <div  class="grid grid-cols-2 text-sm font-medium gap-2">
                                 <div v-for="(user, index) in rejectedUsers" :key="index" class="flex justify-between items-center px-4 border-2 border-transparent shadow"  >
-                                    <UserListItem :href="route('profile.index', user.username)" :image="user.avatar_path" :name="user.username" class="hover:bg-white"/>
+                                    <UserListItem :href="route('profile.index', user.username)" :user="user" class="hover:bg-white"/>
                                     <div class="flex gap-2">
                                         <button @click="approveUser(user.id, 'approved')" class="bg-gray-800 text-xs text-white px-4 py-2 rounded hover:bg-gray-900 capitalize">approve</button>
                                         <button @click="deleteGroupUser(user.id)" class="bg-red-800 text-xs text-white px-4 py-2 rounded hover:bg-red-900 capitalize">Delete</button>
@@ -242,7 +242,7 @@
                                 </button>
                             </div>
                         </template>
-                        <div v-html="group.about"></div>
+                        <div v-else v-html="group.about"></div>
 
 
                       </TabPanel>
@@ -301,7 +301,7 @@ const validationErrors = ref({});
 const groupForm = useForm({
     name: props.group.name,
     auto_approval:props.group.autoApproval? true: false,
-    about:props.group.about,
+    about:props.group.about.replace(/<br\s\/>/g, '\n'),
 });
 
 

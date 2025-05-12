@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\Request;
+use App\Http\Resources\PostResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -19,15 +21,53 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function index(User $user)
+    public function index(Request $request, User $user)
     {
-        $user = new UserResource($user);
+        $authUser = auth()->user();
+        if (!Auth::guest()) {
+            $isFollowing = $authUser->followedUsers()->wherePivot('followed_id', $user->id)->exists();
+        }
+
+        $posts = Post::where('user_id', $user->id)
+            ->with([
+                'attachments',
+                'reactions',
+                'user',
+                'post_comments' => function ($query) {
+                    $query->with('reactions');
+                }
+            ])
+            ->paginate(5);
+        if ($request->wantsJson()) {
+            return PostResource::collection($posts);
+        }
+
+        $followers = User::query()
+            ->join('follower_users as f', 'f.follower_id', '=', 'users.id')
+            ->select('users.*')
+            ->where('f.followed_id', $user->id)
+            ->get();
+
+        $followings = User::query()
+            ->select('users.*')
+            ->join('follower_users as f', 'f.followed_id', '=', 'users.id')
+            ->where('f.follower_id', $user->id)
+            ->get();
+
+
+
+
         return Inertia::render(
             'Profile/Index',
             [
-                "user" => $user,
+                "user" => new UserResource($user),
                 'status' => session('status'),
                 'success' => session('success'),
+                'isCurrentUserFollower' => $isFollowing,
+                'posts' => PostResource::collection($posts),
+                //'followers' => $user->followers,
+                'followers' => $followers,
+                'followings' => $followings
             ]
         );
     }

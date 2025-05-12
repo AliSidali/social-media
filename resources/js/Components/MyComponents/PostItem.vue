@@ -116,9 +116,8 @@ const translations = page.translations;
 
 
 //SHOWING EDIT POST MODAL
-const emit = defineEmits(['editClick', 'onAttachmentClick', 'onShowComments', 'postValue']);
+const emit = defineEmits(['editClick', 'onAttachmentClick', 'onShowComments']);
 const openEditModal = ()=>{
-
     emit('editClick', props.post);
 };
 

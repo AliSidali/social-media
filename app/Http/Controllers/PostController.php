@@ -36,7 +36,6 @@ class PostController extends Controller
             }
         ]);
         $post = $post->load('group');
-        dd($post);
         return Inertia::render(
             'Post/View',
             [

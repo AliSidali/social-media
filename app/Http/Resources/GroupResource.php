@@ -29,7 +29,7 @@ class GroupResource extends JsonResource
             "status" => $pivotData?->status,
             "role" => $pivotData?->role,
             "about" => $this->about,
-            "description" => Str::words($this->about, 7, ' '),
+            "description" => Str::words(strip_tags($this->about), 10),
         ];
     }
 }

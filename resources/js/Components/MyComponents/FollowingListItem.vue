@@ -5,8 +5,9 @@
             Your don't have any friends yet.
         </div>
         <div v-else>
-            <UserListItem image="https://picsum.photos/200" name="Abd elrezak" />
-            <UserListItem image="https://picsum.photos/200" name="Hadjer sidali" />
+            <UserListItem  :user="user" />
+            <UserListItem  :user="user" />
+            <UserListItem  :user="user" />
         </div>
     </div>
 </template>
@@ -15,5 +16,7 @@ import UserListItem from '@/Components/MyComponents/UserListItem.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { ref } from 'vue';
 const forModelError = ref('');
-
+const user = ref({
+        name:'abdelrezak'
+})
 </script>

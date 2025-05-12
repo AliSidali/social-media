@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -16,6 +17,8 @@ Route::post('/lang/{lang}', [LanguageController::class, 'index'])->name('languag
 
 
 Route::middleware(['auth', LocaleMiddleware::class])->group(function () {
+    Route::post('/user/follow/{user}', [UserController::class, 'followUser'])->name('user.follow');
+
     Route::post('/profile/update-images', [ProfileController::class, 'updateImages'])->name('profile.updateImages');
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -67,14 +67,16 @@ const loadMore = ()=>{
 
 onMounted(()=>{
     const observer = new IntersectionObserver(
-    (entities)=>entities.forEach((entity)=>{
+        (entities)=>{
+        entities.forEach((entity)=>{
 
         if(entity.isIntersecting && allPosts.value.next){
 
             loadMore();
         }
 
-    })
+
+    })}
 )
 
 observer.observe(loadMoreIntersect.value);

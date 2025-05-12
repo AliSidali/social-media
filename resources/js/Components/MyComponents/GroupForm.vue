@@ -2,7 +2,9 @@
 <div>
     <div class="mt-4">
         <label for="" class="font-semibold">{{ translations.group_name_field }}</label>
-        <TextInput v-model="form.name" class="w-full mt-1" :class="validationErrors.name ?'border-red-500' : ''"/>
+        <ckeditor :editor="editor" v-model="form.about" :config="editorConfig" ></ckeditor>
+
+        <!-- <TextInput v-model="form.name" class="w-full mt-1" :class="validationErrors.name ?'border-red-500' : ''"/> -->
         <span v-if="validationErrors.name" class="text-red-600">{{ validationErrors.name[0]}}</span>
     </div>
     <div class="flex items-center mt-4 gap-2">
@@ -11,7 +13,8 @@
     </div>
     <div class="mt-4">
         <label class="font-semibold">{{ translations.group_text }}</label>
-        <InputTextarea v-model="form.about" class="mt-1"/>
+        <Ckeditor :editor="editor" v-model="form.about" :config="editorConfig"></Ckeditor>
+        <!-- <InputTextarea v-model="form.about" class="mt-1"/> -->
         <span v-if="validationErrors.about" class="text-red-600  ">{{ validationErrors.about[0]}}</span>
 
     </div>
@@ -22,9 +25,18 @@
 import TextInput from '../TextInput.vue';
 import InputTextarea from './InputTextarea.vue';
 import Checkbox from '../Checkbox.vue';
+
+import ClassicEditor  from '@ckeditor/ckeditor5-build-classic';
+
 const props = defineProps({
     validationErrors:Object,
     translations:Object,
     form:Object
 })
+
+const editor = ClassicEditor;
+const editorConfig= {
+  toolbar: [ 'heading','|', 'link','|','bold', 'italic',  '|', 'bulletedList', 'numberedList','|', 'outdent','indent', '|', 'blockquote' ],
+
+};
 </script>

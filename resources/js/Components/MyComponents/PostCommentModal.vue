@@ -133,7 +133,7 @@
     import Comment from './Comment.vue';
     import { router, useForm, usePage } from '@inertiajs/vue3';
     import axiosClient from '@/axiosClient';
-    import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
+    import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
     import {helpers} from '@/helpers';
 
     const props = defineProps({
@@ -194,7 +194,7 @@
  //send comment
 
     //1.ckeditor
-    const editor = BalloonEditor;
+    const editor = ClassicEditor;
     const commentText = ref('');
     const editorConfig = {
         toolbar: [ 'heading','|', 'link','|','bold', 'italic',  '|', 'bulletedList', 'numberedList','|', 'outdent','indent', '|', 'blockquote' ],
