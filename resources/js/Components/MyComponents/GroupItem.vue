@@ -4,9 +4,10 @@
         <div class="ml-1 w-full">
             <div class="flex justify-between">
                 <h4 class="font-black text-m">{{ group.name }} </h4>
-                <h2 class="text-indigo-700 text-sm">{{ group.status==="approved" ? (group.role == "admin" ? group.role : "") : 'Not Approved' }}</h2>
             </div>
-            <p class="text-xs text-gray-500">{{ group.description }} </p>
+            <span class="text-indigo-700 text-xs">{{ group.status==="approved" ? (group.role == "admin" ? group.role : "") : 'Not Approved' }}</span>
+
+            <!-- <p class="text-xs text-gray-500">{{ group.description }} </p> -->
         </div>
     </Link>
 </template>

@@ -83,7 +83,9 @@
 
                     <div class="w-full ">
                         <div class="border border-gray-300 rounded-xl bg-gray-100">
-                            <ckeditor :editor="editor" v-model="commentText" :config="editorConfig" ></ckeditor>
+                            <!-- <ckeditor :editor="editor" v-model="commentText" :config="editorConfig" ></ckeditor> -->
+                           <TextInput v-model="commentText" class="mt-1"/>
+
                             <div class="flex justify-between px-5">
                                 <div class="relative p-2 rounded-full hover:bg-gray-200">
                                     <input type="file" @change="displayAttachment" accept="image/*" class="absolute opacity-0 cursor-pointer w-5">
@@ -133,9 +135,8 @@
     import Comment from './Comment.vue';
     import { router, useForm, usePage } from '@inertiajs/vue3';
     import axiosClient from '@/axiosClient';
-    import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
     import {helpers} from '@/helpers';
-
+import TextInput from '@/Components/TextInput.vue'
     const props = defineProps({
         modelValue : Boolean,
         post: Object
@@ -193,13 +194,6 @@
 
  //send comment
 
-    //1.ckeditor
-    const editor = ClassicEditor;
-    const commentText = ref('');
-    const editorConfig = {
-        toolbar: [ 'heading','|', 'link','|','bold', 'italic',  '|', 'bulletedList', 'numberedList','|', 'outdent','indent', '|', 'blockquote' ],
-        placeholder: translations.comment_input_placeholder
-    }
 
     //2.create new comment
     const createComment = ()=>{

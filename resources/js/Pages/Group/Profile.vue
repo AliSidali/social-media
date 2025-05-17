@@ -301,7 +301,7 @@ const validationErrors = ref({});
 const groupForm = useForm({
     name: props.group.name,
     auto_approval:props.group.autoApproval? true: false,
-    about:props.group.about.replace(/<br\s\/>/g, '\n'),
+    about:props.group.about?.replace(/<br\s\/>/g, '\n'),
 });
 
 

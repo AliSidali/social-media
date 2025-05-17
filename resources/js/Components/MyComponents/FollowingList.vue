@@ -9,14 +9,14 @@
                      </div>
                 </DisclosureButton>
                 <DisclosurePanel class="h-[300px] flex flex-col  mt-3">
-                    <FollowingListItem />
+                    <FollowingListItem :followings="followings"/>
                 </DisclosurePanel>
             </Disclosure>
         </div>
 
         <div class="hidden h-full lg:flex lg:flex-col">
             <h3 class=" text-xl font-bold mb-3"> My Friends </h3>
-            <FollowingListItem />
+            <FollowingListItem :followings="followings"/>
         </div>
     </div>
 </template>
@@ -25,5 +25,8 @@ import FollowingListItem from '@/Components/MyComponents/FollowingListItem.vue';
 import { Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue';
 import { ChevronDownIcon, ChevronUpIcon  } from '@heroicons/vue/24/solid'
 
+const props = defineProps({
+    followings:Array
+})
 
 </script>

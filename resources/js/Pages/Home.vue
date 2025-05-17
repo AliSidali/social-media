@@ -10,6 +10,7 @@ const props = defineProps({
     success:  String,
     posts:  Object,
     groups: Array,
+    followings:Array
 
 })
 
@@ -29,7 +30,7 @@ const props = defineProps({
                 <GroupList  :groups="groups"/>
             </div>
             <div class="lg:col-span-3 lg:order-3   ">
-                <FollowingList />
+                <FollowingList :followings="followings"/>
             </div>
             <div class="flex flex-col lg:col-span-6 lg:order-2 ">
 

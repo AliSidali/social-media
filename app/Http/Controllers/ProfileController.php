@@ -56,14 +56,13 @@ class ProfileController extends Controller
 
 
 
-
         return Inertia::render(
             'Profile/Index',
             [
                 "user" => new UserResource($user),
                 'status' => session('status'),
                 'success' => session('success'),
-                'isCurrentUserFollower' => $isFollowing,
+                'isCurrentUserFollower' => $isFollowing ?? false,
                 'posts' => PostResource::collection($posts),
                 //'followers' => $user->followers,
                 'followers' => $followers,

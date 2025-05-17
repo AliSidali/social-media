@@ -51,7 +51,9 @@
 
                     <div>
                         <div class=" border border-gray-200 mt-3" :class="{'border-red-500' : errors.body}">
-                            <ckeditor :editor="editor" v-model="postForm.body" :config="editorConfig" ></ckeditor>
+                            <!-- <ckeditor :editor="editor" v-model="postForm.body" :config="editorConfig" ></ckeditor> -->
+                            <InputTextarea v-model="postForm.body" class="mt-1"/>
+
                         </div>
                         <span class="text-red-500" v-if="errors.body">{{ errors.body}}</span>
                     </div>
@@ -121,7 +123,6 @@ import InputTextarea from './InputTextarea.vue';
 import PostUserHeader from './PostUserHeader.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { BookmarkIcon, PaperClipIcon, XMarkIcon, ArrowUturnLeftIcon } from '@heroicons/vue/24/solid';
-import ClassicEditor  from '@ckeditor/ckeditor5-build-classic';
 import { helpers } from '@/helpers';
 
 
@@ -250,12 +251,6 @@ const setAttachmentErrors = (errs)=>{
 }
 
 
-//CKEDITOR CONFIG
-const editor = ClassicEditor;
-const editorConfig= {
-  toolbar: [ 'heading','|', 'link','|','bold', 'italic',  '|', 'bulletedList', 'numberedList','|', 'outdent','indent', '|', 'blockquote' ],
-
-};
 
 
 //DISPLAY ATTACHMENT ON MODAL
