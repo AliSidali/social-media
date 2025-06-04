@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OpenAiController;
 use App\Http\Controllers\UserController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
@@ -15,9 +16,10 @@ Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified
 Route::get('/u/{user:username}', [ProfileController::class, 'index'])->middleware(LocaleMiddleware::class)->name('profile.index');
 Route::post('/lang/{lang}', [LanguageController::class, 'index'])->name('language.index');
 
-
 Route::middleware(['auth', LocaleMiddleware::class])->group(function () {
     Route::post('/user/follow/{user}', [UserController::class, 'followUser'])->name('user.follow');
+    Route::post('/ai-post', [PostController::class, 'aiPostContent'])->name('post.aiContent');
+
 
     Route::post('/profile/update-images', [ProfileController::class, 'updateImages'])->name('profile.updateImages');
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

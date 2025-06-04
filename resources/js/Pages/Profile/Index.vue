@@ -1,6 +1,7 @@
 <template>
     <UserProfileLayout :errors="errors" :success="success" :user="user" :followers="followers" :isCurrentUserFollower="isCurrentUserFollower">
         <TabPanels class="mt-2">
+            {{ isPhotoModalOpen }}
             <TabPanel  class="bg-white p-3 shadow">
                 <PostList :posts="posts" />
             </TabPanel>
@@ -17,14 +18,14 @@
                 </div>
             </TabPanel>
             <TabPanel class="bg-white p-3 shadow">
-                Photos
+                <PhotosTab :attachments="attachments"  />
             </TabPanel>
 
             <TabPanel v-if="isUserProfile">
                 <Edit :mustVerifyEmail="mustVerifyEmail" :status="status" />
             </TabPanel>
         </TabPanels>
-     </UserProfileLayout>
+    </UserProfileLayout>
 
 </template>
 
@@ -34,9 +35,10 @@ import Edit from "./Edit.vue";
 import UserProfileLayout from "@/Layouts/UserProfileLayout.vue";
 import PostList from "@/Components/MyComponents/PostList.vue";
 import UserListItem from "@/Components/MyComponents/UserListItem.vue";
+import PhotosTab from "@/Components/MyComponents/PhotosTab.vue";
 import {  TabPanels, TabPanel } from '@headlessui/vue'
 import { usePage } from "@inertiajs/vue3";
-import { computed } from "vue";
+import { computed, reactive, ref } from "vue";
 
 
 const props = defineProps({
@@ -58,16 +60,19 @@ const props = defineProps({
     isCurrentUserFollower: Boolean,
     posts: {
         type:Object
-    }
-});
+    },
+    attachments:Array
+})
 
 const page = usePage();
 const authUser  = page.props.auth.user;
 const translations = page.props.translations;
+const isPhotoModalOpen=ref(false);
 
 const isUserProfile = computed(()=>{
     return authUser && authUser.id == props.user.id;
 });
+
 
 
 // const loadingSpinner = ref(false);

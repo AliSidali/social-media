@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateGroupRequest;
-use App\Http\Resources\PostResource;
+use App\Http\Resources\AttachmentResource;
+use App\Models\Post;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Group;
+use App\Models\Attachment;
 use Illuminate\Support\Str;
 use App\Http\Enums\RoleEnum;
 use App\Models\Notification;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 use App\Http\Enums\StatusEnum;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\PostResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\GroupResource;
@@ -21,6 +23,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreGroupRequest;
 use App\Notifications\InvitationToGroup;
 use App\Http\Requests\InviteUsersRequest;
+use App\Http\Requests\UpdateGroupRequest;
 use App\Notifications\InvitationApproved;
 
 
@@ -46,7 +49,18 @@ class GroupController extends Controller
             $groupPosts = null;
         }
 
+        //group attachments
 
+        $attachments = Post::query()
+            ->join('attachments', function ($query) {
+                $query->on('posts.id', 'attachments.attachable_id')
+                    ->where('mime', 'like', 'image/%')
+                ;
+            })
+            ->select('attachments.*')
+            ->where('group_id', $group->id)
+            ->latest()
+            ->get();
         if ($request->wantsJson()) {
             return PostResource::collection($groupPosts);
         }
@@ -57,7 +71,8 @@ class GroupController extends Controller
             'pendingUsers' => UserResource::collection($group->getPendingUsers),
             'approvedUsers' => UserResource::collection($group->getApprovedUsers),
             'groupUsers' => UserResource::collection($group->users),
-            'groupPosts' => $groupPosts ? PostResource::collection($groupPosts) : null
+            'groupPosts' => $groupPosts ? PostResource::collection($groupPosts) : null,
+            'attachments' => AttachmentResource::collection($attachments)
         ]);
     }
     public function store(StoreGroupRequest $request)

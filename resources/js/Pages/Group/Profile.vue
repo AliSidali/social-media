@@ -117,6 +117,8 @@
                       >
                         <TabItem text="about" :selected="selected" />
                       </Tab>
+
+
                     </TabList>
 
                     <TabPanels class="mt-2">
@@ -219,10 +221,8 @@
                         ]"
                       >
 
-                            <h3 class="text-sm font-medium leading-5">
-                              photos
 
-                            </h3>
+                            <PhotosTab :attachments="attachments" />
 
 
                       </TabPanel>
@@ -250,6 +250,7 @@
                 </TabGroup>
             </div>
         </div>
+        <InviteUserModal v-model=" isOpenModal" />
     </AuthenticatedLayout>
 </template>
 <script setup>
@@ -258,7 +259,7 @@ import { Head, useForm, usePage, Link } from '@inertiajs/vue3';
 import { PencilIcon, CameraIcon, XMarkIcon, CheckIcon, CheckCircleIcon, ChevronDownIcon } from '@heroicons/vue/24/solid';
 
 import { TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import axiosClient from '@/axiosClient';
 import PostList from '@/Components/MyComponents/PostList.vue';
 import TabItem from '@/Components/MyComponents/TabItem.vue';
@@ -266,6 +267,9 @@ import UserListItem from '@/Components/MyComponents/UserListItem.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import GroupForm from '@/Components/MyComponents/GroupForm.vue';
 import CreatePost from '@/Components/MyComponents/CreatePost.vue';
+import PhotosTab from "@/Components/MyComponents/PhotosTab.vue";
+import InviteUserModal from "@/Components/MyComponents/InviteUserModal.vue";
+
 
 const props = defineProps({
     group: Object,
@@ -273,7 +277,8 @@ const props = defineProps({
     pendingUsers: Object,
     approvedUsers: Object,
     groupPosts:Object,
-    groupUsers: Object
+    groupUsers: Object,
+    attachments:Array
 })
 
 
@@ -417,9 +422,6 @@ const deleteGroupUser = (userId)=>{
 
    form.delete(route('groupUser.destroy', props.group.slug));
 }
-
-
-
 
 
 

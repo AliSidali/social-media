@@ -117,7 +117,7 @@ const isOwner = computed(()=>{
 const isUrlCopied = ref(false);
 const copyPostUrl = (postId)=>{
 
-    if(!navigator.clipboard){
+    if(navigator.clipboard){
         navigator.clipboard.writeText(route('post.view', postId));
     }else{
         const textarea = document.createElement('textarea');

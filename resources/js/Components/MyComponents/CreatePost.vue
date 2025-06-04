@@ -6,6 +6,7 @@
 
         </div>
 
+
         <PostModal v-model="showModal" :group_id="group_id" />
     </div>
 </template>
@@ -13,6 +14,7 @@
 import {  ref } from 'vue';
 import PostModal from './PostModal.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
+import axiosClient from '@/axiosClient';
 
 const props = defineProps({
     success: {
@@ -29,6 +31,8 @@ const translations = page.translations;
 //SHOW MODAL FOR CREATING POST
 
 const showModal = ref(false);
+
+
 
 
 

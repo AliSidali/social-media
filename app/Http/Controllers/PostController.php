@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Enums\StatusEnum;
-use App\Http\Resources\ReactionResource;
-use App\Models\Group;
-use App\Models\Notification;
 use App\Models\Post;
+use Inertia\Inertia;
+use App\Models\Group;
 use App\Models\Reaction;
 use App\Models\Attachment;
 use App\Models\PostComment;
+use App\Models\Notification;
 use Illuminate\Http\Request;
+use App\Http\Enums\StatusEnum;
 use Illuminate\Validation\Rule;
 use App\Http\Enums\ReactionEnum;
 use Illuminate\Support\Facades\DB;
+use OpenAI\Laravel\Facades\OpenAI;
 use App\Http\Resources\PostResource;
 use Illuminate\Validation\Rules\File;
 use App\Http\Requests\StorePostRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\ReactionResource;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Resources\PostCommentResource;
-use Inertia\Inertia;
 
 class PostController extends Controller
 {
@@ -163,7 +164,6 @@ class PostController extends Controller
 
     public function downloadAttachment(Attachment $attachment)
     {
-
         return Storage::disk('public')->download($attachment->path);
     }
 
@@ -410,6 +410,19 @@ class PostController extends Controller
 
     }
 
+    public function aiPostContent()
+    {
+        $result = OpenAI::chat()->create([
+            'model' => 'gpt-4o-mini',
+            'messages' => [
+                ['role' => 'user', 'content' => 'Hello!'],
+            ],
+        ]);
+        // echo $result->choices[0]->message->content;
+        return response([
+            'content' => "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa laborum accusamus facilis quos illum praesentium aspernatur nisi quibusdam quasi distinctio minus aut eos ex ullam id voluptate, minima expedita alias!"
+        ]);
+    }
 
 
 }

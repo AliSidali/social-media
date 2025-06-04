@@ -1,7 +1,7 @@
 <template>
 <Head title="Profile" />
 <AuthenticatedLayout>
-    <div class="max-w-3xl mx-auto  h-full overflow-auto">
+    <div class="max-w-[80%] mx-auto  h-full overflow-auto">
         <div v-show="showNotification && success" class="px-4 py-2 bg-emerald-200 text-green-800 my-2 text-sm font-medium">
             {{ success }}
         </div>
@@ -9,11 +9,11 @@
             {{ errors.avatar }}
             <XMarkIcon class="w-5 cursor-pointer"  @click="showNotification=false"/>
         </div>
-        <div class="bg-white border-b">
+        <div class="bg-white border-b h-[80%]">
 
             <!-- Select cover image -->
-            <div class="relative  group">
-                <img class="w-full h-[200px] object-cover " :src=" coverImageSrc || user.cover_path || '/imgs/default_cover.jpg' " alt="">
+            <div class="relative group h-[80%]">
+                <img class="w-full h-full object-cover " :src=" coverImageSrc || user.cover_path || '/imgs/default_cover.jpg' " alt="">
                 <div class=" absolute right-3 top-3  ">
                     <button v-if="!coverImageSrc" class="opacity-0 group-hover:opacity-100 flex space-x-2  w-48 justify-center text-sm py-1 bg-gray-50 text-gray-800 hover:bg-gray-100">
 
@@ -83,7 +83,7 @@
 
         </div>
 
-        <div class="w-full  px-2   sm:px-0">
+        <div class="w-full  px-2  sm:px-0">
             <TabGroup>
                 <TabList class="flex py-1  bg-white ">
 

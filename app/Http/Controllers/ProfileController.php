@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AttachmentResource;
 use App\Models\Post;
 use App\Models\User;
 use Inertia\Inertia;
@@ -21,6 +22,8 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
+
+
     public function index(Request $request, User $user)
     {
         $authUser = auth()->user();
@@ -54,6 +57,16 @@ class ProfileController extends Controller
             ->where('f.follower_id', $user->id)
             ->get();
 
+        $attachments = Post::query()
+            ->join('attachments', function ($query) {
+                $query->on('posts.id', 'attachments.attachable_id')
+                    ->where('attachments.attachable_type', Post::class)
+                    ->where('mime', 'like', 'image/%');
+            })
+            ->select('attachments.*')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
 
 
         return Inertia::render(
@@ -66,7 +79,8 @@ class ProfileController extends Controller
                 'posts' => PostResource::collection($posts),
                 //'followers' => $user->followers,
                 'followers' => $followers,
-                'followings' => $followings
+                'followings' => $followings,
+                'attachments' => AttachmentResource::collection($attachments)
             ]
         );
     }
