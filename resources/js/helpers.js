@@ -20,11 +20,21 @@ export function helpers(){
             }
 
         })
+
+
+    }
+
+    function hasUrlQueryParam(url, param){
+            const urlObject = new URL(url); //URL Object
+            const queryParam = urlObject.search; //like ?page=2
+            const paramObject = new URLSearchParams(queryParam) // it returns ex:  ?page=2 to an object { page → "2" }
+            return paramObject.has(param)
     }
 
     return {
         isImage,
-        readFile
+        readFile,
+        hasUrlQueryParam
     }
 }
 

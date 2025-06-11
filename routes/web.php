@@ -1,16 +1,16 @@
 <?php
 
-use App\Http\Controllers\OpenAiController;
-use App\Http\Controllers\UserController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
 use App\Http\Middleware\LocaleMiddleware;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\GlobalSearchController;
 
 Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified', LocaleMiddleware::class])->name('home');
 Route::get('/u/{user:username}', [ProfileController::class, 'index'])->middleware(LocaleMiddleware::class)->name('profile.index');
@@ -18,13 +18,13 @@ Route::post('/lang/{lang}', [LanguageController::class, 'index'])->name('languag
 
 Route::middleware(['auth', LocaleMiddleware::class])->group(function () {
     Route::post('/user/follow/{user}', [UserController::class, 'followUser'])->name('user.follow');
-    Route::post('/ai-post', [PostController::class, 'aiPostContent'])->name('post.aiContent');
 
 
     Route::post('/profile/update-images', [ProfileController::class, 'updateImages'])->name('profile.updateImages');
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/search/{keyword}', [GlobalSearchController::class, 'globalSearch'])->name('globalSearch');
 
     //Post routes
     Route::get('/post/{post}', [PostController::class, 'view'])->name('post.view');
@@ -38,6 +38,8 @@ Route::middleware(['auth', LocaleMiddleware::class])->group(function () {
     Route::delete('/comment/{comment}', [PostController::class, 'destroyComment'])->name('comment.destroy');
     Route::post('/comment/{comment}/reaction', [PostController::class, 'saveCommentReaction'])->name('comment.reaction');
     Route::post('/group', [GroupController::class, 'store'])->name('group.store');
+    Route::post('/post/ai-post', [PostController::class, 'aiPostContent'])->name('post.aiContent');
+
     //Group Routes
     Route::get('/g/{group:slug}', [GroupController::class, 'profile'])->middleware(LocaleMiddleware::class)->name('group.profile');
     Route::post('/group/{group:slug}/update-images', [GroupController::class, 'updateImage'])->name('group.updateImages');

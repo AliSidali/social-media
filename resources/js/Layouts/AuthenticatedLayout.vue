@@ -5,16 +5,22 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeftStartOnRectangleIcon, BellAlertIcon } from '@heroicons/vue/24/outline';
 import axiosClient from '@/axiosClient';
+import SearchModal from '@/Components/MyComponents/SearchModal.vue';
+
 
 const showingNavigationDropdown = ref(false);
 
 const  page = usePage().props;
+const isSearchModalOpen = ref(false);
+
+
 const authUser = page.auth.user;
 const translations = page.translations;
 const notificationsNum = ref(authUser.notReadNotificationNum);
+
 
 const changeLanguage = (lang)=>{
 
@@ -29,15 +35,18 @@ const readNotifications = ()=>{
     });
 }
 
+
 </script>
 
 <template>
     <div>
         <div class="h-screen bg-gray-100 dark:bg-gray-900"  >
             <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-                <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
+
+
+                        <!-- Primary Navigation Menu -->
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
@@ -50,8 +59,18 @@ const readNotifications = ()=>{
 
                         </div>
 
+
+                        <!-- links in the right of the navbar -->
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
-                            <!-- Settings Dropdown -->
+
+                            <!-- search bar -->
+                            <div @click="isSearchModalOpen=true" class="border border-gray-200 text-gray-500 w-32 px-2 py-1 rounded ">
+                                <span>search</span>
+                                {{ isSearchModalOpen }}
+                            </div>
+
+
+                            <!-- notifications dropdowns -->
                             <div class="ms-3 relative flex gap-1" v-if="authUser">
                                 <Dropdown align="right" >
                                     <template #trigger>
@@ -91,6 +110,9 @@ const readNotifications = ()=>{
                                         </div>
                                     </template>
                                 </Dropdown>
+
+
+                                <!-- language dropdowns -->
                                 <Dropdown align="right" width="">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
@@ -123,6 +145,9 @@ const readNotifications = ()=>{
 
                                     </template>
                                 </Dropdown>
+
+
+                                <!-- authuser dropdown -->
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
@@ -161,9 +186,9 @@ const readNotifications = ()=>{
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
-
-
                             </div>
+
+
                             <div v-else>
                                 <Link :href="route('login')">
                                     Login
@@ -213,9 +238,9 @@ const readNotifications = ()=>{
                 >
 
                     <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+                    <div class="p-4 border-t border-gray-200 dark:border-gray-600">
                         <template v-if="authUser">
-                            <div class="px-4">
+                            <div >
                                 <div class="font-medium text-base text-gray-800 dark:text-gray-200">
                                     {{ authUser.name }}
                                 </div>
@@ -227,6 +252,11 @@ const readNotifications = ()=>{
                                 <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                     Log Out
                                 </ResponsiveNavLink>
+                            </div>
+
+                            <!-- search bar -->
+                            <div @click="isSearchModalOpen=true" class="border border-gray-300 text-gray-500 w-full px-2 py-1 rounded ">
+                                <span>search</span>
                             </div>
                         </template>
                         <template v-else>
@@ -246,7 +276,32 @@ const readNotifications = ()=>{
 
             <!-- Page Content -->
             <main class="h-[86%]">
+
+                <!-- GLOBAL SEARCH RESULTS -->
+                <!-- <div class="mt-8 px-4 grid grid-cols-2 gap-3 mb-4 rounded-lg">
+                    <div v-if="searchResult.users" class="bg-white p-3 max-h-[200px] overflow-auto shadow rounded-lg">
+                        <h3 class="text-lg font-semibold">Users</h3>
+                        <div v-if="searchResult.users.length>0">
+                            <UserListItem  v-for="(user, index) in searchResult.users" :key="index" :user="user" />
+                        </div>
+
+                        <div v-else class="text-center py-2 text-gray-400">
+                            <p>No users were found</p>
+                        </div>
+                    </div>
+                    <div v-if="searchResult.groups" class="bg-white p-3 max-h-[200px] overflow-auto shadow rounded-lg">
+                        <h3 class="text-lg font-semibold">Groups</h3>
+                        <div v-if="searchResult.groups.length>0">
+                            <GroupItem  v-for="(group, index) in searchResult.groups" :key="index" :group="group" />
+                        </div>
+                        <div v-else class="text-center py-2 text-gray-400">
+                            <p>No groups were found</p>
+                        </div>
+                    </div>
+                </div> -->
+
                 <slot />
+                <SearchModal v-if="isSearchModalOpen"   v-model="isSearchModalOpen" @onSearchModelClose="isSearchModalOpen=false" />
             </main>
         </div>
     </div>

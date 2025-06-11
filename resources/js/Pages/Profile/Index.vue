@@ -1,7 +1,6 @@
 <template>
     <UserProfileLayout :errors="errors" :success="success" :user="user" :followers="followers" :isCurrentUserFollower="isCurrentUserFollower">
         <TabPanels class="mt-2">
-            {{ isPhotoModalOpen }}
             <TabPanel  class="bg-white p-3 shadow">
                 <PostList :posts="posts" />
             </TabPanel>
