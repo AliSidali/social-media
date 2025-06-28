@@ -104,4 +104,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(User::class, 'follower_users', 'follower_id', 'followed_id');
     }
+
+    public function pin_post()
+    {
+        return $this->morphOne(PinPost::class, 'pinable');
+    }
 }

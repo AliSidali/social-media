@@ -49,6 +49,9 @@
                         <div  v-if="isImage(currentAttachment)" class="h-full flex justify-center">
                             <img class="object-contain w-full h-full" :src="currentAttachment.url" alt="">
                         </div>
+                        <div v-else-if="isVideo(currentAttachment)" class=" h-full flex justify-center">
+                            <video :src="currentAttachment.url" controls autoplay></video>
+                        </div>
                         <div v-else class="flex flex-col justify-center items-center text-white h-full">
                             <PaperClipIcon  class=" w-10 " />
                             <small class="font-semibold">{{ currentAttachment.name }}</small>
@@ -79,7 +82,7 @@ import { helpers } from '@/helpers';
 import {ChevronLeftIcon, ChevronRightIcon, XMarkIcon, PaperClipIcon } from '@heroicons/vue/24/solid';
 
 
-const {isImage} = helpers();
+const {isImage, isVideo} = helpers();
 
   const props = defineProps({
     modelValue: Boolean,

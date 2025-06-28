@@ -43,7 +43,13 @@ class GroupController extends Controller
             ->with('attachments')
             ->with('reactions')
             ->with('post_comments')
+            ->leftJoin('pin_posts as pp', function ($query) {
+                $query->on('pp.post_id', 'posts.id')
+                    ->where('pp.pinable_type', Group::class);
+            })->select('posts.*', 'pp.id as pin_id')
+            ->orderBy('pin_id', 'desc')
             ->latest()->paginate(3);
+
 
         if (!$group->isCurrentUserApproved()) {
             $groupPosts = null;

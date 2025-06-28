@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PinPost;
 use App\Models\Post;
+use App\Models\User;
+use DOMDocument;
+use Exception;
 use Inertia\Inertia;
 use App\Models\Group;
 use App\Models\Reaction;
@@ -49,48 +53,49 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
 
-        DB::beginTransaction();
+        // DB::beginTransaction();
+        $post = null;
+        //try {
+        $user = auth()->user();
+        $data = $request->validated();
+        $post = Post::create($data);
+        $attachments = $data['attachments'] ?? [];
+        foreach ($attachments as $attachment) {
+            $path = $attachment->store('attachments/post-' . $post->id, 'public');
+            Attachment::create([
+                'attachable_id' => $post->id,
+                'attachable_type' => Post::class,
+                'name' => $attachment->getClientOriginalName(),
+                'path' => $path,
+                'mime' => $attachment->getMimeType(),
+                'size' => $attachment->getSize(),
+                'created_by' => $user->id
+            ]);
+        }
 
-        try {
-            $user = auth()->user();
-            $data = $request->validated();
-            $post = Post::create($data);
-            $attachments = $data['attachments'] ?? [];
-            foreach ($attachments as $attachment) {
-                $path = $attachment->store('attachments/post-' . $post->id, 'public');
-                Attachment::create([
-                    'attachable_id' => $post->id,
-                    'attachable_type' => Post::class,
-                    'name' => $attachment->getClientOriginalName(),
-                    'path' => $path,
-                    'mime' => $attachment->getMimeType(),
-                    'size' => $attachment->getSize(),
-                    'created_by' => $user->id
-                ]);
-            }
-
-            $group = $post->group;
-            if ($group) {
-                $approvedUsers = $group->users()->wherePivot('status', StatusEnum::APPROVED->value)->get();
-                foreach ($approvedUsers as $groupUser) {
-                    if ($groupUser->id !== $user->id) {
-                        $notification = Notification::create([
-                            'user_id' => $groupUser->id,
-                            'title' => 'New post added to group ' . $group->name,
-                            'message' => substr($post->body, 3, 40) . '...',
-                            'notificable_id' => $group->id,
-                            'notificable_type' => Group::class
-                        ]);
-                    }
+        $group = $post->group;
+        if ($group) {
+            $approvedUsers = $group->users()->wherePivot('status', StatusEnum::APPROVED->value)->get();
+            foreach ($approvedUsers as $groupUser) {
+                if ($groupUser->id !== $user->id) {
+                    $notification = Notification::create([
+                        'user_id' => $groupUser->id,
+                        'title' => 'New post added to group ' . $group->name,
+                        'message' => substr($post->body, 3, 40) . '...',
+                        'notificable_id' => $group->id,
+                        'notificable_type' => Group::class
+                    ]);
                 }
             }
-
-            DB::commit();
-        } catch (\Exception $e) {
-
-            Storage::deleteDirectory('public/attachments/post-' . $post->id);
-            DB::rollBack();
         }
+
+        //     DB::commit();
+        // } catch (Exception $e) {
+        //     if ($post) {
+        //         Storage::deleteDirectory('public/attachments/post-' . $post->id);
+        //     }
+        //     DB::rollBack();
+        // }
 
 
         return back();
@@ -130,7 +135,7 @@ class PostController extends Controller
                 ]);
             }
             DB::commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             foreach ($attachments_path as $path) {
                 Storage::disk('public')->delete($path);
@@ -286,7 +291,7 @@ class PostController extends Controller
             return response([
                 'comment' => new PostCommentResource($comment),
             ], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             if ($path) {
@@ -362,7 +367,7 @@ class PostController extends Controller
             DB::commit();
             $comment = new PostCommentResource(PostComment::find($comment->id));
             return response(['comment' => $comment], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             response([], 422);
         }
@@ -424,5 +429,81 @@ class PostController extends Controller
         ]);
     }
 
+    public function fetchUrlPreview(Request $request)
+    {
+        try {
+
+
+            $data = $request->validate([
+                'url' => ['regex:/^(https?:\/\/)/']
+            ]);
+
+            $html = file_get_contents($data['url']);
+            libxml_use_internal_errors(true);
+            $doc = new DOMDocument();
+            $doc->loadHTML($html);
+            libxml_clear_errors();
+            $metaTags = $doc->getElementsByTagName('meta');
+            $ogTags = [];
+            foreach ($metaTags as $tag) {
+                if ($tag->hasAttribute('property') && str_starts_with($tag->getAttribute('property'), 'og')) {
+                    $property = $tag->getAttribute('property');
+                    $content = $tag->getAttribute('content');
+                    $ogTags[$property] = $content;
+
+                }
+            }
+
+            return response($ogTags);
+        } catch (Exception $e) {
+            return response([
+                'error' => 'This link not found!'
+            ]);
+        }
+
+
+    }
+
+    public function pinUnpin(Request $request, Post $post)
+    {
+        $authUser = auth()->user();
+        if ($authUser->id === $post->user_id || $post->group?->isCurrentUserAdmin()) {
+            $isPostPinned = null;
+            if ($post->group && str_contains(url()->previous(), $post->group->slug)) {
+                $isPostPinned = $post->group->pin_post()->where('post_id', $post->id)->exists();
+                if ($isPostPinned) {
+                    $post->group->pin_post()->where('post_id', $post->id)->delete();
+                } else {
+                    $post->group->pin_post()->delete();
+                    $pinPost = PinPost::create([
+                        'post_id' => $post->id,
+                        'pinable_id' => $post->group_id,
+                        'pinable_type' => Group::class
+                    ]);
+                }
+
+
+            } else {
+                $isPostPinned = $post->user->pin_post()->where('post_id', $post->id)->exists();
+                if ($isPostPinned) {
+                    $post->user->pin_post()->where('post_id', $post->id)->delete();
+                }
+                $post->user->pin_post()->delete();
+                $pinPost = PinPost::create([
+                    'post_id' => $post->id,
+                    'pinable_id' => $post->user_id,
+                    'pinable_type' => User::class
+                ]);
+
+            }
+
+
+            return back()->with('success', 'Post was successfully ' . ($isPostPinned ? 'unpinned' : 'pinned'));
+        }
+
+
+        return response('you don\'t have a permission to pin or unpin post', 403);
+
+    }
 
 }

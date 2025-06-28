@@ -30,6 +30,7 @@ class GroupResource extends JsonResource
             "role" => $pivotData?->role,
             "about" => $this->about,
             "description" => Str::words(strip_tags($this->about), 10),
+            "isPinned" => $this->id
         ];
     }
 }

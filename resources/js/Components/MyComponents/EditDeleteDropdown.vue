@@ -59,6 +59,18 @@
                                 {{ translations.edit_button }}
                             </button>
                         </MenuItem>
+                        <MenuItem v-slot="{ active }" v-if="isOwner || isAdmin">
+                            <button
+                                :class="[
+                                active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                                'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                                ]"
+                                @click="$emit('onPinPost')"
+                            >
+                                <MapPinIcon class="w-5 h-5 mr-2" />
+                                Pin
+                            </button>
+                        </MenuItem>
                         <MenuItem v-slot="{ active }"  v-if="isOwner || isAdmin" >
                             <button
                                 :class="[
@@ -73,13 +85,14 @@
                             </button>
                         </MenuItem>
 
+
                     </div>
                     </MenuItems>
                 </transition>
             </Menu>
 </template>
 <script setup>
-import {EllipsisVerticalIcon, TrashIcon, PencilIcon, EyeIcon} from '@heroicons/vue/24/solid'
+import {EllipsisVerticalIcon, TrashIcon, PencilIcon, EyeIcon, MapPinIcon} from '@heroicons/vue/24/solid'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -99,7 +112,7 @@ const props = defineProps({
 })
 
 
-defineEmits(['edit', 'delete']);
+defineEmits(['edit', 'delete', 'onPinPost']);
 const page = usePage().props;
 const currentUser = page.auth.user;
 const translations = page.translations;
@@ -131,5 +144,7 @@ const copyPostUrl = (postId)=>{
         isUrlCopied.value = false
     }, 1000)
 }
+
+
 
 </script>

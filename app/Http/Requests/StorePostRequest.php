@@ -52,6 +52,7 @@ class StorePostRequest extends FormRequest
                 )->max(500 * 1024 * 1024 * 1024)
             ],
             'body' => ['required', 'string'],
+            'url_preview' => ['nullable', 'array'],
             'group_id' => ['nullable', 'exists:groups,id']
 
         ];

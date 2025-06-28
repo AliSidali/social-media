@@ -58,7 +58,7 @@
                               </button>
                             </div>
                             <!-- <ckeditor :editor="editor" v-model="postForm.body" :config="editorConfig" ></ckeditor> -->
-                            <InputTextarea v-model="postForm.body" class="mt-1"/>
+                            <InputTextarea v-model="postForm.body" class="mt-1" @input="fetchUrlData "/>
 
                         </div>
                         <span class="text-red-500" v-if="errors.body">{{ errors.body}}</span>
@@ -89,7 +89,11 @@
                             </div>
 
                     </div>
+
+                    <!-- fetch url content -->
+                    <UrlPreview :url=" postForm.body || post.body " :preview="postForm.url_preview || post.url_preview  " />
                 </div>
+
 
 
                 <!-- MODAL BOTTOM FOR BUTTONS -->
@@ -131,9 +135,10 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import { BookmarkIcon, PaperClipIcon, XMarkIcon, ArrowUturnLeftIcon,SparklesIcon } from '@heroicons/vue/24/solid';
 import { helpers } from '@/helpers';
 import axiosClient from '@/axiosClient';
+import UrlPreview from './UrlPreview.vue';
 
 
-const {isImage} = helpers();
+const {isImage, getQueryParamObject, isUrl} = helpers();
 
 const props = defineProps({
   modelValue: Boolean,
@@ -154,6 +159,7 @@ const postForm = useForm({
   group_id:null,
   attachments: null,
   deleted_file_ids : [],
+  url_preview:null,
   _method: 'POST'
 });
 
@@ -180,6 +186,9 @@ const errors = ref({
 
 const isAiContentLoading = ref(false);
 
+//FOR URL PREVIEW
+let pastedUrl = null;
+
 //toggle modal
 const emit = defineEmits(['update:modelValue', 'hideModal']);
 
@@ -200,6 +209,7 @@ const closeModal = () => {
     body: null
   };
   showExtensionMessage.value = false;
+  postForm.url_preview = null;
 }
 
 //UPDATE OR CREATE POST
@@ -299,6 +309,10 @@ const readFile = (file)=>{
           }else{
               resolve(null);
           }
+
+
+
+
       })
  }
 
@@ -328,7 +342,6 @@ const undoAttachmentRemove = (attachment)=>{
 
 const getAiContent = ()=>{
   isAiContentLoading.value = true;
-console.log("hello");
 
   axiosClient.post(route('post.aiContent')).then(({data})=>{
         postForm.body=data.content;
@@ -339,6 +352,48 @@ console.log("hello");
 
 
   })
+
+}
+
+//display video thumbnail
+
+
+
+const fetchUrlData  = (e)=>{
+
+
+    if(pastedUrl ==postForm.body){
+        return;
+    }
+    postForm.url_preview=null
+    pastedUrl = postForm.body;
+
+    // pastedUrl = e.clipboardData.getData('text');
+    if(isUrl(pastedUrl)){
+        //----This is for youtube video-----------------------
+        // const objectParam = getQueryParamObject(pastedUrl)
+        // const videoId = objectParam.get("v");
+        // videoThumbnailLink.value = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+
+        //-------------THIS IS FOR EVERY WEBSITE-----------
+        axiosClient.post(route('post.urlPreview'), {
+            url:pastedUrl
+        }).then(({data})=>{
+            if(data.error){
+                errors.value.body = data.error
+                postForm.url_preview=null
+            }else{
+                postForm.url_preview = {
+                    image:data['og:image'],
+                    title: data['og:title'],
+                    description: data['og:description']
+                }
+                errors.value.body = null
+            }
+        })
+    }
+
+
 
 }
 

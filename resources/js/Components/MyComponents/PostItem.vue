@@ -4,13 +4,22 @@
         <div class="flex justify-between">
             <PostUserHeader  :post="post"/>
             <!-- the three dots section -->
-            <EditDeleteDropdown :post="post" @edit="openEditModal" @delete="deletePost"/>
+             <div class="flex items-center">
+                <div v-if="post.isPinned" class="flex text-xs bg-indigo-100 py-0.5 px-1 rounded text-indigo-700">
+                    <MapPinIcon class="w-4"/>
+                    <p>pinned</p>
+                </div>
+                <EditDeleteDropdown :post="post" @edit="openEditModal" @delete="deletePost" @onPinPost="pinPost"/>
+             </div>
         </div>
 
 
         <!-- POST DESCRIPTION -->
         <div class="mb-3">
             <ReadMoreLess :content="post.body" />
+        </div>
+        <div v-if="post.url_preview">
+            <UrlPreview :url="post.body" :preview="post.url_preview" />
         </div>
         <!-- POST ATTACHEMENTS -->
         <div class="grid  gap-2 mb-3" :class="post.attachments.length ==1?'grid-cols-1 ':'grid-cols-2'">
@@ -20,6 +29,11 @@
                         + {{ post.attachments.length-4 }} more
                     </div>
                     <img v-if="isImage(attachment)"    :src="attachment.url" class="object-contain " alt="">
+                    <div v-else-if="isVideo(attachment)" class="relative flex justify-center items-center">
+                        <PlayIcon class="absolute w-16 h-16  text-white" />
+                        <video :src="attachment.url"></video>
+                        <div class="absolute inset-0 bg-black/25"></div>
+                    </div>
                     <div v-else class="flex flex-col justify-center items-center">
                         <PaperClipIcon class=" w-10 h-10 mb-3" />
                         <small>{{ attachment.name }}</small>
@@ -91,19 +105,20 @@
 </template>
 <script setup>
 import { Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue';
-import { ArrowDownTrayIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon, PaperClipIcon,  FaceFrownIcon, ChatBubbleOvalLeftIcon } from '@heroicons/vue/24/outline';
-import {FaceSmileIcon, HandThumbUpIcon, HeartIcon} from '@heroicons/vue/24/solid'
+import { ArrowDownTrayIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon, PaperClipIcon,  FaceFrownIcon, ChatBubbleOvalLeftIcon, MapPinIcon } from '@heroicons/vue/24/outline';
+import {FaceSmileIcon, HandThumbUpIcon, HeartIcon, PlayIcon} from '@heroicons/vue/24/solid'
 import { MenuItem } from '@headlessui/vue'
 import PostUserHeader from './PostUserHeader.vue';
 import ReadMoreLess from './ReadMoreLess.vue';
+import UrlPreview from './UrlPreview.vue';
 import EditDeleteDropdown from './EditDeleteDropdown.vue';
 import {helpers} from '@/helpers';
 import axiosClient from '@/axiosClient';
 import { computed, onMounted, ref, watch } from 'vue';
-import { router, usePage } from '@inertiajs/vue3';
+import { router, useForm, usePage } from '@inertiajs/vue3';
 
 
-const {isImage} = helpers();
+const {isImage, isVideo} = helpers();
 
 const props = defineProps({
     post: Object,
@@ -113,10 +128,12 @@ const page = usePage().props;
 const user = page.auth.user;
 const translations = page.translations;
 
+//editing post body for mentionning
+
 
 
 //SHOWING EDIT POST MODAL
-const emit = defineEmits(['editClick', 'onAttachmentClick', 'onShowComments']);
+const emit = defineEmits(['editClick', 'onAttachmentClick', 'onShowComments', 'onPinPost']);
 const openEditModal = ()=>{
     emit('editClick', props.post);
 };
@@ -171,6 +188,12 @@ const showComments = ()=>{
     emit('onShowComments', props.post)
 }
 
+//pin unpin post
+
+const pinPost = ()=>{
+    const form = useForm({});
+    form.post(route('post.pinUnpin', props.post.id));
+}
 
 </script>
 

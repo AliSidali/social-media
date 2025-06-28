@@ -39,6 +39,8 @@ Route::middleware(['auth', LocaleMiddleware::class])->group(function () {
     Route::post('/comment/{comment}/reaction', [PostController::class, 'saveCommentReaction'])->name('comment.reaction');
     Route::post('/group', [GroupController::class, 'store'])->name('group.store');
     Route::post('/post/ai-post', [PostController::class, 'aiPostContent'])->name('post.aiContent');
+    Route::post('/post/urlPreview', [PostController::class, 'fetchUrlPreview'])->name('post.urlPreview');
+    Route::post('/post/{post}/pin', [PostController::class, 'pinUnpin'])->name('post.pinUnpin');
 
     //Group Routes
     Route::get('/g/{group:slug}', [GroupController::class, 'profile'])->middleware(LocaleMiddleware::class)->name('group.profile');

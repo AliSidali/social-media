@@ -138,7 +138,7 @@ const globalSearch = (evt)=>{
 
     if(evt){
         searchInit();
-        searchResult.value.nextUrl=route('globalSearch', newKeyword.value);
+        searchResult.value.nextUrl=route('globalSearch', encodeURIComponent(newKeyword.value));
     }
 
    axios.get(searchResult.value.nextUrl).then(({data})=>{

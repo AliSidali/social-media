@@ -14,7 +14,11 @@ class Post extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['id', 'user_id', 'body', 'group_id'];
+    protected $fillable = ['id', 'user_id', 'body', 'url_preview', 'group_id', 'isPinned'];
+
+    protected $casts = [
+        'url_preview' => 'json'
+    ];
 
     public function user(): BelongsTo
     {
@@ -54,6 +58,11 @@ class Post extends Model
     public function createdNotifications()
     {
         return $this->morphMany(Notification::class, 'notificable');
+    }
+
+    public function pin_posts()
+    {
+        return $this->hasMany(PinPost::class);
     }
 
 }

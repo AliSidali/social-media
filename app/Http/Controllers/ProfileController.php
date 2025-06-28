@@ -40,7 +40,15 @@ class ProfileController extends Controller
                     $query->with('reactions');
                 }
             ])
+            ->leftJoin('pin_posts as pp', function ($query) {
+                $query->on('pp.post_id', 'posts.id')
+                    ->where('pinable_type', User::class);
+            })->select('posts.*', 'pp.id as pin_id')
+            ->orderBy('pin_id', 'desc')
+            ->latest()
             ->paginate(5);
+
+
         if ($request->wantsJson()) {
             return PostResource::collection($posts);
         }
@@ -69,6 +77,7 @@ class ProfileController extends Controller
             ->get();
 
 
+
         return Inertia::render(
             'Profile/Index',
             [
@@ -80,7 +89,7 @@ class ProfileController extends Controller
                 //'followers' => $user->followers,
                 'followers' => $followers,
                 'followings' => $followings,
-                'attachments' => AttachmentResource::collection($attachments)
+                'attachments' => AttachmentResource::collection($attachments),
             ]
         );
     }

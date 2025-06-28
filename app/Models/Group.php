@@ -68,4 +68,9 @@ class Group extends Model
     {
         return $this->users()->wherePivot('role', 'admin')->wherePivot('user_id', $user_id)->exists();
     }
+
+    public function pin_post()
+    {
+        return $this->morphOne(PinPost::class, 'pinable');
+    }
 }

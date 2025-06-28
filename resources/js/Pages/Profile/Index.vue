@@ -2,6 +2,7 @@
     <UserProfileLayout :errors="errors" :success="success" :user="user" :followers="followers" :isCurrentUserFollower="isCurrentUserFollower">
         <TabPanels class="mt-2">
             <TabPanel  class="bg-white p-3 shadow">
+                <!-- for pinned post -->
                 <PostList :posts="posts" />
             </TabPanel>
             <TabPanel class="bg-white p-3 shadow">
@@ -33,6 +34,7 @@
 import Edit from "./Edit.vue";
 import UserProfileLayout from "@/Layouts/UserProfileLayout.vue";
 import PostList from "@/Components/MyComponents/PostList.vue";
+import PostItem from "@/Components/MyComponents/PostItem.vue";
 import UserListItem from "@/Components/MyComponents/UserListItem.vue";
 import PhotosTab from "@/Components/MyComponents/PhotosTab.vue";
 import {  TabPanels, TabPanel } from '@headlessui/vue'
@@ -60,7 +62,7 @@ const props = defineProps({
     posts: {
         type:Object
     },
-    attachments:Array
+    attachments:Array,
 })
 
 const page = usePage();
@@ -89,6 +91,11 @@ const isUserProfile = computed(()=>{
 //     }
 // }
 
+const instantPinPost = (isPinned)=>{
+    if(props.pinnedPost){
+        props.pinnedPost.isPinned=isPinned;
+    }
+}
 
 </script>
 
