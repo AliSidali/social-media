@@ -6,13 +6,8 @@ const props = defineProps({
         type: String,
         default: 'right',
     },
-    width: {
-        type: String,
-        default: '48',
-    },
     contentClasses: {
         type: String,
-        default: 'pb-1 bg-white dark:bg-gray-700',
     },
     isDisabled : false
 });
@@ -26,11 +21,6 @@ const closeOnEscape = (e) => {
 onMounted(() => document.addEventListener('keydown', closeOnEscape));
 onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
 
-const widthClass = computed(() => {
-    return {
-        48: 'w-48',
-    }[props.width.toString()];
-});
 
 const alignmentClasses = computed(() => {
     if (props.align === 'left') {
@@ -76,7 +66,7 @@ const openDropdown = ()=>{
                 style="display: none"
                 @click="open = false"
             >
-                <div class="rounded-md ring-1 ring-black ring-opacity-5" :class="contentClasses">
+                <div class="rounded-md ring-1 ring-black ring-opacity-5 pb-1 bg-white dark:bg-gray-700" :class="contentClasses">
                     <slot name="content" />
                 </div>
             </div>

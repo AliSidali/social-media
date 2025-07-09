@@ -22,4 +22,15 @@ trait ModelsMethods
             return round($time->diffInYears(now())) . " years ago";
         }
     }
+
+    public function getNotReadNotifications($notifications)
+    {
+        $notReadNotifications = [];
+        foreach ($notifications as $notification) {
+            if (!$notification->is_read) {
+                $notReadNotifications[] = $notification;
+            }
+        }
+        return $notReadNotifications;
+    }
 }

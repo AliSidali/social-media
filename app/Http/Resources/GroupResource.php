@@ -16,8 +16,7 @@ class GroupResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $user_id = auth()->user()?->id;
-        $pivotData = $this->users()->wherePivot('user_id', $user_id)->first()?->pivot;
+
         return [
             "id" => $this->id,
             "user_id" => $this->user_id,
@@ -26,11 +25,10 @@ class GroupResource extends JsonResource
             "autoApproval" => $this->auto_approval,
             "cover_path" => $this->cover_path ? Storage::url($this->cover_path) : null,
             "thumbnail_path" => $this->thumbnail_path ? Storage::url($this->thumbnail_path) : '/imgs/no_thumbnail.png',
-            "status" => $pivotData?->status,
-            "role" => $pivotData?->role,
+            "status" => $this->pivot?->status,
+            "role" => $this->pivot?->role,
             "about" => $this->about,
             "description" => Str::words(strip_tags($this->about), 10),
-            "isPinned" => $this->id
         ];
     }
 }

@@ -40,11 +40,11 @@ class ProfileController extends Controller
                     $query->with('reactions');
                 }
             ])
-            ->leftJoin('pin_posts as pp', function ($query) {
-                $query->on('pp.post_id', 'posts.id')
-                    ->where('pinable_type', User::class);
-            })->select('posts.*', 'pp.id as pin_id')
-            ->orderBy('pin_id', 'desc')
+            ->leftJoin('users', function ($query) {
+                $query->on('users.id', 'posts.user_id');
+            })
+            ->select('posts.*', 'users.pinned_post_id')
+            ->orderByRaw('CASE WHEN posts.id = users.pinned_post_id THEN 0 ELSE 1 END')
             ->latest()
             ->paginate(5);
 

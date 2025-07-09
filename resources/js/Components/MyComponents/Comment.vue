@@ -46,7 +46,7 @@
 
             <div class="w-[60%] border border-gray-300 rounded-xl bg-gray-100 ">
                 <!-- <ckeditor :editor="editor" v-model="editedComment.text" :config="editorConfig" class=" text-end px-4 py-2"></ckeditor> -->
-              <InputTextarea v-model="editedComment.text" class="mt-1"/>
+              <TextInput v-model="editedComment.text" class="mt-1"/>
 
                 <div class="flex justify-between px-5">
                     <div class=" text-white bg-black/50 left-1/3 top-1/4 rounded-full hover:bg-black/80">
@@ -85,7 +85,7 @@
         <div class="w-full">
             <div class="w-[60%] border border-gray-300 rounded-xl bg-gray-100">
                 <!-- <ckeditor :editor="editor" v-model="replyComment" :config="editorConfig" ></ckeditor> -->
-                <InputTextarea v-model="replyComment" class="mt-1"/>
+                <TextInput v-model="replyComment" class="mt-1"/>
                 <div class="flex justify-between px-5">
                     <div class="relative p-2 rounded-full hover:bg-gray-200">
                         <input type="file" @change="displayNewAttachment" accept="image/*" class="absolute opacity-0 cursor-pointer w-5">
@@ -121,6 +121,7 @@
 <script setup>
 import ReadMoreLess from './ReadMoreLess.vue';
 import Comment from './Comment.vue';
+import TextInput from '@/Components/TextInput.vue';
 import { usePage } from '@inertiajs/vue3';
 import {CameraIcon, ChatBubbleLeftEllipsisIcon,  HandThumbUpIcon, PaperAirplaneIcon, XMarkIcon} from '@heroicons/vue/24/solid';
 import EditDeleteDropdown from './EditDeleteDropdown.vue';

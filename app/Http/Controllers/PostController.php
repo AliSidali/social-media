@@ -405,10 +405,8 @@ class PostController extends Controller
     //no route methods
     private function deleteAttachment($comment)
     {
-        foreach ($comment->attachments as $attachment) {
-            $attachmentFolder = dirname($attachment->path);
-            Storage::disk('public')->deleteDirectory($attachmentFolder);
-        }
+        $attachmentFolder = dirname($comment->attachment->path);
+        Storage::disk('public')->deleteDirectory($attachmentFolder);
         foreach ($comment->replies as $reply) {
             $this->deleteAttachment($reply);
         }
@@ -467,38 +465,30 @@ class PostController extends Controller
     public function pinUnpin(Request $request, Post $post)
     {
         $authUser = auth()->user();
-        if ($authUser->id === $post->user_id || $post->group?->isCurrentUserAdmin()) {
-            $isPostPinned = null;
-            if ($post->group && str_contains(url()->previous(), $post->group->slug)) {
-                $isPostPinned = $post->group->pin_post()->where('post_id', $post->id)->exists();
-                if ($isPostPinned) {
-                    $post->group->pin_post()->where('post_id', $post->id)->delete();
-                } else {
-                    $post->group->pin_post()->delete();
-                    $pinPost = PinPost::create([
-                        'post_id' => $post->id,
-                        'pinable_id' => $post->group_id,
-                        'pinable_type' => Group::class
-                    ]);
-                }
-
-
+        $group_id = $request->get('group_id');
+        $group = $post->group;
+        $pinned = false;
+        if ($group_id && $group->isCurrentUserAdmin()) {
+            if ($group->pinned_post_id === $post->id) {
+                $group->update(['pinned_post_id' => null]);
             } else {
-                $isPostPinned = $post->user->pin_post()->where('post_id', $post->id)->exists();
-                if ($isPostPinned) {
-                    $post->user->pin_post()->where('post_id', $post->id)->delete();
-                }
-                $post->user->pin_post()->delete();
-                $pinPost = PinPost::create([
-                    'post_id' => $post->id,
-                    'pinable_id' => $post->user_id,
-                    'pinable_type' => User::class
-                ]);
+                $group->update(['pinned_post_id' => $post->id]);
+                $pinned = true;
 
             }
+            return back()->with('success', 'Post was successfully ' . ($pinned ? 'pinned' : 'unpinned'));
 
+        } elseif ($authUser->id === $post->user_id) {
+            $user = $post->user;
+            if ($user->pinned_post_id == $post->id) {
+                $user->update(['pinned_post_id' => null]);
 
-            return back()->with('success', 'Post was successfully ' . ($isPostPinned ? 'unpinned' : 'pinned'));
+            } else {
+                $user->update(['pinned_post_id' => $post->id]);
+                $pinned = true;
+
+            }
+            return back()->with('success', 'Post was successfully ' . ($pinned ? 'pinned' : 'unpinned'));
         }
 
 

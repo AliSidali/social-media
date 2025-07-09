@@ -9,7 +9,7 @@ import { ref } from 'vue';
 
 const props = defineProps({
     success:  String,
-    posts:  Object,
+     posts:  Object,
     groups: Array,
     followings:Array
 
@@ -31,10 +31,10 @@ const props = defineProps({
 
             <!-- "auto-rows-fr" important class for specifying grid child height  -->
             <div class="grid  gap-2 lg:grid-cols-12  lg:h-full lg:auto-rows-fr">
-                <div class=" lg:col-span-3 lg:order-1 ">
+                <div class=" lg:col-span-3 lg:order-1 lg:max-h-screen">
                     <GroupList  :groups="groups"/>
                 </div>
-                <div class="lg:col-span-3 lg:order-3   ">
+                <div class="lg:col-span-3 lg:order-3 lg:max-h-screen  ">
                     <FollowingList :followings="followings"/>
                 </div>
                 <div class="flex flex-col lg:col-span-6 lg:order-2 ">

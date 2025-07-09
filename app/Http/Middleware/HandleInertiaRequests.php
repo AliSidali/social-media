@@ -34,12 +34,19 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = auth()->user();
-        $userResource = $user ? new UserResource(auth()->user()) : null;
-
+        if (!$user) {
+            return [...parent::share($request)];
+        }
+        $userWithNotifications = $user->load('receivedNotifications');
+        $notReadNotifications = $user->getNotReadNotifications($userWithNotifications->receivedNotifications);
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $userResource
+                'user' => new UserResource($user),
+                'notificationsData' => [
+                    'notifications' => NotificationResource::collection($userWithNotifications->receivedNotifications),
+                    'notReadNotificationNum' => count($notReadNotifications),
+                ],
             ],
             'extensions' => StorePostRequest::$extensions,
 

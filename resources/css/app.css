@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
 /* CK CONTENT OF EDIT POST INSIDE MODAL */
 .ck-content > blockquote,
 .ck-content > dl,

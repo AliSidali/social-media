@@ -27,7 +27,7 @@ class Post extends Model
 
     public function group()
     {
-        return $this->belongsTo(Group::class)->select('id', 'name', 'slug');
+        return $this->belongsTo(Group::class)->select('id', 'name', 'slug', 'pinned_post_id');
     }
 
     public function attachments()

@@ -39,9 +39,9 @@ class PostComment extends Model
         return $this->hasMany(self::class, 'parent_id')->latest();
     }
 
-    public function attachments()
+    public function attachment()
     {
-        return $this->morphMany(Attachment::class, 'attachable');
+        return $this->morphOne(Attachment::class, 'attachable');
     }
 
     protected static function boot()
@@ -50,14 +50,14 @@ class PostComment extends Model
 
         static::deleting(function ($comment) {
             self::delete_attachments($comment->replies);
-            $comment->attachments()->delete();
+            $comment->attachment()->delete();
         });
     }
 
     private static function delete_attachments($replies)
     {
         foreach ($replies as $reply) {
-            $reply->attachments()->delete();
+            $reply->attachment()->delete();
             self::delete_attachments($reply->replies);
         }
     }

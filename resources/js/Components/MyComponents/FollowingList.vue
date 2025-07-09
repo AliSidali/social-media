@@ -1,6 +1,6 @@
 <template>
-    <div class="p-3   flex flex-col bg-white rounded border lg:h-full">
-        <div class="block lg:hidden">
+    <div class="p-3  h-[60%] flex flex-col bg-white rounded border lg:h-[85%]   dark:bg-slate-900 dark:text-gray-100 dark:border-slate-900">
+        <div class="block  lg:hidden">
             <Disclosure v-slot="{open}">
                 <DisclosureButton class="w-full flex justify-between items-center">
                      <h3 class=" text-xl font-bold"> My Friends </h3>

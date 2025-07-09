@@ -32,7 +32,7 @@ class PostCommentResource extends JsonResource
             ],
             'sub_comments' => $this->childComments,
             'subcomment_num' => $this->numOfComments,
-            'attachment' => new AttachmentResource($this->attachments()->where('attachable_id', $this->id)->first()) ?? null
+            'attachment' => new AttachmentResource($this->attachment) ?? null
         ];
     }
 }

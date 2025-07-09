@@ -30,8 +30,8 @@ class NotificationResource extends JsonResource
                 'parameter' => $this->notificable->slug ?? $this->notificable->username,
                 'thumbnail_path' => Storage::url($this->notificable->thumbnail_path ?? $this->notificable->avatar_path),
                 'path' => $this->notificationPath()
+            ],
 
-            ]
 
 
         ];

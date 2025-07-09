@@ -36,7 +36,7 @@ class PostResource extends JsonResource
             'post_comments_num' => $comments->count(),
             'comments' => self::convertIntoCommentTree($comments)[0],
             'group' => new GroupResource($this->group),
-            'isPinned' => $this->pin_id
+            'pinned_post_id' => $this->pinned_post_id
         ];
     }
 

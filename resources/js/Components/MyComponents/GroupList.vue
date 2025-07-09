@@ -1,5 +1,5 @@
 <template>
-    <div class=" p-3  bg-white rounded border h-full">
+    <div class=" p-3  bg-white rounded border h-full dark:bg-slate-900 dark:text-gray-100 dark:border-slate-900">
         <div class="block  lg:hidden">
             <Disclosure v-slot="{open}" >
                 <DisclosureButton class="w-full flex justify-between items-center">
@@ -13,7 +13,7 @@
         </div>
 
 
-        <div class="hidden lg:flex lg:flex-col lg:h-full ">
+        <div class="hidden lg:flex lg:flex-col h-[85%] ">
             <h3 class=" text-xl font-bold mb-3">{{ translations.group_title }} </h3>
             <GroupListItem :groups="groups"/>
         </div>

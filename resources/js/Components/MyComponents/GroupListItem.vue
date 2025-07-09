@@ -5,7 +5,7 @@
 
     </div>
 
-    <div class="flex-1  px-2  overflow-auto mt-4">
+    <div class="flex-1  px-2 overflow-hidden hover:overflow-auto mt-4">
         <div v-if="groups.length == 0" class="text-gray-400 text-center">
             {{ translations.no_group }}
         </div>

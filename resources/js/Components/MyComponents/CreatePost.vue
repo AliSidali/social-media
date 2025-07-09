@@ -1,7 +1,7 @@
 <template>
-    <div class="p-3 bg-white rounded-t border mb-3">
+    <div class="p-3 bg-white rounded-t border mb-3 dark:bg-slate-800">
 
-        <div  @click="showModal=true"  class="w-full mb-3  border-2 border-gray-200 py-2 px-3 rounded-md text-gray-500">
+        <div  @click="showModal=true"  class="w-full mb-3  border border-gray-200 py-2 px-3 rounded-md text-gray-500 dark:bg-slate-900">
             {{ translations.add_post_placeholder }}
 
         </div>

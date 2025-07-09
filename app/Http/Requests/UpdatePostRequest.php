@@ -21,6 +21,7 @@ class UpdatePostRequest extends StorePostRequest
     public function rules(): array
     {
         $rules = parent::rules();
+        unset($rules['group_id']);
         $additionnalRules = [
             'deleted_file_ids' => ['array'],
             'deleted_file_ids.*' => ['numeric']

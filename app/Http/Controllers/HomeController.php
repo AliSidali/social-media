@@ -8,7 +8,6 @@ use App\Http\Resources\UserResource;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use App\Models\Group;
 use Illuminate\Http\Request;
 use App\Http\Resources\PostResource;
 
@@ -17,8 +16,8 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        // $following_ids = $user->followedUsers->pluck('id');
-        // $group_ids = $user->groups->pluck('id');
+        // // $following_ids = $user->followedUsers->pluck('id');
+        // // $group_ids = $user->groups->pluck('id');
         $posts = Post::query()
             // ->where(function ($query) use ($following_ids, $group_ids) {
             //     $query->whereIn('user_id', $following_ids)        // the commented block is correct, lets try another method
@@ -46,9 +45,14 @@ class HomeController extends Controller
                 [
                     'attachments',
                     'reactions',
+                    'reactions.user',
                     'post_comments',
+                    'post_comments.reactions',
+                    'post_comments.attachment',
                     'group',
-                    'user'
+                    'user',
+                    'post_comments.user',
+
                 ]
             )
             ->latest()
@@ -59,30 +63,25 @@ class HomeController extends Controller
         if ($request->wantsJson()) {
             return $posts;
         }
-        // $groups = Group::query()
-        //     //->select(['groups.*', 'gu.role', 'gu.status'])
-        //     ->with('groupUser')
-        //     ->join('group_users as gu', 'groups.id', '=', 'gu.group_id')
-        //     ->where('gu.user_id', $user->id)
-        //     ->orderBy("gu.role")
-        //     ->orderBy("name")
-        //     ->get();
+        // // $groups = Group::query()
+        // //     //->select(['groups.*', 'gu.role', 'gu.status'])
+        // //     ->with('groupUser')
+        // //     ->join('group_users as gu', 'groups.id', '=', 'gu.group_id')
+        // //     ->where('gu.user_id', $user->id)
+        // //     ->orderBy("gu.role")
+        // //     ->orderBy("name")
+        // //     ->get();
 
-        $groups = Group::with([
-            'users'
-        ])->whereHas(
-                'users',
-                function ($query) {
-                    $query->where('user_id', Auth::id());
-                }
-            )->get();
+        $groups = $user->groups()->get();
+
+        $followedUsers = $user->followedUsers;
 
         return Inertia::render('Home', [
             'success' => session('success'),
             'posts' => $posts,
             'groups' => GroupResource::collection($groups),
             'language' => __('messages.language'),
-            'followings' => UserResource::collection($user->followedUsers)
+            'followings' => UserResource::collection($followedUsers)
         ]);
     }
 

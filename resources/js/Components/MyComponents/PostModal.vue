@@ -140,13 +140,18 @@ import UrlPreview from './UrlPreview.vue';
 
 const {isImage, getQueryParamObject, isUrl} = helpers();
 
+const page = usePage().props;
+const translations = page.translations;
+
+
 const props = defineProps({
   modelValue: Boolean,
   post: {
     type: Object,
     default:()=>({
         body:'',
-        user:usePage().props.auth.user
+        user:usePage().props.auth.user,
+        group_id:null
     })
   },
   group_id:{
@@ -156,15 +161,14 @@ const props = defineProps({
 })
 const postForm = useForm({
   body: props.post.body,
-  group_id:null,
+  group_id:props.group_id,
   attachments: null,
   deleted_file_ids : [],
   url_preview:null,
   _method: 'POST'
 });
 
-const page = usePage().props;
-const translations = page.translations;
+
 
 const resetForm = ()=>{
   postForm.reset();
@@ -225,6 +229,7 @@ watch(()=>props.post, ()=>{
 const submit = ()=>{
 
     postForm.attachments = attachments.value.map(index=>index.file);
+console.log(postForm.group_id);
 
 
   if(props.post.id){
@@ -242,7 +247,6 @@ const submit = ()=>{
     });
   }else{
 
-      postForm.group_id = props.group_id;
 
       postForm.post(route('post.store'), {
 

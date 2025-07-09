@@ -68,7 +68,7 @@
                     <!-- diplaying post comments and update input -->
                     <div class="py-3 px-6">
                         <div v-for="(comment, index) in post.comments" :key="index"  class="mb-4 group">
-                            <comment  :comment="comment"  :post="post" @onCreateComment="createComment" @onPreviewAttachment="previewAttachment"/>
+                            <Comment  :comment="comment"  :post="post" @onCreateComment="createComment" @onPreviewAttachment="previewAttachment"/>
 
                         </div>
 
@@ -136,7 +136,7 @@
     import { router, useForm, usePage } from '@inertiajs/vue3';
     import axiosClient from '@/axiosClient';
     import {helpers} from '@/helpers';
-import TextInput from '@/Components/TextInput.vue'
+    import TextInput from '@/Components/TextInput.vue'
     const props = defineProps({
         modelValue : Boolean,
         post: Object
@@ -147,6 +147,8 @@ import TextInput from '@/Components/TextInput.vue'
     const page = usePage();
     const user = page.props.auth.user;
     const translations = page.props.translations;
+
+    const commentText = ref('');
 
 
     const emit = defineEmits(['update:modelValue', 'onAttachmentClick']);

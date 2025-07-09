@@ -6,7 +6,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeftStartOnRectangleIcon, BellAlertIcon } from '@heroicons/vue/24/outline';
+import { ArrowLeftStartOnRectangleIcon, BellAlertIcon, MoonIcon } from '@heroicons/vue/24/outline';
 import axiosClient from '@/axiosClient';
 import SearchModal from '@/Components/MyComponents/SearchModal.vue';
 
@@ -18,8 +18,9 @@ const isSearchModalOpen = ref(false);
 
 
 const authUser = page.auth.user;
+const notificationsData=page.auth.notificationsData;
 const translations = page.translations;
-const notificationsNum = ref(authUser.notReadNotificationNum);
+const notificationsNum = ref(notificationsData.notReadNotificationNum);
 
 
 const changeLanguage = (lang)=>{
@@ -35,12 +36,22 @@ const readNotifications = ()=>{
     });
 }
 
+const changeLightMode = ()=>{
+    const htmlClasses = document.getElementsByTagName('html')[0].classList;
+    if(htmlClasses.contains('dark')){
+        htmlClasses.remove('dark');
+    }else{
+        htmlClasses.add('dark');
+    }
+
+}
+
 
 </script>
 
 <template>
     <div>
-        <div class="h-screen bg-gray-100 dark:bg-gray-900"  >
+        <div class=" bg-gray-100 dark:bg-gray-900 h-full"  >
             <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
@@ -93,8 +104,9 @@ const readNotifications = ()=>{
                                                 <h3>Notifications</h3>
                                             </div>
                                             <div class="max-h-[75vh] overflow-auto">
+
                                                 <!-- notification.created_by.is_user ?  route('profile.index', notification.created_by.parameter) : route('group.profile', notification.created_by.parameter) -->
-                                                <DropdownLink v-for="(notification, index) in authUser.notifications" :key="index"  :href="notification.created_by.path" class="flex  gap-4  items-center ">
+                                                <DropdownLink v-for="(notification, index) in notificationsData.notifications" :key="index"  :href="notification.created_by.path" class="flex  gap-4  items-center ">
                                                     <img :src="notification.created_by.thumbnail_path ?? '/storage/defaults/avatar.png'" class="border w-10 h-10 rounded-full" alt="">
                                                     <div>
                                                         <div class=" gap-2">
@@ -148,9 +160,9 @@ const readNotifications = ()=>{
 
 
                                 <!-- authuser dropdown -->
-                                <Dropdown align="right" width="48">
+                                <Dropdown :contentClasses="' w-72 '" align="right" >
                                     <template #trigger>
-                                        <span class="inline-flex rounded-md">
+                                        <span class="inline-flex rounded-md  ">
                                             <button
                                                 type="button"
                                                 class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
@@ -175,14 +187,17 @@ const readNotifications = ()=>{
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink class="flex justify-around  items-center" :href="route('profile.index', {username:authUser.username})">
-                                            <span> Profile </span>
-                                            <img :src="authUser.cover_path ?? '/storage/defaults/avatar.png'" class="border w-10 h-10 rounded-full" alt="">
+                                        <DropdownLink class="flex items-center gap-3 border-b border-gray-200" :href="route('profile.index', {username:authUser.username})">
+                                            <img :src="authUser.avatar_path ?? '/storage/defaults/avatar.png'" class="border w-10 h-10 rounded-full" alt="">
+                                            <span class="text-2xl font-semibold"> {{ authUser.username }} </span>
                                         </DropdownLink>
-                                        <DropdownLink class="flex justify-around " :href="route('logout')" method="post" as="button">
-                                            <span>{{ translations.logout }}</span>
+                                        <DropdownLink class="flex items-center gap-3" :href="route('logout')" method="post" as="button">
                                             <ArrowLeftStartOnRectangleIcon class="w-7" />
-
+                                            <span>{{ translations.logout }}</span>
+                                        </DropdownLink>
+                                        <DropdownLink href="#" as="button" class="flex   items-center gap-3" @click="changeLightMode">
+                                            <MoonIcon class="w-7" />
+                                            <span>Dark Mode</span>
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>

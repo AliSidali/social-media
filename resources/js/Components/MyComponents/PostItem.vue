@@ -1,11 +1,11 @@
 <template>
-    <div class="bg-white py-3 px-5 border rounded mb-3">
+    <div class="bg-white py-3 px-5 border rounded mb-3 dark:bg-slate-800 dark:text-gray-100 dark:border-gray-900">
         <!-- POST HEAD -->
         <div class="flex justify-between">
             <PostUserHeader  :post="post"/>
             <!-- the three dots section -->
              <div class="flex items-center">
-                <div v-if="post.isPinned" class="flex text-xs bg-indigo-100 py-0.5 px-1 rounded text-indigo-700">
+                <div v-if="post.pinned_post_id == post.id" class="flex text-xs bg-indigo-100 py-0.5 px-1 rounded text-indigo-700">
                     <MapPinIcon class="w-4"/>
                     <p>pinned</p>
                 </div>
@@ -53,7 +53,7 @@
         <div class="flex items-center justify-between border-b mb-2 px-4 py-2 ">
             <div class="relative flex items-center group">
                 <div class="" v-for="(type, index) in existingReactionTypes" :key="index">
-                    <img  :src="`/storage/emojis/${type}.png`"  class="w-5 object-contain" />
+                    <img  :src="`/storage/emojis/${type}.png`"  class="w-5 object-contain bg-white rounded-full" />
                 </div>
                 <div v-if="post.reactions.length > 0">
                     <span class="ml-2">{{ post.reactions[0].username }} and</span>
@@ -85,15 +85,15 @@
                 </div>
                 <button
                     @click="sendPostReaction('like')"
-                    class="flex z-10 w-full items-center justify-center gap-2 text-gray-800  py-2 rounded-lg "
-                    :class="post.has_current_user_reaction ? 'bg-sky-100 hover:bg-sky-200' : 'bg-gray-100 hover:bg-gray-200'"
+                    class="flex z-10 w-full items-center justify-center gap-2 text-gray-800  py-2 rounded-lg  dark:text-gray-100 "
+                    :class="post.has_current_user_reaction ? 'bg-sky-100 dark:bg-sky-900 hover:bg-sky-200 dark:hover:bg-sky-950' : 'bg-gray-100 dark:bg-slate-900 hover:bg-gray-200 dark:hover:bg-slate-950 '"
                 >
                     <HandThumbUpIcon class="w-6 text-blue-700"/>
                     <span>{{ translations.like_button }}</span>
                 </button>
             </div>
 
-            <button @click="showComments" class="flex flex-1 items-center justify-center gap-2 bg-gray-100 py-2  rounded-lg hover:bg-gray-200">
+            <button @click="showComments" class="flex flex-1 items-center justify-center gap-2 bg-gray-100 py-2  rounded-lg hover:bg-gray-200 dark:bg-slate-900 dark:hover:bg-slate-950">
                 <ChatBubbleLeftRightIcon class="w-6" />
                 <span>{{ translations.comment_button }}</span>
             </button>
@@ -127,6 +127,7 @@ const props = defineProps({
 const page = usePage().props;
 const user = page.auth.user;
 const translations = page.translations;
+const group = page.group;
 
 //editing post body for mentionning
 
@@ -191,7 +192,9 @@ const showComments = ()=>{
 //pin unpin post
 
 const pinPost = ()=>{
-    const form = useForm({});
+    const form = useForm({
+        group_id: group?.id
+    });
     form.post(route('post.pinUnpin', props.post.id));
 }
 

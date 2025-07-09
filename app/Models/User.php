@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Post;
+use App\Traits\ModelsMethods;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Illuminate\Notifications\Notifiable;
@@ -15,6 +16,7 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
     use HasSlug;
+    use ModelsMethods;
     /**
      * The attributes that are mass assignable.
      *
@@ -27,7 +29,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'cover_path',
-        'avatar_path'
+        'avatar_path',
+        'pinned_post_id'
     ];
 
     /**
@@ -81,13 +84,13 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class);
+        return $this->belongsToMany(Group::class)->withPivot('status', 'role');
 
     }
 
     public function receivedNotifications()//THE USER WHO OWN THE NOTIFICATIONS, BELONG TO HIM
     {
-        return $this->hasMany(Notification::class)->limit(20)->latest();
+        return $this->hasMany(Notification::class)->with('notificable')->limit(20)->latest();
     }
 
     public function createdNotifications()//THE USER WHO CREATES THE NOTIFICATION AND SAVE IT FOR RECEIVER
@@ -109,4 +112,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->morphOne(PinPost::class, 'pinable');
     }
+
+
+    //
 }
