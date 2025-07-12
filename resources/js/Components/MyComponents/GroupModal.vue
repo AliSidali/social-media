@@ -28,29 +28,28 @@
               leave-to="opacity-0 scale-95"
             >
               <DialogPanel
-                class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white  align-middle shadow-xl transition-all text-start"
+                class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white  align-middle shadow-xl transition-all text-start dark:bg-slate-800 dark:text-gray-100"
               >
                 <DialogTitle
                   as="h3"
-                  class="text-lg font-semibold  leading-6 text-gray-900 border-b-2 p-4 bg-gray-100 flex items-center justify-between"
+                  class="text-lg font-semibold  leading-6 text-gray-900 border-b-2 p-4 bg-gray-100 flex items-center justify-between dark:bg-slate-900 dark:text-gray-100"
                 >
                   <h3>{{ translations.group_modal_header }}</h3>
-                  <XMarkIcon @click="closeModal" class="w-8 rounded-full cursor-pointer p-1 hover:bg-gray-200"/>
+                  <XMarkIcon @click="closeModal" class="w-8 rounded-full cursor-pointer p-1 hover:bg-gray-200 dark:hover:bg-gray-800"/>
                 </DialogTitle>
                 <div class="p-6">
-
-                    <GroupForm :form="form" :translations="translations" :validationErrors="validationErrors" />
+                    <GroupForm :form="form" :translations="translations" :validationErrors="form.errors" />
                     <div class="mt-4 flex justify-between">
                         <button
                             type="button"
-                            class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            class="inline-flex justify-center rounded-md borddark:bg-slate-800er border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:bg-blue-800 dark:text-gray-100 dark:hover:bg-blue-900"
                             @click="closeModal"
                         >
                             {{ translations.cancel_button }}
                         </button>
                         <button
                             type="button"
-                            class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:bg-blue-800 dark:text-gray-100 dark:hover:bg-blue-900"
                             @click="createGroup"
                         >
                             {{ translations.send_button }}
@@ -117,13 +116,12 @@ import GroupForm from './GroupForm.vue';
 
   const createGroup = ()=>{
 
-    axiosClient.post(route('group.store'),form)
-            .then(({data})=>{
-                closeModal();
-                emit('addGroup', data.group);
-            }).catch(({response})=>{
-                validationErrors.value = response.data.errors;
-            })
+    form.post(route('group.store'), {
+        onSuccess:()=>{
+            closeModal();
+
+        }
+    })
   }
 
   </script>

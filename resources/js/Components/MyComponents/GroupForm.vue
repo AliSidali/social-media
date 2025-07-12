@@ -5,7 +5,7 @@
         <!-- <ckeditor :editor="editor" v-model="form.about" :config="editorConfig" ></ckeditor> -->
 
         <TextInput v-model="form.name" class="w-full mt-1" :class="validationErrors.name ?'border-red-500' : ''"/>
-        <span v-if="validationErrors.name" class="text-red-600">{{ validationErrors.name[0]}}</span>
+        <span v-if="validationErrors.name" class="text-red-600">{{ validationErrors.name}}</span>
     </div>
     <div class="flex items-center mt-4 gap-2">
         <Checkbox v-model:checked="form.auto_approval" />

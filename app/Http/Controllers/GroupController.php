@@ -38,6 +38,11 @@ class GroupController extends Controller
         //     ->select('users.name', 'gu.role')
         //     ->where(['gu.group_id' => $group->id, 'gu.status' => 'approved'])
         //     ->get();
+
+        $user = auth()->user();
+
+        $groupWithCurrentUser = $user->groups()->wherePivot('group_id', $group->id)->first();
+
         $groupPosts = $group->posts()
             ->with('user')
             ->with('attachments')
@@ -70,7 +75,7 @@ class GroupController extends Controller
         }
 
         return Inertia::render('Group/Profile', [
-            'group' => new GroupResource($group),
+            'group' => new GroupResource($groupWithCurrentUser),
             'message' => ['success' => session('success')],
             'pendingUsers' => UserResource::collection($group->getPendingUsers),
             'approvedUsers' => UserResource::collection($group->getApprovedUsers),
@@ -92,9 +97,7 @@ class GroupController extends Controller
             "role" => RoleEnum::ADMIN->value,
             "created_by" => $group->user_id
         ]);
-        $group->status = StatusEnum::APPROVED->value;
-        $group->role = RoleEnum::ADMIN->value;
-        return response(["group" => new GroupResource($group)], 201);
+        return back();
     }
 
     public function updateImage(Request $request, Group $group)
