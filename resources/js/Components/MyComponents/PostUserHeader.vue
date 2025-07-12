@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center gap-2 mb-3">
+    <div class="flex items-center gap-2 mb-3 ">
         <a href="#" class="border-2 rounded-full hover:border-blue-500  transition-all">
             <img class="w-[40px] h-[40px] rounded-full" :src="post.user.avatar_path" alt="">
         </a>

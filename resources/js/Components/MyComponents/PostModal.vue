@@ -29,11 +29,11 @@
               leave-to="opacity-0 scale-95"
             >
               <DialogPanel
-                class="w-full max-w-md transform overflow-hidden rounded bg-white text-start align-middle shadow-xl transition-all"
+                class="w-full max-w-md transform overflow-hidden rounded bg-white text-start align-middle shadow-xl transition-all border border-slate-500 dark:bg-slate-800 dark:text-gray-100 "
               >
                 <DialogTitle
                   as="h3"
-                  class=" font-medium p-3 px-4 bg-gray-200 text-gray-900 flex justify-between items-center"
+                  class=" font-medium p-3 px-4 bg-gray-200 text-gray-900 flex justify-between items-center dark:bg-slate-900 dark:text-gray-100"
                 >
                   {{post.id ? translations.update_post_modal_header: translations.create_post_modal_header}}
                   <button class="w-8 h-8 rounded-full flex justify-center items-center hover:bg-black/10 transition">

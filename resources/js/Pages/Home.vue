@@ -31,7 +31,7 @@ const props = defineProps({
 
             <!-- "auto-rows-fr" important class for specifying grid child height  -->
             <div class="grid  gap-2 lg:grid-cols-12  lg:h-full lg:auto-rows-fr">
-                <div class=" lg:col-span-3 lg:order-1 lg:max-h-screen">
+                <div class="lg:col-span-3 lg:order-1 lg:max-h-screen">
                     <GroupList  :groups="groups"/>
                 </div>
                 <div class="lg:col-span-3 lg:order-3 lg:max-h-screen  ">

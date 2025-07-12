@@ -1,23 +1,23 @@
 <template>
     <UserProfileLayout :errors="errors" :success="success" :user="user" :followers="followers" :isCurrentUserFollower="isCurrentUserFollower">
-        <TabPanels class="mt-2">
-            <TabPanel  class="bg-white p-3 shadow">
+        <TabPanels class="mt-2 bg-white dark:bg-slate-900 dark:text-gray-100">
+            <TabPanel  class="p-3 shadow">
                 <!-- for pinned post -->
                 <PostList :posts="posts" />
             </TabPanel>
-            <TabPanel class="bg-white p-3 shadow">
+            <TabPanel class=" p-3 shadow">
                 followers page
                 <div class="grid grid-cols-2 gap-2">
-                    <UserListItem v-for="(user, index) in followers" :key="index" :user="user" :href="route('profile.index', user.username)" class="bg-gray-100 shadow" />
+                    <UserListItem v-for="(user, index) in followers" :key="index" :user="user" :href="route('profile.index', user.username)" class="bg-gray-100 dark:bg-slate-800 dark:text-gray-100 shadow" />
                 </div>
             </TabPanel>
-            <TabPanel class="bg-white p-3 shadow">
+            <TabPanel class=" p-3 shadow">
                 followings page
                 <div class="grid grid-cols-2 gap-2">
-                    <UserListItem v-for="(user, index) in followings" :key="index" :user="user" :href="route('profile.index', user.username)"  class="bg-gray-100 shadow"/>
+                    <UserListItem v-for="(user, index) in followings" :key="index" :user="user" :href="route('profile.index', user.username)"  class="bg-gray-100 dark:bg-slate-800 dark:text-gray-100 shadow"/>
                 </div>
             </TabPanel>
-            <TabPanel class="bg-white p-3 shadow">
+            <TabPanel class=" p-3 shadow">
                 <PhotosTab :attachments="attachments"  />
             </TabPanel>
 

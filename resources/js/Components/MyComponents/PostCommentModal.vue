@@ -27,14 +27,14 @@
               leave-to="opacity-0 scale-95"
             >
               <DialogPanel
-                class="flex flex-col w-[60%] max-h-full transform  rounded-2xl bg-white py-6 text-left align-middle shadow-xl transition-all"
+                class="flex flex-col w-[60%] max-h-full transform  rounded-2xl bg-white pb-6 text-left align-middle shadow-xl transition-all dark:text-gray-100 dark:bg-slate-800"
               >
                 <DialogTitle
                   as="h3"
-                  class="text-lg font-medium leading-6 text-gray-900 flex justify-between items-center  shadow-xl px-6 text-start"
+                  class="text-lg  font-medium leading-6 text-gray-900 flex justify-between items-center rounded-t-2xl py-3 shadow-xl px-6 text-start dark:text-gray-100 dark:bg-slate-900"
                 >
                   <PostUserHeader :post="post"/>
-                  <div class="p-2  cursor-pointer rounded-full hover:bg-gray-100" @click="closeModal">
+                  <div class="p-2  cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" @click="closeModal">
                       <XMarkIcon class="w-5" />
                   </div>
 
@@ -82,11 +82,11 @@
                     <img :src="user.avatar_path" alt="" class="w-10 h-10 rounded-full">
 
                     <div class="w-full ">
-                        <div class="border border-gray-300 rounded-xl bg-gray-100">
+                        <div class="rounded-xl bg-gray-100">
                             <!-- <ckeditor :editor="editor" v-model="commentText" :config="editorConfig" ></ckeditor> -->
-                           <TextInput v-model="commentText" class="mt-1"/>
+                           <TextInput  v-model="commentText" class="w-full bg-gray-100 border-b-none rounded-b-none shadow-none"/>
 
-                            <div class="flex justify-between px-5">
+                            <div class="flex justify-between px-5 rounded-b-lg border  border-gray-300 dark:border-slate-700 dark:text-gray-100 dark:bg-slate-900">
                                 <div class="relative p-2 rounded-full hover:bg-gray-200">
                                     <input type="file" @change="displayAttachment" accept="image/*" class="absolute opacity-0 cursor-pointer w-5">
                                     <CameraIcon class="w-4" />

@@ -13,20 +13,20 @@
         <div class="fixed inset-0 bg-black/10" />
       </TransitionChild>
 
-      <div class="fixed h-full  inset-0  top-10">
+      <div class="fixed h-full  inset-0  top-10 ">
         <div
-          class="flex max-h-full  justify-center p-4 text-center"
+          class="flex max-h-full  justify-center p-4 text-center "
         >
 
             <DialogPanel
-              class="w-full max-h-[95%] max-w-xl transform  rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+              class="w-full max-h-[95%] max-w-xl transform  rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-slate-800 dark:text-gray-100"
             >
               <DialogTitle
                 as="h3"
-                class="text-lg font-medium leading-6 text-gray-900 mb-4"
+                class="text-lg font-medium leading-6 text-gray-900 mb-4 "
               >
               <div class="flex">
-                <div class="my-auto  p-2 bg-gray-200 border border-gray-300 border-r-0 rounded-l">
+                <div class="my-auto  p-2 bg-gray-200 border border-gray-300 border-r-0 rounded-l dark:bg-slate-800 dark:border-gray-700 dark:text-gray-100 ">
                     <MagnifyingGlassIcon class="w-5" />
                 </div>
                 <TextInput @keyup.enter="globalSearch" v-model="newKeyword" type="text" placeholder="search" class="w-full rounded-l-none " />
@@ -49,7 +49,7 @@
                     </div>
                     <div >
                         <h3 class="text-sm font-semibold border-b">Posts</h3>
-                        <Link  :href="route('post.view', post.id)" v-for="(post, index) in searchResult.posts" :key="index" class="flex gap-3 items-center  cursor-pointer px-3 py-2  hover:bg-gray-100">
+                        <Link  :href="route('post.view', post.id)" v-for="(post, index) in searchResult.posts" :key="index" class="flex gap-3 items-center  cursor-pointer px-3 py-2  hover:bg-gray-100 dark:hover:bg-slate-900">
                             <img class="w-[32px] h-[32px] rounded-full " :src="'storage/'+post.user.avatar_path??'https://picsum.photos/200'" alt="">
                             <p v-html="post.body.slice(0, 40)+'...'"></p>
                         </Link>

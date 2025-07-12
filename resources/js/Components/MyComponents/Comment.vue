@@ -6,7 +6,7 @@
         <img :src="comment.user.avatar_path" alt="" class=" z-10 w-8 h-8 rounded-full">
         <div v-if=" editedComment.id !== comment.id"  class="flex justify-between w-full ">
             <div>
-                <div class="bg-gray-100 px-4 py-2 rounded-xl">
+                <div class="bg-gray-100 px-4 py-2 rounded-xl dark:bg-slate-900">
                     <h6 class="text-sm font-semibold">{{ comment.user.name }}{{ comment.id }}</h6>
                     <ReadMoreLess :content="comment.text"/>
                 </div>
@@ -18,7 +18,7 @@
 
                 <!-- comment buttons (reaction, reply, view subcomment button) -->
                 <div class="flex gap-2 py-0.5">
-                    <div class="text-xs text-gray-600">
+                    <div class="text-xs text-gray-600 dark:text-gray-300">
                         {{ comment.updated_at }}
                     </div>
                     <button @click="sendReaction" :class="{'bg-indigo-100':comment.user_has_comment_reaction}" class="flex text-xs gap-1  px-1 rounded text-indigo-600 hover:bg-indigo-50" >

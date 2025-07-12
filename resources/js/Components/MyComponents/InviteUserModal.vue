@@ -27,11 +27,11 @@
               leave-to="opacity-0 scale-95"
             >
               <DialogPanel
-                class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white  text-start align-middle shadow-xl transition-all"
+                class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white  text-start align-middle shadow-xl transition-all dark:bg-slate-800 dark:text-gray-100"
               >
                 <DialogTitle
                   as="h3"
-                  class="text-xl font-bold bg-gray-100 leading-6 text-gray-900 p-4"
+                  class="text-xl font-bold bg-gray-100 leading-6 text-gray-900 p-4 dark:bg-slate-900 dark:text-gray-100"
                 >
                   {{ translations.invitation }}
 
@@ -46,14 +46,14 @@
                     <div class="mt-4 flex justify-between">
                     <button
                         type="button"
-                        class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        class="inline-flex justify-center rounded-md border border-transparent text-blue-100 px-4 py-2 text-sm font-medium bg-blue-800 hover:bg-blue-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                         @click="closeModal"
                     >
                         {{ translations.cancel_button }}
                     </button>
                     <button
                         type="button"
-                        class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        class="inline-flex justify-center rounded-md border border-transparent text-blue-100 px-4 py-2 text-sm font-medium bg-blue-800 hover:bg-blue-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                         @click="sendInvitation"
                     >
                         {{ translations.send_button }}
@@ -85,7 +85,7 @@ import TextInput from '../TextInput.vue';
     modelValue: Boolean,
     group : Object,
   })
-  const emit = defineEmits(['closeModal'])
+  const emit = defineEmits(['onCloseModal'])
   const isOpen = ref(props.modelValue);
   const page = usePage();
   const translations = page.props.translations;
@@ -100,7 +100,7 @@ import TextInput from '../TextInput.vue';
   function closeModal() {
     form.reset();
     isOpen.value = false
-    emit('closeModal', isOpen.value)
+    emit('onCloseModal', isOpen.value)
   }
 
 

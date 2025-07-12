@@ -37,7 +37,7 @@
                 </div>
 
             </div>
-            <div class="flex">
+            <div class="flex dark:bg-slate-800 dark:text-gray-100">
 
                 <!-- Select avatar image -->
                 <div class=" group ml-[60px] -mt-[60px] relative w-[120px] h-[120px] ">
@@ -62,7 +62,7 @@
                 <div class="p-3 flex justify-between items-center flex-1">
                     <div class="flex items-center " >
                         <h2 class="font-bold text-lg ">{{ user.username }}</h2>
-                        <p class="ml-2 text-xs  text-gray-500">{{ followers.length }} follower(s)</p>
+                        <p class="ml-2 text-xs  text-gray-400">{{ followers.length }} follower(s)</p>
                     </div>
                     <PrimaryButton v-if="isUserProfile">
                         <PencilIcon class="w-4 mr-2" />
@@ -83,9 +83,9 @@
 
         </div>
 
-        <div class="w-full  px-2  sm:px-0">
+        <div class="w-full  px-2  sm:px-0 ">
             <TabGroup>
-                <TabList class="flex py-1  bg-white ">
+                <TabList class="flex py-1  bg-white dark:bg-slate-800 dark:text-gray-100">
 
                     <Tab v-slot="{ selected }" as="template">
                         <TabItem class="capitalize" :text="translations.posts"  :selected="selected"/>
