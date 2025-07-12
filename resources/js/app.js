@@ -7,6 +7,15 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 
+//saving dark mode after refreshing browser using locaStorage
+const darkClass = localStorage.getItem('darkMode');
+
+if(darkClass){
+    document.querySelector('html').classList.add(darkClass);
+}
+
+//////////////////////////////////////////////////////////////
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({

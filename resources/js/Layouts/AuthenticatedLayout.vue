@@ -6,7 +6,8 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeftStartOnRectangleIcon, BellAlertIcon, MoonIcon } from '@heroicons/vue/24/outline';
+import { ArrowLeftStartOnRectangleIcon, BellAlertIcon } from '@heroicons/vue/24/outline';
+import { MoonIcon } from '@heroicons/vue/24/solid';
 import axiosClient from '@/axiosClient';
 import SearchModal from '@/Components/MyComponents/SearchModal.vue';
 
@@ -21,6 +22,7 @@ const authUser = page.auth.user;
 const notificationsData=page.auth.notificationsData;
 const translations = page.translations;
 const notificationsNum = ref(notificationsData.notReadNotificationNum);
+const hasDarkMode = localStorage.getItem('darkMode');
 
 
 const changeLanguage = (lang)=>{
@@ -40,9 +42,14 @@ const changeLightMode = ()=>{
     const htmlClasses = document.getElementsByTagName('html')[0].classList;
     if(htmlClasses.contains('dark')){
         htmlClasses.remove('dark');
+        localStorage.removeItem('darkMode');
     }else{
         htmlClasses.add('dark');
+        localStorage.setItem('darkMode', 'dark');
+
     }
+
+
 
 }
 
@@ -196,8 +203,8 @@ const changeLightMode = ()=>{
                                             <span>{{ translations.logout }}</span>
                                         </DropdownLink>
                                         <DropdownLink href="#" as="button" class="flex   items-center gap-3" @click="changeLightMode">
-                                            <MoonIcon class="w-7" />
-                                            <span>Dark Mode</span>
+                                            <MoonIcon class="w-7"  />
+                                            <span>{{ hasDarkMode ? 'Light Mode' : 'Dark Mode'}}</span>
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
